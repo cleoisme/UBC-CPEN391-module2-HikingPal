@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Move the Camera to User's Current Location", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.new_trail) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.view_history) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.fav_trails) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.unused_frag) {
 
         } else if (id == R.id.nav_share) {
 
