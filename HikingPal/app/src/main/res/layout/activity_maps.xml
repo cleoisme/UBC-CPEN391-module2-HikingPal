@@ -14,11 +14,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapViewFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <com.mapbox.mapboxsdk.maps.MapView
-        android:id="@+id/mapview"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--&lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
+    <!--<com.mapbox.mapboxsdk.maps.MapView-->
+        <!--android:id="@+id/mapview"-->
+        <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
 </FrameLayout>

@@ -27,23 +27,6 @@ public class MainActivity extends AppCompatActivity
         //Inflate the container
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            // Create fragment
-            final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            mapFragment = new MapViewFragment();
-
-            // Add map fragment to parent container
-            transaction.add(R.id.fragment_container, mapFragment);
-
-
-
-            //debug hereeeee
-            // transaction.commit();
-        } else {
-            mapFragment = (MapViewFragment) getSupportFragmentManager().findFragmentByTag("com.google.map");
-        }
-
-
         //setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
