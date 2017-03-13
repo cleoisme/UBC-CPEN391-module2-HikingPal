@@ -16,7 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
+import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -107,14 +109,18 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentID) {
             case R.id.new_trail:
-                ft.add(R.id.fragment_container, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 break;
 
             case R.id.view_history:
+                ft.add(R.id.fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
+                getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 break;
 
             case R.id.fav_trails:
+                ft.add(R.id.fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
+                getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
                 break;
 
             case R.id.unused_frag:

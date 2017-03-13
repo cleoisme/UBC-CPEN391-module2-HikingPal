@@ -12,35 +12,38 @@
         android:layout_height="wrap_content"
         android:id="@+id/track_buttons"
         android:paddingTop="20dp"
-        android:paddingLeft="7dp"
-        android:paddingRight="7dp">
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
 
         <Button
             android:text="Start"
+            android:textSize="15dp"
             android:layout_width="100dp"
             android:id="@+id/track_start"
             android:layout_weight="1"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
             android:layout_height="60dp" />
 
         <Button
             android:text="Stop"
+            android:textSize="15dp"
             android:layout_width="100dp"
             android:layout_height="60dp"
             android:id="@+id/track_stop"
             android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" />
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp" />
 
         <Button
             android:text="Continue"
+            android:textSize="15dp"
             android:layout_width="100dp"
             android:layout_height="60dp"
             android:id="@+id/track_continue"
             android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" />
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp" />
     </LinearLayout>
 
     <Button

@@ -7,4 +7,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">maps</string>
     <string name="new_trail_tag">New Trail</string>
+    <string name="view_history_tag">View Trail History</string>
+    <string name="fav_trail_tag">My Favourite Trails</string>
 </resources>

@@ -13,15 +13,16 @@ import com.cpen391.module2.hikingpal.R;
 /**
  * Created by YueyueZhang on 2017-03-12.
  */
-public class NewTrailFragment extends Fragment {
 
-    public NewTrailFragment() {
+public class FavTrailsFragment extends Fragment {
+
+    public FavTrailsFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.new_trail_frag, container, false);
+        LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.fav_trail_frag, container, false);
         return ll;
     }
 }
