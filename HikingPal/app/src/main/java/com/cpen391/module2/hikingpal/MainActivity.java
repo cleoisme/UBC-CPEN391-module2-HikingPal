@@ -20,9 +20,6 @@ import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
 
-import java.util.List;
-import java.util.ListIterator;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,10 +57,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else {
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             super.onBackPressed();
         }
     }
@@ -104,23 +104,28 @@ public class MainActivity extends AppCompatActivity
 
     public void MayFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft =fm.beginTransaction();
-        List<Fragment> all_frag = fm.getFragments();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        FragmentTransaction ft = fm.beginTransaction();
 
         switch (fragmentID) {
             case R.id.new_trail:
                 ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
+                ft.addToBackStack(null);
                 break;
 
             case R.id.view_history:
                 ft.add(R.id.fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
+                ft.addToBackStack(null);
                 break;
 
             case R.id.fav_trails:
                 ft.add(R.id.fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
+                ft.addToBackStack(null);
+
                 break;
 
             case R.id.unused_frag:
@@ -135,7 +140,6 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
-
         ft.commit();
     }
 }
