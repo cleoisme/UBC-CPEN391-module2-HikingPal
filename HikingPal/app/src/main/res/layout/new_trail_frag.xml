@@ -4,11 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/new_trail_ll"
-    android:background="#FFFFFF">
+    android:background="@color/colorPrimary">
 
-    <TextView
-        android:text="TextView"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:id="@+id/track_buttons"
+        android:paddingTop="20dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp">
+
+        <Button
+            android:text="Start"
+            android:layout_width="100dp"
+            android:id="@+id/track_start"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="60dp" />
+
+        <Button
+            android:text="Stop"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:id="@+id/track_stop"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+
+        <Button
+            android:text="Continue"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:id="@+id/track_continue"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+    </LinearLayout>
+
+    <Button
+        android:text="Save"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_track"
+        android:layout_width="150dp"
+        android:layout_marginTop="18dp" />
 
 </LinearLayout>

@@ -41,6 +41,6 @@
         android:layout_height="match_parent"
         android:id="@+id/fragment_container"
 
-        android:layout_marginTop="500dp"></FrameLayout>
+        android:layout_marginTop="450dp"></FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

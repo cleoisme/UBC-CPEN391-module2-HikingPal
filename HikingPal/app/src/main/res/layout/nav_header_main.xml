@@ -26,4 +26,5 @@
         android:text="Weather and Date go here"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
+
 </LinearLayout>
