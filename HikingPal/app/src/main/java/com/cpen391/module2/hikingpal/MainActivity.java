@@ -3,6 +3,9 @@ package com.cpen391.module2.hikingpal;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,10 +16,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
+
+import java.util.List;
+import java.util.ListIterator;
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    MapViewFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,25 +93,43 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.new_trail) {
-            // Handle the camera action
-        } else if (id == R.id.view_history) {
-
-        } else if (id == R.id.fav_trails) {
-
-        } else if (id == R.id.unused_frag) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+        MayFragmentManager(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    public void MayFragmentManager(int fragmentID) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft =fm.beginTransaction();
+        List<Fragment> all_frag = fm.getFragments();
 
+        switch (fragmentID) {
+            case R.id.new_trail:
+                ft.add(R.id.fragment_container, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
+                break;
+
+            case R.id.view_history:
+                break;
+
+            case R.id.fav_trails:
+                break;
+
+            case R.id.unused_frag:
+                break;
+
+            case R.id.nav_share:
+                break;
+
+            case R.id.nav_send:
+                break;
+
+            default:
+                break;
+        }
+
+        ft.commit();
+    }
 }
