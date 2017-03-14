@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         
         obtainPermissions();
-        
+
         //hide the discover fab
         FloatingActionButton dfab = (FloatingActionButton) findViewById(R.id.discover_fab);
         dfab.hide();
@@ -75,11 +73,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-//
-//        FragmentManager fm = getSupportFragmentManager();
-//        FragmentTransaction ft = fm.beginTransaction();
-//        mapFragment = new MapViewFragment();
-//        ft.add(fragment_container, mapFragment, "googleMap");
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        mapFragment = new MapViewFragment();
+        ft.add(fragment_container, mapFragment, "googleMap");
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     void obtainPermissions() {
@@ -184,11 +184,11 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentID) {
             case R.id.new_trail:
-                ft.add(fragment_container, new MapViewFragment(), "googleMap");
-                //ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
-                //getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
+                //ft.add(fragment_container, new MapViewFragment(), "googleMap");
+                ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 lfb.hide();
-                //DiscoverFabOnClick(dfb);
+                DiscoverFabOnClick(dfb);
                 ft.addToBackStack(null);
                 break;
 
