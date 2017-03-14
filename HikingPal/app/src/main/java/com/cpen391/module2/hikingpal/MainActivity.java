@@ -1,8 +1,11 @@
 package com.cpen391.module2.hikingpal;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +25,9 @@ import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
+import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 
+import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
@@ -31,12 +36,19 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
+    MapViewFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Inflate the container
         setContentView(R.layout.activity_main);
+
+        obtainPermissions();
+
         //hide the discover fab
         FloatingActionButton dfab = (FloatingActionButton) findViewById(R.id.discover_fab);
         dfab.hide();
@@ -63,6 +75,30 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        mapFragment = new MapViewFragment();
+        ft.add(fragment_container, mapFragment, "googleMap");
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    void obtainPermissions() {
+
+        String[] permissions = {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+        };
+
+        for (int i = 0; i < permissions.length; i++) {
+            int hasFineLocation = ActivityCompat.checkSelfPermission(this, permissions[i]);
+            if (hasFineLocation != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{permissions[i]}, REQUEST_ALL_MAP_PERMISSIONS);
+            }
+        }
+
     }
 
     @Override
@@ -150,6 +186,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentID) {
             case R.id.new_trail:
+                //ft.add(fragment_container, new MapViewFragment(), "googleMap");
                 ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 lfb.hide();
