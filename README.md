@@ -6,6 +6,9 @@ Notice:
    2. Remember to delete the branch after it is merged to the master
    3. Open a new issue as long as you find it is necesary
 
+About Map Background:
+    Currently, we have the same map as background for each fragment. Later when we implement the new trail feature, we need to pass a new MapViewFragment to fragment_container, which overlays the original background.
+
 Fragments:
 - New Trail: Our main feature. 
     Start/continue/stop/save user's path.
