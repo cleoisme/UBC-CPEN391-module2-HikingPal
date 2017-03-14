@@ -1,5 +1,6 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,18 +27,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 
 public class MapViewFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-            GoogleMap.OnInfoWindowClickListener,
-            GoogleMap.OnMapLongClickListener,
-            GoogleMap.OnMapClickListener,
-            GoogleMap.OnMarkerClickListener
-{
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMapClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     GoogleMap mMap;
     MapView mapView;
+    int speed;
+    Location location = null;
 
-    public MapViewFragment(){
+    public MapViewFragment() {
 
     }
 
@@ -53,21 +55,68 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                 mMap = googleMap;
 
                 // Add a marker in UBC and move the camera
-                LatLng UBC = new LatLng(49.260482, -123.253919);
-                mMap.addMarker(new MarkerOptions().position(UBC).title("Marker in UBC"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UBC, 15));
-                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                mMap.addMarker(new MarkerOptions()
-                        .position(UBC)
-                        .title("UBC")
-                        .icon(BitmapDescriptorFactory.defaultMarker())
-                );
+//                LatLng UBC = new LatLng(49.260482, -123.253919);
+//                mMap.addMarker(new MarkerOptions().position(UBC).title("Marker in UBC"));
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UBC, 15));
+//                //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+//                mMap.addMarker(new MarkerOptions()
+//                        .position(UBC)
+//                        .title("UBC")
+//                        .icon(BitmapDescriptorFactory.defaultMarker())
+//                );
+
+
                 mMap.setMyLocationEnabled(true);
+                mMap.setIndoorEnabled(true);
+
+//
+//                double curLa = location.getLatitude();
+//                double curLo = location.getLongitude();
+//
+//                LatLng current = new LatLng(curLa,curLo);
+
+                mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                    @Override
+                    public void onMyLocationChange(Location location) {
+
+                        speed = (int) ((location.getSpeed() * 3600) / 1000);
+
+
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(location.getLatitude(), location.getLongitude()), 15));
+
+                        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    }
+                });
+
 
             }
+
         });
 
+
         return view;
+    }
+
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+
+    }
+
+    public void startRecord(){
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng current = new LatLng(latitude, -longitude);
+        mMap.addMarker(new MarkerOptions()
+                        .position(current)
+                        .title("current location")
+                        .icon(BitmapDescriptorFactory.defaultMarker())
+                );
+
     }
 
     @Override
@@ -104,11 +153,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
 
     }
 
