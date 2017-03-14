@@ -5,8 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
     MapViewFragment mapFragment;
+    NewTrailFragment newtrailFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +56,6 @@ public class MainActivity extends AppCompatActivity
         //setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //floating button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.locate_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Move the Camera to User's Current Location", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -105,12 +97,12 @@ public class MainActivity extends AppCompatActivity
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction ft = fm.beginTransaction();
 
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout fcl = (FrameLayout)findViewById(R.id.fragment_container_long);
         FrameLayout fcs = (FrameLayout)findViewById(fragment_container_small);
         FrameLayout fcm1 = (FrameLayout)findViewById(fragment_container_med1);
         FrameLayout fcm2 = (FrameLayout)findViewById(fragment_container_med2);
-        FloatingActionButton lfb = (FloatingActionButton) findViewById(R.id.locate_fab);
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -118,23 +110,28 @@ public class MainActivity extends AppCompatActivity
         }else if(fcl.isDirty()){
             fcl.removeAllViewsInLayout();
             ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+            ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
             ft.addToBackStack(null);
             ft.commit();
         }else if(fcs.isDirty()){
             fcs.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            lfb.show();
+            //ft.add(R.id.toolbar, new MapViewFragment());
+            //ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
             dfb.hide();
         }else if(fcm1.isDirty()){
             fcm1.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            lfb.show();
             dfb.hide();
         }else if(fcm2.isDirty()){
             fcm2.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            lfb.show();
             dfb.hide();
+//        }else if((currentFragment instanceof MapViewFragment) && mapFragment.isDirty()) {
+//            mapFragment.removeRoute();
+//        }else if(currentFragment.equals(new MapViewFragment())){
+//            DrawerLayout myFl = (DrawerLayout)findViewById(R.id.drawer_layout);
+//            ft.add(R.id.fragment_container, myFl);
         }else {
             super.onBackPressed();
         }
@@ -167,43 +164,32 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        MayFragmentManager(id);
+        MapFragmentManager(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void MayFragmentManager(int fragmentID) {
+    public void MapFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        FloatingActionButton lfb = (FloatingActionButton) findViewById(R.id.locate_fab);
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         FragmentTransaction ft = fm.beginTransaction();
 
         switch (fragmentID) {
             case R.id.new_trail:
-                //ft.add(fragment_container, new MapViewFragment(), "googleMap");
                 ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
-                lfb.hide();
                 DiscoverFabOnClick(dfb);
                 ft.addToBackStack(null);
-//                Button startButton = (Button) findViewById(R.id.track_start);
-//                startButton.setOnClickListener(new View.OnClickListener(){
-//
-//                    @Override
-//                    public void onClick(View view) {
-//                        mapFragment.startRecord();
-//                    }
-//                });
                 break;
 
             case R.id.view_history:
                 ft.add(fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
-                lfb.hide();
                 dfb.hide();
                 ft.addToBackStack(null);
                 break;
@@ -211,23 +197,19 @@ public class MainActivity extends AppCompatActivity
             case R.id.fav_trails:
                 ft.add(fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
-                lfb.hide();
                 dfb.hide();
                 ft.addToBackStack(null);
                 break;
 
             case R.id.unused_frag:
-                lfb.hide();
                 dfb.hide();
                 break;
 
             case R.id.nav_share:
-                lfb.hide();
                 dfb.hide();
                 break;
 
             case R.id.nav_send:
-                lfb.hide();
                 dfb.hide();
                 break;
 
@@ -236,6 +218,8 @@ public class MainActivity extends AppCompatActivity
         }
         ft.commit();
     }
+
+
 
     public void DiscoverFabOnClick(FloatingActionButton dfb) {
         dfb.show();
@@ -246,6 +230,8 @@ public class MainActivity extends AppCompatActivity
                 fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 FragmentTransaction ft = fm.beginTransaction();
 
+                getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
+                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
                 ft.add(R.id.fragment_container_long, new DiscoverNearbyFragment(), getResources().getString(R.string.discover_nearby_tag));
                 ft.addToBackStack(null);
                 ft.commit();

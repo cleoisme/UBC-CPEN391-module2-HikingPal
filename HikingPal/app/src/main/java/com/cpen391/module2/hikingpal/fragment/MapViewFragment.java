@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 
 /**
@@ -34,13 +35,40 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         GoogleMap.OnMarkerClickListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    Location userLocation;
     GoogleMap mMap;
     MapView mapView;
+
     int speed;
     Location location = null;
+    Polyline routeLine;
 
     public MapViewFragment() {
 
+    }
+
+    /**
+     * Removes the routeline
+     */
+    public void removeRoute() {
+        if (routeLine != null) {
+            routeLine.remove();
+            routeLine = null;
+        }
+    }
+
+    /**
+     * Getter for the user location
+     */
+    public Location getUserLocation() {
+        return userLocation;
+    }
+
+    /**
+     * CHeck if the map is dirty
+     */
+    public boolean isDirty() {
+        return (routeLine != null);
     }
 
     @Override
@@ -170,4 +198,5 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     public boolean onMarkerClick(Marker marker) {
         return false;
     }
+
 }
