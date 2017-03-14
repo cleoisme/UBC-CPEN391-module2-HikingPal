@@ -38,11 +38,18 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.cpen391.module2.hikingpal.MapViewFragment"
+    <!--<fragment-->
+        <!--android:id="@+id/map"-->
+        <!--android:name="com.cpen391.module2.hikingpal.fragment.MapViewFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        ></FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
