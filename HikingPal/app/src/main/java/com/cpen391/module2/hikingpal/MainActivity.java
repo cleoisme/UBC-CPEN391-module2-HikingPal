@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity
 
         //Inflate the container
         setContentView(R.layout.activity_main);
-
+        
         obtainPermissions();
 
         //hide the discover fab
