@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
-        ft.add(fragment_container, mapFragment, "googleMap");
-        ft.addToBackStack(null);
+        ft.add(fragment_container, mapFragment,getResources().getString(R.string.map_view_tag));
+        //ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -97,18 +97,19 @@ public class MainActivity extends AppCompatActivity
 
         Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        FrameLayout fcl = (FrameLayout)findViewById(R.id.fragment_container_long);
-        FrameLayout fcs = (FrameLayout)findViewById(fragment_container_small);
-        FrameLayout fcm1 = (FrameLayout)findViewById(fragment_container_med1);
-        FrameLayout fcm2 = (FrameLayout)findViewById(fragment_container_med2);
+        FrameLayout fcl = (FrameLayout) findViewById(R.id.fragment_container_long);
+        FrameLayout fcs = (FrameLayout) findViewById(fragment_container_small);
+        FrameLayout fcm1 = (FrameLayout) findViewById(fragment_container_med1);
+        FrameLayout fcm2 = (FrameLayout) findViewById(fragment_container_med2);
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }else if(fcl.isDirty()){
             fcl.removeAllViewsInLayout();
-            ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
-            ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
+            if(mapFragment != null){
+                ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+            }
             ft.addToBackStack(null);
             ft.commit();
         }else if(fcs.isDirty()){
@@ -164,31 +165,36 @@ public class MainActivity extends AppCompatActivity
 
     public void MapFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FragmentTransaction ft = fm.beginTransaction();
+
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
-        FragmentTransaction ft = fm.beginTransaction();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+       // MapViewFragment map = new MapViewFragment();
 
         switch (fragmentID) {
             case R.id.new_trail:
-                ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
-                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
+                NewTrailFragment curFrag1 = new NewTrailFragment();
+                ft.add(fragment_container_small,curFrag1, getResources().getString(R.string.new_trail_tag));
+               // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
-                DiscoverFabOnClick(dfb);
+                DiscoverFabOnClick(dfb, mapFragment);
                 ft.addToBackStack(null);
                 break;
 
             case R.id.view_history:
-                ft.add(fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
-                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
+                ViewHistoryFragment curFrag2 = new ViewHistoryFragment();
+                ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+                //ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
                 break;
 
             case R.id.fav_trails:
-                ft.add(fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
-                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
+                FavTrailsFragment curFrag3 = new FavTrailsFragment();
+                ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
+               // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
@@ -212,7 +218,8 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public void DiscoverFabOnClick(FloatingActionButton dfb) {
+    public void DiscoverFabOnClick(FloatingActionButton dfb, final MapViewFragment mv) {
+        final MapViewFragment map = mv;
         dfb.show();
         dfb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +229,6 @@ public class MainActivity extends AppCompatActivity
                 FragmentTransaction ft = fm.beginTransaction();
 
                 getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
-                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
                 ft.add(R.id.fragment_container_long, new DiscoverNearbyFragment(), getResources().getString(R.string.discover_nearby_tag));
                 ft.addToBackStack(null);
                 ft.commit();
