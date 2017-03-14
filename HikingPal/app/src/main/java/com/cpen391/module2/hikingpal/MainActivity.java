@@ -15,10 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
+
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
 
 
 public class MainActivity extends AppCompatActivity
@@ -30,13 +37,16 @@ public class MainActivity extends AppCompatActivity
 
         //Inflate the container
         setContentView(R.layout.activity_main);
+        //hide the discover fab
+        FloatingActionButton dfab = (FloatingActionButton) findViewById(R.id.discover_fab);
+        dfab.hide();
 
         //setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //floating button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.locate_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,12 +68,40 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FragmentTransaction ft = fm.beginTransaction();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        FrameLayout fcl = (FrameLayout)findViewById(R.id.fragment_container_long);
+        FrameLayout fcs = (FrameLayout)findViewById(fragment_container_small);
+        FrameLayout fcm1 = (FrameLayout)findViewById(fragment_container_med1);
+        FrameLayout fcm2 = (FrameLayout)findViewById(fragment_container_med2);
+        FloatingActionButton lfb = (FloatingActionButton) findViewById(R.id.locate_fab);
+        FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else {
+        }else if(fcl.isDirty()){
+            fcl.removeAllViewsInLayout();
+            ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+            ft.addToBackStack(null);
+            ft.commit();
+        }else if(fcs.isDirty()){
+            fcs.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            lfb.show();
+            dfb.hide();
+        }else if(fcm1.isDirty()){
+            fcm1.removeAllViewsInLayout();
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            lfb.show();
+            dfb.hide();
+        }else if(fcm2.isDirty()){
+            fcm2.removeAllViewsInLayout();
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            lfb.show();
+            dfb.hide();
+        }else {
             super.onBackPressed();
         }
     }
@@ -105,41 +143,70 @@ public class MainActivity extends AppCompatActivity
     public void MayFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FloatingActionButton lfb = (FloatingActionButton) findViewById(R.id.locate_fab);
+        FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         FragmentTransaction ft = fm.beginTransaction();
 
         switch (fragmentID) {
             case R.id.new_trail:
-                ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                ft.add(fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
+                lfb.hide();
+                DiscoverFabOnClick(dfb);
                 ft.addToBackStack(null);
                 break;
 
             case R.id.view_history:
-                ft.add(R.id.fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
+                ft.add(fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
+                lfb.hide();
+                dfb.hide();
                 ft.addToBackStack(null);
                 break;
 
             case R.id.fav_trails:
-                ft.add(R.id.fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
+                ft.add(fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
+                lfb.hide();
+                dfb.hide();
                 ft.addToBackStack(null);
-
                 break;
 
             case R.id.unused_frag:
+                lfb.hide();
+                dfb.hide();
                 break;
 
             case R.id.nav_share:
+                lfb.hide();
+                dfb.hide();
                 break;
 
             case R.id.nav_send:
+                lfb.hide();
+                dfb.hide();
                 break;
 
             default:
                 break;
         }
         ft.commit();
+    }
+
+    public void DiscoverFabOnClick(FloatingActionButton dfb) {
+        dfb.show();
+        dfb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                FragmentTransaction ft = fm.beginTransaction();
+
+                ft.add(R.id.fragment_container_long, new DiscoverNearbyFragment(), getResources().getString(R.string.discover_nearby_tag));
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
     }
 }

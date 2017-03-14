@@ -22,7 +22,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        android:layout_gravity="right|center"
+        app:srcCompat="@android:drawable/sym_def_app_icon"
+        android:id="@+id/discover_fab" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/locate_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -65,5 +74,16 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_marginBottom="5dp"></FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container_long"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="50dp">
+
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
