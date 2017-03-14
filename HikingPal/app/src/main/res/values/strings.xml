@@ -10,4 +10,5 @@
     <string name="view_history_tag">View Trail History</string>
     <string name="fav_trail_tag">My Favourite Trails</string>
     <string name="discover_nearby_tag">Interesting</string>
+    <string name="map_view_tag">Google Map</string>
 </resources>

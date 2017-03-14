@@ -1,5 +1,6 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+
+import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -34,11 +39,37 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    Location userLocation;
     GoogleMap mMap;
     MapView mapView;
+    Polyline routeLine;
 
     public MapViewFragment(){
 
+    }
+
+    /**
+     * Removes the routeline
+     */
+    public void removeRoute() {
+        if (routeLine != null) {
+            routeLine.remove();
+            routeLine = null;
+        }
+    }
+
+    /**
+     * Getter for the user location
+     */
+    public Location getUserLocation() {
+        return userLocation;
+    }
+
+    /**
+     * CHeck if the map is dirty
+     */
+    public boolean isDirty() {
+        return (routeLine != null);
     }
 
     @Override
@@ -126,4 +157,5 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     public boolean onMarkerClick(Marker marker) {
         return false;
     }
+
 }
