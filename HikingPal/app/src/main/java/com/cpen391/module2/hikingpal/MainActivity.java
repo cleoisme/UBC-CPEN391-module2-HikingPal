@@ -24,7 +24,6 @@ import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
-import com.google.android.gms.maps.MapFragment;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -115,8 +114,6 @@ public class MainActivity extends AppCompatActivity
         }else if(fcs.isDirty()){
             fcs.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            //ft.add(R.id.toolbar, new MapViewFragment());
-            //ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
             dfb.hide();
         }else if(fcm1.isDirty()){
             fcm1.removeAllViewsInLayout();
@@ -126,11 +123,6 @@ public class MainActivity extends AppCompatActivity
             fcm2.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
-//        }else if((currentFragment instanceof MapViewFragment) && mapFragment.isDirty()) {
-//            mapFragment.removeRoute();
-//        }else if(currentFragment.equals(new MapViewFragment())){
-//            DrawerLayout myFl = (DrawerLayout)findViewById(R.id.drawer_layout);
-//            ft.add(R.id.fragment_container, myFl);
         }else {
             super.onBackPressed();
         }
@@ -188,6 +180,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.view_history:
                 ft.add(fragment_container_med1, new ViewHistoryFragment(), getResources().getString(R.string.view_history_tag));
+                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
@@ -195,6 +188,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.fav_trails:
                 ft.add(fragment_container_med2, new FavTrailsFragment(), getResources().getString(R.string.fav_trail_tag));
+                ft.add(R.id.fragment_container, new MapViewFragment(), getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
