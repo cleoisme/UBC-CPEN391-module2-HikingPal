@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
 
 /**
@@ -34,19 +35,14 @@ public class NewTrailFragment extends Fragment {
         LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.new_trail_frag, container, false);
 
         Button startButton = (Button) ll.findViewById(R.id.track_start);
-        StartButtonClick(startButton);
+        Button stopButton = (Button) ll.findViewById(R.id.track_stop);
+        MainActivity.StartButtonClick(startButton);
+        MainActivity.StopButtonClick(stopButton);
         return ll;
     }
 
 
-    public void StartButtonClick(Button startButton){
-        startButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                mapFragment.startRecord();
-            }
-        });
-    }
+
 
 
 }
