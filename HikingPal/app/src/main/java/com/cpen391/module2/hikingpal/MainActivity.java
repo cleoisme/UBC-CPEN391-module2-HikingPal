@@ -4,12 +4,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,13 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
+import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
-import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -31,12 +32,15 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
 
 
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
-    MapViewFragment mapFragment;
+    static MapViewFragment mapFragment;
+    NewTrailFragment newtrailFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +220,38 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         ft.commit();
+    }
+
+    public static boolean StartIsPressed = false;
+    public static boolean StopIsPressed = false;
+
+    public static void StartButtonClick(Button startButton){
+        startButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(StartIsPressed==true){
+                }
+                else {
+                    mapFragment.startRecord();
+                    StartIsPressed=true;
+                    StopIsPressed=false;
+                }
+            }
+        });
+    }
+
+    public static void StopButtonClick(Button stopButton){
+        stopButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(StopIsPressed==true){
+                }else {
+                    mapFragment.stopRecord();
+                    StopIsPressed=true;
+                    StartIsPressed=false;
+                }
+            }
+        });
     }
 
     public void DiscoverFabOnClick(FloatingActionButton dfb, final MapViewFragment mv) {

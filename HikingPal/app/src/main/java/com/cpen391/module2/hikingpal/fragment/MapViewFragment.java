@@ -1,5 +1,7 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,30 +23,40 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.List;
-import java.util.ListIterator;
+import java.util.ArrayList;
 
+import static com.cpen391.module2.hikingpal.MainActivity.StartIsPressed;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW;
 
 /**
  * Created by YueyueZhang on 2017-03-06.
  */
 
 public class MapViewFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-            GoogleMap.OnInfoWindowClickListener,
-            GoogleMap.OnMapLongClickListener,
-            GoogleMap.OnMapClickListener,
-            GoogleMap.OnMarkerClickListener
-{
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMapClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     Location userLocation;
     GoogleMap mMap;
     MapView mapView;
+
+
+    private Context context;
+
+    int speed;
+    Location location = null;
     Polyline routeLine;
 
-    public MapViewFragment(){
+    private ArrayList<LatLng> points;
+    Polyline line;
+
+    public MapViewFragment() {
 
     }
 
@@ -58,12 +70,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         }
     }
 
-    /**
-     * Getter for the user location
-     */
-    public Location getUserLocation() {
-        return userLocation;
-    }
 
     /**
      * CHeck if the map is dirty
@@ -72,33 +78,94 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         return (routeLine != null);
     }
 
+    LatLng latlng;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_map_view, container, false);
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
+        points = new ArrayList<LatLng>();
+
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
-                // Add a marker in UBC and move the camera
-                LatLng UBC = new LatLng(49.260482, -123.253919);
-                mMap.addMarker(new MarkerOptions().position(UBC).title("Marker in UBC"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UBC, 15));
-                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                mMap.addMarker(new MarkerOptions()
-                        .position(UBC)
-                        .title("UBC")
-                        .icon(BitmapDescriptorFactory.defaultMarker())
-                );
                 mMap.setMyLocationEnabled(true);
+                mMap.setIndoorEnabled(true);
+
+                mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                    @Override
+                    public void onMyLocationChange(Location location) {
+
+                        speed = (int) ((location.getSpeed() * 3600) / 1000);
+
+
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(location.getLatitude(), location.getLongitude()), 15));
+
+                        latlng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                        if(StartIsPressed==true) {
+                            points.add(latlng);
+                            drawLine();
+                        }
+
+                    }
+                });
+
+
+
+
 
             }
+
         });
 
+
         return view;
+    }
+
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+
+    }
+
+    public void startRecord() {
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions()
+                .position(latlng)
+                .title("start location")
+                .icon(BitmapDescriptorFactory.defaultMarker())
+        );
+
+
+    }
+
+    private void drawLine(){
+
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        for (int i = 0; i < points.size(); i++) {
+            LatLng point = points.get(i);
+            options.add(point);
+        }
+        line = mMap.addPolyline(options);
+    }
+
+
+    public void stopRecord(){
+
+        mMap.addMarker(new MarkerOptions()
+                .position(latlng)
+                .title("end location")
+                .icon(BitmapDescriptorFactory.defaultMarker(HUE_YELLOW))
+        );
+
+
     }
 
     @Override
@@ -135,11 +202,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
 
     }
 
