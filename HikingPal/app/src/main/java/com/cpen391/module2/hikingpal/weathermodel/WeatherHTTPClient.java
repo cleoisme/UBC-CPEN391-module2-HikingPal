@@ -19,7 +19,7 @@ public class WeatherHTTPClient {
 
     String weatherURL = "http://api.openweathermap.org/data/2.5/weather?id=6173331&units=metric&APPID=c474a7d78b302ff5c01bb04cb8867fdd";
 
-    String weatherIcon = "http://openweathermap.org/img/w/09n.png";
+    String weatherIcon = "http://openweathermap.org/img/w/";
 
     public WeatherHTTPClient() {
 
@@ -64,7 +64,7 @@ public class WeatherHTTPClient {
         HttpURLConnection con = null ;
         InputStream is = null;
         try {
-            con = (HttpURLConnection) ( new URL(weatherIcon + code)).openConnection();
+            con = (HttpURLConnection) ( new URL(weatherIcon + code + ".png")).openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);
             con.setDoOutput(true);
