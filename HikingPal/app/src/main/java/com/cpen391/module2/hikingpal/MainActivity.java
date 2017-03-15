@@ -2,6 +2,9 @@ package com.cpen391.module2.hikingpal;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -19,12 +22,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
+import com.cpen391.module2.hikingpal.weathermodel.JSONWeatherParser;
+import com.cpen391.module2.hikingpal.weathermodel.Weather;
+import com.cpen391.module2.hikingpal.weathermodel.WeatherHTTPClient;
+
+import org.json.JSONException;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -48,7 +58,10 @@ public class MainActivity extends AppCompatActivity
 
         //Inflate the container
         setContentView(R.layout.activity_main);
-        
+
+        JSONWeatherTask task = new JSONWeatherTask();
+        task.execute(new String[]{"Vancouver"});
+
         obtainPermissions();
 
         //hide the discover fab
@@ -130,6 +143,41 @@ public class MainActivity extends AppCompatActivity
             dfb.hide();
         }else {
             super.onBackPressed();
+        }
+    }
+
+    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
+
+        @Override
+        protected Weather doInBackground(String... params) {
+            WeatherHTTPClient weatherHTTPClient = new WeatherHTTPClient();
+            Weather weather = new Weather();
+            String data = (weatherHTTPClient.getWeatherData());
+
+           try {
+               weather = JSONWeatherParser.getWeather(data);
+               weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
+           } catch (JSONException e) {
+               e.printStackTrace();
+           }
+
+           return weather;
+
+        }
+
+        @Override
+        protected void onPostExecute(Weather weather) {
+            super.onPostExecute(weather);
+
+            if (weather.iconData != null && weather.iconData.length > 0) {
+                ImageView weatherImage = (ImageView) findViewById(R.id.weather_icon);
+                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
+                weatherImage.setImageBitmap(img);
+            }
+
+            TextView textView = (TextView) findViewById(R.id.weather_info);
+            textView.setText(weather.currentCondition.getDescr() + "Temp: " + weather.temperature.getTemp());
+
         }
     }
 
