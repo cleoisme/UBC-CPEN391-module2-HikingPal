@@ -30,17 +30,37 @@ public class NewTrailFragment extends Fragment {
 //
 //    }
 
+    public static Button trailButton;
+    public static Button finishButton;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.new_trail_frag, container, false);
 
-        Button startButton = (Button) ll.findViewById(R.id.track_start);
-        Button stopButton = (Button) ll.findViewById(R.id.track_stop);
-        Button rateButton = (Button) ll.findViewById(R.id.rate_track);
-        MainActivity.StartButtonClick(startButton);
-        MainActivity.StopButtonClick(stopButton);
 
+//        Button startButton = (Button) ll.findViewById(R.id.track_start);
+//        Button stopButton = (Button) ll.findViewById(R.id.track_stop);
+//        Button continueButton = (Button) ll.findViewById(R.id.track_continue);
+//        MainActivity.StartButtonClick(startButton);
+//        MainActivity.StopButtonClick(stopButton);
+//        MainActivity.ContinueButtonClick(continueButton);
+//
+//
+        trailButton = (Button) ll.findViewById(R.id.trail_Button);
+        MainActivity.trailButtonClick(trailButton);
+
+        finishButton = (Button) ll.findViewById(R.id.finish_Button);
+        MainActivity.finishButtonClick(finishButton);
+
+        Button rateButton = (Button) ll.findViewById(R.id.rate_track);
+
+
+//        Button startButton = (Button) ll.findViewById(R.id.track_start);
+//        Button stopButton = (Button) ll.findViewById(R.id.track_stop);
+//        Button rateButton = (Button) ll.findViewById(R.id.rate_track);
+//        MainActivity.StartButtonClick(startButton);
+//        MainActivity.StopButtonClick(stopButton);
+//
         rateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ((MainActivity)getActivity()).sendMessage("Q");

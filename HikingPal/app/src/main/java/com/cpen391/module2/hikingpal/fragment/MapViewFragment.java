@@ -1,10 +1,11 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 
-import static com.cpen391.module2.hikingpal.MainActivity.StartIsPressed;
+import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
+import static com.cpen391.module2.hikingpal.MainActivity.running;
+import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW;
 
 /**
@@ -81,7 +84,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     LatLng latlng;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_map_view, container, false);
         mapView = (MapView) view.findViewById(R.id.mapview);
@@ -100,26 +103,22 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     @Override
                     public void onMyLocationChange(Location location) {
 
-                        speed = (int) ((location.getSpeed() * 3600) / 1000);
+                        //speed = (int) ((location.getSpeed() * 3600) / 1000);
 
 
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(location.getLatitude(), location.getLongitude()), 15));
+                                new LatLng(location.getLatitude(), location.getLongitude()), 18));
 
                         latlng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                        if(StartIsPressed==true) {
+                        //if(StartIsPressed==true || ContinueIsPressed==true) {
+                        if(running==true){
                             points.add(latlng);
                             drawLine();
                         }
 
                     }
                 });
-
-
-
-
-
             }
 
         });
@@ -135,13 +134,55 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
+    public boolean firstStart = true;
+    Marker startMarker;
+    Marker stopMarker;
     public void startRecord() {
-        mMap.clear();
-        mMap.addMarker(new MarkerOptions()
-                .position(latlng)
-                .title("start location")
-                .icon(BitmapDescriptorFactory.defaultMarker())
-        );
+        if(firstStart == true){
+            points.add(latlng);
+            startMarker = mMap.addMarker(new MarkerOptions()
+                            .position(latlng)
+                            .title("start")
+                            .icon(BitmapDescriptorFactory.defaultMarker()));
+            firstStart = false;
+        }
+        else {
+//            new AlertDialog.Builder(getActivity())
+//                    .setTitle("start over")
+//                    .setMessage("Are you sure you want to start a new trail?")
+//                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mMap.clear();
+//                            points.clear();
+//                            points.add(latlng);
+////                            StartIsPressed=true;
+////                            StopIsPressed=false;
+////                            ContinueIsPressed=false;
+//                            startMarker = mMap.addMarker(new MarkerOptions()
+//                                    .position(latlng)
+//                                    .title("start")
+//                                    .icon(BitmapDescriptorFactory.defaultMarker())
+//                            );
+//                        }
+//                    })
+//                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+////                            StopIsPressed=true;
+//                        }
+//                    })
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .show();
+            mMap.clear();
+            points.clear();
+            points.add(latlng);
+            startMarker = mMap.addMarker(new MarkerOptions()
+                    .position(latlng)
+                    .title("start")
+                    .icon(BitmapDescriptorFactory.defaultMarker())
+            );
+
+
+        }
 
 
     }
@@ -159,13 +200,37 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     public void stopRecord(){
 
-        mMap.addMarker(new MarkerOptions()
+        stopMarker = mMap.addMarker(new MarkerOptions()
                 .position(latlng)
-                .title("end location")
+                .title("stop")
                 .icon(BitmapDescriptorFactory.defaultMarker(HUE_YELLOW))
         );
+    }
 
+    public void continueRecord(){
+        stopMarker.remove();
+    }
 
+    public void finishRecord(){
+                    new AlertDialog.Builder(getActivity())
+                    .setTitle("finish")
+                    .setMessage("finish?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mMap.clear();
+                            points.clear();
+                            buttonNum = 1;
+                            running = false;
+                            trailButton.setText("Start");
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //running = false;
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
     }
 
     @Override

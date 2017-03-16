@@ -363,34 +363,87 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public static boolean StartIsPressed = false;
-    public static boolean StopIsPressed = false;
+//    public static boolean StartIsPressed = false;
+//    public static boolean StopIsPressed = false;
+//    public static boolean ContinueIsPressed = false;
 
-    public static void StartButtonClick(Button startButton){
-        startButton.setOnClickListener(new View.OnClickListener(){
+//    public static void StartButtonClick(Button startButton){
+//        startButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                if(StartIsPressed==false){
+//                    mapFragment.startRecord();
+//                    StartIsPressed=true;
+//                    StopIsPressed=false;
+//                    ContinueIsPressed=false;
+//                }
+//            }
+//        });
+//    }
+//
+//    public static void StopButtonClick(Button stopButton){
+//        stopButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                if(StopIsPressed==false && StartIsPressed==true){
+//                    mapFragment.stopRecord();
+//                    StopIsPressed=true;
+//                    StartIsPressed=false;
+//                    ContinueIsPressed=false;
+//                }
+//            }
+//        });
+//    }
+//
+//    public static void ContinueButtonClick(Button continueButton){
+//        continueButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                if(ContinueIsPressed==false && StopIsPressed==true){
+//                    mapFragment.continueRecord();
+//                    StopIsPressed=false;
+//                    StartIsPressed=true;
+//                    ContinueIsPressed = true;
+//                }
+//            }
+//        });
+//    }
+
+
+    public static int buttonNum = 1;
+    public static boolean running = false;
+    public static void trailButtonClick(final Button trailButton){
+        trailButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if(StartIsPressed==true){
-                }
-                else {
+
+                if(buttonNum==1){ //init
+                    buttonNum=2;
+                    trailButton.setText("Stop");
+                    running = true;
                     mapFragment.startRecord();
-                    StartIsPressed=true;
-                    StopIsPressed=false;
+                }
+                else if(buttonNum==2){ //stop
+                    buttonNum=3;
+                    trailButton.setText("Resume");
+                    running = false;
+                    mapFragment.stopRecord();
+                }
+                else if(buttonNum==3){ //resume
+                    trailButton.setText("Stop");
+                    buttonNum=2;
+                    running = true;
+                    mapFragment.continueRecord();
                 }
             }
         });
     }
 
-    public static void StopButtonClick(Button stopButton){
-        stopButton.setOnClickListener(new View.OnClickListener(){
+    public static void finishButtonClick(final Button finishButton){
+        finishButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if(StopIsPressed==true){
-                }else {
-                    mapFragment.stopRecord();
-                    StopIsPressed=true;
-                    StartIsPressed=false;
-                }
+                mapFragment.finishRecord();
             }
         });
     }
