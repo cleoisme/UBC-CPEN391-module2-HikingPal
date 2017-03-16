@@ -18,14 +18,12 @@
 package com.cpen391.module2.hikingpal.bluetooth;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ViewAnimator;
 
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.bluetooth.logger.Log;
-import com.cpen391.module2.hikingpal.bluetooth.logger.LogFragment;
 import com.cpen391.module2.hikingpal.bluetooth.logger.LogWrapper;
 import com.cpen391.module2.hikingpal.bluetooth.logger.MessageOnlyLogFilter;
 //import com.example.android.common.activities.SampleActivityBase;
@@ -53,12 +51,14 @@ public class BluetoothMainActivity extends SampleActivityBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             BluetoothChatFragment fragment = new BluetoothChatFragment();
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
         }
+        */
     }
 
     @Override
@@ -105,11 +105,13 @@ public class BluetoothMainActivity extends SampleActivityBase {
         MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();
         logWrapper.setNext(msgFilter);
 
+        /*
         // On screen logging via a fragment with a TextView.
         LogFragment logFragment = (LogFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.log_fragment);
         msgFilter.setNext(logFragment.getLogView());
 
         Log.i(TAG, "Ready");
+        */
     }
 }

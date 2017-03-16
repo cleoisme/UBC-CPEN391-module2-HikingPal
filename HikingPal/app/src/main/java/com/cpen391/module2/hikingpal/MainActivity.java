@@ -88,10 +88,6 @@ public class MainActivity extends AppCompatActivity
 
         //Inflate the container
         setContentView(R.layout.activity_main);
-
-        JSONWeatherTask task = new JSONWeatherTask();
-        task.execute(new String[]{"Vancouver"});
-
         obtainPermissions();
 
         //hide the discover fab
@@ -116,12 +112,19 @@ public class MainActivity extends AppCompatActivity
             textView.setText(mWeatherText);
         }
 
+
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
         ft.add(fragment_container, mapFragment,getResources().getString(R.string.map_view_tag));
         //ft.addToBackStack(null);
         ft.commit();
+
+        JSONWeatherTask task = new JSONWeatherTask();
+        task.execute(new String[]{"Vancouver"});
+
+
     }
 
     @Override
@@ -242,13 +245,15 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
 
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
             if (weather.iconData != null && weather.iconData.length > 0) {
-                ImageView weatherImage = (ImageView) findViewById(R.id.weather_icon);
+                ImageView weatherImage = (ImageView) drawer.findViewById(R.id.weather_icon);
                 Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
                 weatherImage.setImageBitmap(img);
             }
 
-            TextView textView = (TextView) findViewById(R.id.weather_info);
+            TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
             mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
             if(textView != null) {
                 textView.setText(mWeatherText);
@@ -570,6 +575,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 
 
 }
