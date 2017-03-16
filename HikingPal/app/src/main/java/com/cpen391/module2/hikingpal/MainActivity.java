@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.new_trail:
                 NewTrailFragment curFrag1 = new NewTrailFragment();
                 ft.add(fragment_container_small,curFrag1, getResources().getString(R.string.new_trail_tag));
-               // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
+               // ft.add(R.id.fragment_container, map, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 DiscoverFabOnClick(dfb, mapFragment);
                 ft.addToBackStack(null);

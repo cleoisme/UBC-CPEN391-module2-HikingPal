@@ -1,12 +1,12 @@
 package com.cpen391.module2.hikingpal.fragment;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,41 +44,19 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerClickListener {
 
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    Location userLocation;
     GoogleMap mMap;
     MapView mapView;
 
 
-    private Context context;
-
-    int speed;
-    Location location = null;
-    Polyline routeLine;
+    public static long startTime;
+    public static long stopTime;
+    public static double totalDistance = 0;
 
     private ArrayList<LatLng> points;
     Polyline line;
 
     public MapViewFragment() {
 
-    }
-
-    /**
-     * Removes the routeline
-     */
-    public void removeRoute() {
-        if (routeLine != null) {
-            routeLine.remove();
-            routeLine = null;
-        }
-    }
-
-
-    /**
-     * CHeck if the map is dirty
-     */
-    public boolean isDirty() {
-        return (routeLine != null);
     }
 
     LatLng latlng;
@@ -134,57 +112,16 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
-    public boolean firstStart = true;
+
     Marker startMarker;
     Marker stopMarker;
     public void startRecord() {
-        if(firstStart == true){
+        startTime = System.currentTimeMillis();
             points.add(latlng);
             startMarker = mMap.addMarker(new MarkerOptions()
                             .position(latlng)
                             .title("start")
                             .icon(BitmapDescriptorFactory.defaultMarker()));
-            firstStart = false;
-        }
-        else {
-//            new AlertDialog.Builder(getActivity())
-//                    .setTitle("start over")
-//                    .setMessage("Are you sure you want to start a new trail?")
-//                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            mMap.clear();
-//                            points.clear();
-//                            points.add(latlng);
-////                            StartIsPressed=true;
-////                            StopIsPressed=false;
-////                            ContinueIsPressed=false;
-//                            startMarker = mMap.addMarker(new MarkerOptions()
-//                                    .position(latlng)
-//                                    .title("start")
-//                                    .icon(BitmapDescriptorFactory.defaultMarker())
-//                            );
-//                        }
-//                    })
-//                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-////                            StopIsPressed=true;
-//                        }
-//                    })
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .show();
-            mMap.clear();
-            points.clear();
-            points.add(latlng);
-            startMarker = mMap.addMarker(new MarkerOptions()
-                    .position(latlng)
-                    .title("start")
-                    .icon(BitmapDescriptorFactory.defaultMarker())
-            );
-
-
-        }
-
-
     }
 
     private void drawLine(){
@@ -193,6 +130,15 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         for (int i = 0; i < points.size(); i++) {
             LatLng point = points.get(i);
             options.add(point);
+            if(i>0){
+                totalDistance = totalDistance + CalculationByDistance(points.get(i-1),points.get(i));
+                Log.i("Total Distance: ", +totalDistance + "meter");
+
+//                long currentTime = System.currentTimeMillis();
+//                long seconds = (currentTime - startTime) / 1000;
+//                Log.i("Duration: ", + seconds + "s");
+
+            }
         }
         line = mMap.addPolyline(options);
     }
@@ -200,6 +146,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     public void stopRecord(){
 
+        stopTime = System.currentTimeMillis();
         stopMarker = mMap.addMarker(new MarkerOptions()
                 .position(latlng)
                 .title("stop")
@@ -220,6 +167,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             mMap.clear();
                             points.clear();
                             buttonNum = 1;
+                            totalDistance=0;
                             running = false;
                             trailButton.setText("Start");
                         }
@@ -232,6 +180,28 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
+
+
+
+    public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius=6371;//radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLon = Math.toRadians(lon2-lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult= Radius*c;
+        double km=valueResult/1;
+        double meter=valueResult%1000;
+        return meter;
+    }
+
+
 
     @Override
     public void onResume() {
