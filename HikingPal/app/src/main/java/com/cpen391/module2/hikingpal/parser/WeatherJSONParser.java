@@ -1,7 +1,7 @@
-package com.cpen391.module2.hikingpal.weathermodel;
+package com.cpen391.module2.hikingpal.parser;
 
-import com.cpen391.module2.hikingpal.weathermodel.Location;
-import com.cpen391.module2.hikingpal.weathermodel.Weather;
+import com.cpen391.module2.hikingpal.module.Location;
+import com.cpen391.module2.hikingpal.module.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * Created by macuser on 2017-03-15.
  */
 
-public class JSONWeatherParser {
+public class WeatherJSONParser {
 
     public static Weather getWeather(String data) throws JSONException  {
         Weather weather = new Weather();

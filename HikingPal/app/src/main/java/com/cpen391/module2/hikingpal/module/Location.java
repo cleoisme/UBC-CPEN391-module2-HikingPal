@@ -1,4 +1,4 @@
-package com.cpen391.module2.hikingpal.weathermodel;
+package com.cpen391.module2.hikingpal.module;
 
 import java.io.Serializable;
 
@@ -17,6 +17,7 @@ import java.io.Serializable;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 public class Location implements Serializable {
 
     private float longitude;

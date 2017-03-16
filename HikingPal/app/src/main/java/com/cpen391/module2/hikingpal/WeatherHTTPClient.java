@@ -1,4 +1,4 @@
-package com.cpen391.module2.hikingpal.weathermodel;
+package com.cpen391.module2.hikingpal;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

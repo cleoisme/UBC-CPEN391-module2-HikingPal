@@ -41,9 +41,8 @@ import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
-import com.cpen391.module2.hikingpal.weathermodel.JSONWeatherParser;
-import com.cpen391.module2.hikingpal.weathermodel.Weather;
-import com.cpen391.module2.hikingpal.weathermodel.WeatherHTTPClient;
+import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
+import com.cpen391.module2.hikingpal.module.Weather;
 
 import org.json.JSONException;
 
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity
             String data = (weatherHTTPClient.getWeatherData());
 
            try {
-               weather = JSONWeatherParser.getWeather(data);
+               weather = WeatherJSONParser.getWeather(data);
                weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
            } catch (JSONException e) {
                e.printStackTrace();
@@ -362,53 +361,6 @@ public class MainActivity extends AppCompatActivity
         }
         ft.commit();
     }
-
-//    public static boolean StartIsPressed = false;
-//    public static boolean StopIsPressed = false;
-//    public static boolean ContinueIsPressed = false;
-
-//    public static void StartButtonClick(Button startButton){
-//        startButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                if(StartIsPressed==false){
-//                    mapFragment.startRecord();
-//                    StartIsPressed=true;
-//                    StopIsPressed=false;
-//                    ContinueIsPressed=false;
-//                }
-//            }
-//        });
-//    }
-//
-//    public static void StopButtonClick(Button stopButton){
-//        stopButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                if(StopIsPressed==false && StartIsPressed==true){
-//                    mapFragment.stopRecord();
-//                    StopIsPressed=true;
-//                    StartIsPressed=false;
-//                    ContinueIsPressed=false;
-//                }
-//            }
-//        });
-//    }
-//
-//    public static void ContinueButtonClick(Button continueButton){
-//        continueButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                if(ContinueIsPressed==false && StopIsPressed==true){
-//                    mapFragment.continueRecord();
-//                    StopIsPressed=false;
-//                    StartIsPressed=true;
-//                    ContinueIsPressed = true;
-//                }
-//            }
-//        });
-//    }
-
 
     public static int buttonNum = 1;
     public static boolean running = false;

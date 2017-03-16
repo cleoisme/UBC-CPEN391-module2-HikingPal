@@ -1,4 +1,6 @@
-package com.cpen391.module2.hikingpal.weathermodel;
+package com.cpen391.module2.hikingpal.module;
+
+import com.cpen391.module2.hikingpal.module.Location;
 
 /**
  * Created by macuser on 2017-03-15.
@@ -161,8 +163,6 @@ public class Weather {
         public void setPerc(int perc) {
             this.perc = perc;
         }
-
-
     }
 
 }
