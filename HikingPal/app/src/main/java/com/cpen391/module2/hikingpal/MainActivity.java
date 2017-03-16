@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity
     private String mConnectedDeviceName = null;
     private StringBuffer mOutStringBuffer;
 
+    private String mWeatherText = null;
+
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
@@ -108,6 +110,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        TextView textView = (TextView) findViewById(R.id.weather_info);
+        if (textView != null && textView.getText() != null && textView.getText().length() != 0) {
+            textView.setText(mWeatherText);
+        }
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -242,8 +249,13 @@ public class MainActivity extends AppCompatActivity
             }
 
             TextView textView = (TextView) findViewById(R.id.weather_info);
-            textView.setText(weather.currentCondition.getDescr() + "Temp: " + weather.temperature.getTemp());
+            mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
+            if(textView != null) {
+                textView.setText(mWeatherText);
+                return;
+            }
 
+            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
         }
     }
 
@@ -433,6 +445,12 @@ public class MainActivity extends AppCompatActivity
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -535,6 +553,21 @@ public class MainActivity extends AppCompatActivity
 
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
+        }
+    }
+
+    public void sendMessageSlow(String message){
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            return;
+        }
+        for(int i = 0; i < message.length(); ++i){
+            Character c = message.charAt(i);
+            sendMessage(c.toString());
+            try {
+                Thread.sleep(40);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

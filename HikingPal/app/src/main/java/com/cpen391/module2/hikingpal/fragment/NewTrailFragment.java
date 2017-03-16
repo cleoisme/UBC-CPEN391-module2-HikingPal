@@ -43,7 +43,7 @@ public class NewTrailFragment extends Fragment {
 
         rateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).sendMessage("R");
+                ((MainActivity)getActivity()).sendMessage("Q");
             }
         });
 
