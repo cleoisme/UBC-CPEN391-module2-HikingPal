@@ -11,6 +11,9 @@
     <string name="fav_trail_tag">My Favourite Trails</string>
     <string name="discover_nearby_tag">Interesting</string>
 
+    <string name="map_view_tag">Google Map</string>
+    <string name="main_frag_tag">Hiking Pall</string>
+
     <!--  BluetoothChat -->
     <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
@@ -32,4 +35,5 @@
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
+
 </resources>

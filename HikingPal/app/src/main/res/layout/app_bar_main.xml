@@ -15,8 +15,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:layout_height="@dimen/tool_bar_size"
+            android:background="@color/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -29,20 +29,6 @@
         android:layout_gravity="right|center"
         app:srcCompat="@android:drawable/sym_def_app_icon"
         android:id="@+id/discover_fab" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/locate_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
-
-    <!--<fragment-->
-        <!--android:id="@+id/map"-->
-        <!--android:name="com.cpen391.module2.hikingpal.fragment.MapViewFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
 
     <FrameLayout
         android:id="@+id/fragment_container"
