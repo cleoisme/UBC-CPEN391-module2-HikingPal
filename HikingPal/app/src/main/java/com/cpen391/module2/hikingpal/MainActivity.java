@@ -452,6 +452,7 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getBaseContext(), readMessage + " Stars!", Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -519,7 +520,7 @@ public class MainActivity extends AppCompatActivity
         mOutStringBuffer = new StringBuffer("");
     }
 
-    private void sendMessage(String message) {
+    public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getBaseContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
