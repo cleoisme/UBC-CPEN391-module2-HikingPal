@@ -1,5 +1,6 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,13 +37,16 @@ public class NewTrailFragment extends Fragment {
 
         Button startButton = (Button) ll.findViewById(R.id.track_start);
         Button stopButton = (Button) ll.findViewById(R.id.track_stop);
+        Button rateButton = (Button) ll.findViewById(R.id.rate_track);
         MainActivity.StartButtonClick(startButton);
         MainActivity.StopButtonClick(stopButton);
+
+        rateButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).sendMessage("Q");
+            }
+        });
+
         return ll;
     }
-
-
-
-
-
 }
