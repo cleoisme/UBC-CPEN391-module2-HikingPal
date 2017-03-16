@@ -1,8 +1,18 @@
 package com.cpen391.module2.hikingpal;
 
 import android.Manifest;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -19,12 +29,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.cpen391.module2.hikingpal.bluetooth.BluetoothChatService;
+import com.cpen391.module2.hikingpal.bluetooth.Constants;
+import com.cpen391.module2.hikingpal.bluetooth.DeviceListActivity;
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
+import com.cpen391.module2.hikingpal.weathermodel.JSONWeatherParser;
+import com.cpen391.module2.hikingpal.weathermodel.Weather;
+import com.cpen391.module2.hikingpal.weathermodel.WeatherHTTPClient;
+
+import org.json.JSONException;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -42,13 +63,35 @@ public class MainActivity extends AppCompatActivity
     static MapViewFragment mapFragment;
     NewTrailFragment newtrailFrag;
 
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothChatService mChatService = null;
+    private String mConnectedDeviceName = null;
+    private StringBuffer mOutStringBuffer;
+
+    private String mWeatherText = null;
+
+    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    private static final int REQUEST_ENABLE_BT = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            finish();
+        }
+
         //Inflate the container
         setContentView(R.layout.activity_main);
-        
+
+        JSONWeatherTask task = new JSONWeatherTask();
+        task.execute(new String[]{"Vancouver"});
+
         obtainPermissions();
 
         //hide the discover fab
@@ -68,12 +111,55 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        TextView textView = (TextView) findViewById(R.id.weather_info);
+        if (textView != null && textView.getText() != null && textView.getText().length() != 0) {
+            textView.setText(mWeatherText);
+        }
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
         ft.add(fragment_container, mapFragment,getResources().getString(R.string.map_view_tag));
         //ft.addToBackStack(null);
         ft.commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mChatService == null) {
+            setupChat();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mChatService != null) {
+            mChatService.stop();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
     }
 
     void obtainPermissions() {
@@ -133,6 +219,46 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
+
+        @Override
+        protected Weather doInBackground(String... params) {
+            WeatherHTTPClient weatherHTTPClient = new WeatherHTTPClient();
+            Weather weather = new Weather();
+            String data = (weatherHTTPClient.getWeatherData());
+
+           try {
+               weather = JSONWeatherParser.getWeather(data);
+               weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
+           } catch (JSONException e) {
+               e.printStackTrace();
+           }
+
+           return weather;
+
+        }
+
+        @Override
+        protected void onPostExecute(Weather weather) {
+            super.onPostExecute(weather);
+
+            if (weather.iconData != null && weather.iconData.length > 0) {
+                ImageView weatherImage = (ImageView) findViewById(R.id.weather_icon);
+                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
+                weatherImage.setImageBitmap(img);
+            }
+
+            TextView textView = (TextView) findViewById(R.id.weather_info);
+            mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
+            if(textView != null) {
+                textView.setText(mWeatherText);
+                return;
+            }
+
+            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -150,6 +276,16 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        switch(id){
+            case R.id.action_settings:
+                return true;
+            case R.id.secure_connect_scan:
+                Intent serverIntent = new Intent(this, DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                return true;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -324,4 +460,169 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    /**
+     * Updates the status on the action bar.
+     *
+     * @param resId a string resource ID
+     */
+    private void setStatus(int resId) {
+        final ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+        actionBar.setSubtitle(resId);
+    }
+
+    /**
+     * Updates the status on the action bar.
+     *
+     * @param subTitle status
+     */
+    private void setStatus(CharSequence subTitle) {
+        final ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+        actionBar.setSubtitle(subTitle);
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothChatService.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
+                            break;
+                        case BluetoothChatService.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case BluetoothChatService.STATE_LISTEN:
+                        case BluetoothChatService.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getBaseContext(), readMessage + " Stars!", Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    Toast.makeText(getBaseContext(), "Connected to "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_TOAST:
+                        Toast.makeText(getBaseContext(), msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CONNECT_DEVICE_SECURE:
+                // When DeviceListActivity returns with a device to connect
+                if (resultCode == Activity.RESULT_OK) {
+                    connectDevice(data, true);
+                }
+                break;
+            case REQUEST_CONNECT_DEVICE_INSECURE:
+                // When DeviceListActivity returns with a device to connect
+                if (resultCode == Activity.RESULT_OK) {
+                    connectDevice(data, false);
+                }
+                break;
+            case REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    // Bluetooth is now enabled, so set up a chat session
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Toast.makeText(getBaseContext(), R.string.bt_not_enabled_leaving,
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+        }
+    }
+
+    /**
+     * Establish connection with other device
+     *
+     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
+     * @param secure Socket Security type - Secure (true) , Insecure (false)
+     */
+    private void connectDevice(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras()
+                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        mChatService.connect(device, secure);
+    }
+
+    private void setupChat() {
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        mChatService = new BluetoothChatService(this, mHandler);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+    }
+
+    public void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(getBaseContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+        }
+    }
+
+    public void sendMessageSlow(String message){
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            return;
+        }
+        for(int i = 0; i < message.length(); ++i){
+            Character c = message.charAt(i);
+            sendMessage(c.toString());
+            try {
+                Thread.sleep(40);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
