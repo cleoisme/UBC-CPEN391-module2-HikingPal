@@ -111,8 +111,6 @@ public class MainActivity extends AppCompatActivity
             textView.setText(mWeatherText);
         }
 
-
-
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
@@ -424,7 +422,7 @@ public class MainActivity extends AppCompatActivity
      * @param resId a string resource ID
      */
     private void setStatus(int resId) {
-        final ActionBar actionBar = getActionBar();
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
             return;
         }
