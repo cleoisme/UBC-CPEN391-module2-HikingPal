@@ -9,6 +9,7 @@ public class MapImage {
     private int imageId; //put the path tp the json file
     private long myDuration;
     private long myDistance;
+    private String[] mySpots;
     private String myDate;
     private int myRating;
 
@@ -35,6 +36,10 @@ public class MapImage {
         return myDate;
     }
 
+    public String[] getMySpots() {
+        return mySpots;
+    }
+
     public void setImageId(int imageId) {
         this.imageId = imageId;
     }
@@ -53,5 +58,9 @@ public class MapImage {
 
     public void setMyDate(String myDate) {
         this.myDate = myDate;
+    }
+
+    public void setMySpots(String[] mySpots) {
+        this.mySpots = mySpots;
     }
 }
