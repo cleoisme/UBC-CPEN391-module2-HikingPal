@@ -1,7 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <!--<Button-->
+    <!--android:id="@+id/btnRestaurant"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Nearby Restaurants" />-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+
+    <!--<ImageButton android:id="@+id/btnRestaurant"-->
+    <!--android:src="@drawable/food"-->
+    <!--android:layout_height="150dp"-->
+    <!--android:layout_width="150dp"-->
+    <!--android:background="@null"-->
+    <!--android:adjustViewBounds="true"-->
+    <!--android:scaleType="fitCenter"  />-->
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/btnStore"-->
+    <!--android:layout_width="150dp"-->
+    <!--android:layout_height="150dp"-->
+    <!--android:src="@drawable/store"-->
+    <!--android:background="@null"-->
+    <!--android:adjustViewBounds="true"-->
+    <!--android:scaleType="fitCenter" />-->
+
+    <!--</LinearLayout>-->
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@null"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="130dp"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@null">
+
+            <ImageButton
+                android:id="@+id/btnRestaurant"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right|bottom"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/food" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="@null">
+
+            <ImageButton
+                android:id="@+id/btnPark"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right|bottom"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/park" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="90dp"
+            android:layout_height="140dp"
+            android:background="@null">
+
+            <ImageButton
+                android:id="@+id/btnStore"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right|bottom"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/store" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="130dp"
+            android:layout_height="170dp"
+            android:background="@null">
+
+            <ImageButton
+                android:id="@+id/btnGym"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right|bottom"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/gym" />
+        </FrameLayout>
+    </RelativeLayout>
+
 
 </LinearLayout>
