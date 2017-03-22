@@ -24,15 +24,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.bluetooth.BluetoothChatService;
 import com.cpen391.module2.hikingpal.bluetooth.Constants;
 import com.cpen391.module2.hikingpal.bluetooth.DeviceListActivity;
@@ -41,8 +45,10 @@ import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
-import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
 import com.cpen391.module2.hikingpal.module.Weather;
+import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
@@ -50,8 +56,10 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
-
-
+import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
+import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
+import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
+import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 
 
 public class MainActivity extends AppCompatActivity
@@ -60,7 +68,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
     static MapViewFragment mapFragment;
-    NewTrailFragment newtrailFrag;
+    NewTrailFragment newtrailFrag = new NewTrailFragment();
 
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
@@ -72,6 +80,8 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+
+    public static int buttonNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +95,12 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
 
+
         //Inflate the container
         setContentView(R.layout.activity_main);
+
         obtainPermissions();
+        CheckGooglePlayServices();
 
         //hide the discover fab
         FloatingActionButton dfab = (FloatingActionButton) findViewById(R.id.discover_fab);
@@ -176,7 +189,18 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.requestPermissions(this, new String[]{permissions[i]}, REQUEST_ALL_MAP_PERMISSIONS);
             }
         }
+    }
 
+
+    private void CheckGooglePlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result,
+                        0).show();
+            }
+        }
     }
 
     @Override
@@ -192,13 +216,19 @@ public class MainActivity extends AppCompatActivity
         FrameLayout fcm1 = (FrameLayout) findViewById(fragment_container_med1);
         FrameLayout fcm2 = (FrameLayout) findViewById(fragment_container_med2);
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
+        //setButtonText(trailButton,buttonNum);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            Log.d("hhh:","1");
         }else if(fcl.isDirty()){
             fcl.removeAllViewsInLayout();
             if(mapFragment != null){
-                ft.add(R.id.fragment_container_small, new NewTrailFragment(), getResources().getString(R.string.new_trail_tag));
+                GetNearbyPlacesData.clearPin();
+                ft.add(R.id.fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+                setButtonText(trailButton,buttonNum);
+                Log.d("buttonNum: %d", String.valueOf(buttonNum));
+                count++;
             }
             ft.addToBackStack(null);
             ft.commit();
@@ -206,16 +236,22 @@ public class MainActivity extends AppCompatActivity
             fcs.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
+            // TODO: 2017-03-22 need to warn user to save before clear the map
+            mMap.clear();
+            Log.d("hhh:","2");
         }else if(fcm1.isDirty()){
             fcm1.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
+            Log.d("hhh:","3");
         }else if(fcm2.isDirty()){
             fcm2.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
+            Log.d("hhh:","4");
         }else {
             super.onBackPressed();
+            Log.d("hhh:","5");
         }
     }
 
@@ -310,14 +346,15 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
 
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
-
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
        // MapViewFragment map = new MapViewFragment();
 
         switch (fragmentID) {
             case R.id.new_trail:
-                NewTrailFragment curFrag1 = new NewTrailFragment();
-                ft.add(fragment_container_small,curFrag1, getResources().getString(R.string.new_trail_tag));
+                buttonNum=1;
+                //NewTrailFragment curFrag1 = new NewTrailFragment();
+                ft.add(fragment_container_small,newtrailFrag, getResources().getString(R.string.new_trail_tag));
+                Log.d("buttonNum2: %d", String.valueOf(buttonNum));
                // ft.add(R.id.fragment_container, map, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 DiscoverFabOnClick(dfb, mapFragment);
@@ -360,8 +397,29 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public static int buttonNum = 1;
+    public static void getNearby(final ImageButton nearbyButton, final int i){
+        nearbyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DF.tap(i);
+                mapFragment.getNearby(i);
+            }
+        });
+    }
+
+
     public static boolean running = false;
+    public static void setButtonText(Button trailButton, int i){
+        if(i==1) {
+            trailButton.setText("start");
+        }
+        else if(i==2){
+            trailButton.setText("stop");
+        }
+        else if(i==3){
+            trailButton.setText("resume");
+        }
+    }
     public static void trailButtonClick(final Button trailButton){
         trailButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -369,18 +427,21 @@ public class MainActivity extends AppCompatActivity
 
                 if(buttonNum==1){ //init
                     buttonNum=2;
-                    trailButton.setText("Stop");
+                    setButtonText(trailButton,buttonNum);
+                    //trailButton.setText("Stop");
                     running = true;
                     mapFragment.startRecord();
                 }
                 else if(buttonNum==2){ //stop
                     buttonNum=3;
-                    trailButton.setText("Resume");
+                    setButtonText(trailButton,buttonNum);
+                    //trailButton.setText("Resume");
                     running = false;
                     mapFragment.stopRecord();
                 }
                 else if(buttonNum==3){ //resume
-                    trailButton.setText("Stop");
+                    setButtonText(trailButton,buttonNum);
+                    //trailButton.setText("Stop");
                     buttonNum=2;
                     running = true;
                     mapFragment.continueRecord();
@@ -398,6 +459,37 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+//    public static void exerciseButtonClick(final Button exerciseButton, final int i){
+//        exerciseButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                mapFragment.exerciseButtonClick(exerciseButton, i);
+//            }
+//        });
+//    }
+
+    public static void mapType_spinner(){
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        //spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) getActivity());
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                mapFragment.maptypeButtonClick(position);
+                //Log.v("item", (String) parent.getItemAtPosition(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mapFragment.maptypeButtonClick(0);
+            }
+        });
+    }
+
+    int count=1;
+    static DiscoverNearbyFragment DF;
     public void DiscoverFabOnClick(FloatingActionButton dfb, final MapViewFragment mv) {
         final MapViewFragment map = mv;
         dfb.show();
@@ -407,11 +499,22 @@ public class MainActivity extends AppCompatActivity
                 FragmentManager fm = getSupportFragmentManager();
                 fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 FragmentTransaction ft = fm.beginTransaction();
+                DF = new DiscoverNearbyFragment();
 
-                getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
-                ft.add(R.id.fragment_container_long, new DiscoverNearbyFragment(), getResources().getString(R.string.discover_nearby_tag));
-                ft.addToBackStack(null);
-                ft.commit();
+                if(count%2!=0){
+                    getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
+                    ft.add(R.id.fragment_container_long, DF, getResources().getString(R.string.discover_nearby_tag));
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                else{
+                    getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
+                    ft.remove(DF);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                    GetNearbyPlacesData.clearPin();
+                }
+                count++;
             }
         });
     }
