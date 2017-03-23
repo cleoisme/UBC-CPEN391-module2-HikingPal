@@ -1,5 +1,7 @@
 package com.cpen391.module2.hikingpal.module;
 
+import android.text.TextUtils;
+
 /**
  * Created by YueyueZhang on 2017-03-13.
  */
@@ -11,8 +13,12 @@ public class MapImage {
     private long myDistance;
     private String[] mySpots;
     private String myDate;
+    private String myName;
     private int myRating;
     private String absPath;
+
+    private final char BT_INIT = 'Q';
+    private final char BT_DELIMITER = 'V';
 
     public MapImage() {
     }
@@ -36,6 +42,8 @@ public class MapImage {
     public String getMyDate() {
         return myDate;
     }
+
+    public String getMyName(){ return myName; }
 
     public String[] getMySpots() {
         return mySpots;
@@ -69,7 +77,22 @@ public class MapImage {
         this.mySpots = mySpots;
     }
 
-    public void setAbsPath(String absPath) {
-        this.absPath = absPath;
+    // Parse all the data to send to bluetooth into a string
+    public String GetDataString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(BT_INIT);
+        sb.append(myName);
+        sb.append(BT_DELIMITER);
+        sb.append(myRating);
+        sb.append(BT_DELIMITER);
+        sb.append(myDistance);
+        sb.append(BT_DELIMITER);
+        sb.append(myDuration);
+        sb.append(BT_DELIMITER);
+        sb.append(TextUtils.join(",", mySpots));
+        sb.append(BT_DELIMITER);
+        sb.append(myDate);
+
+        return sb.toString();
     }
 }
