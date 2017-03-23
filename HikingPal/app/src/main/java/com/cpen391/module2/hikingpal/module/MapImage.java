@@ -12,6 +12,7 @@ public class MapImage {
     private String[] mySpots;
     private String myDate;
     private int myRating;
+    private String absPath;
 
     public MapImage() {
     }
@@ -40,6 +41,10 @@ public class MapImage {
         return mySpots;
     }
 
+    public String getAbsPath() {
+        return absPath;
+    }
+
     public void setImageId(int imageId) {
         this.imageId = imageId;
     }
@@ -62,5 +67,9 @@ public class MapImage {
 
     public void setMySpots(String[] mySpots) {
         this.mySpots = mySpots;
+    }
+
+    public void setAbsPath(String absPath) {
+        this.absPath = absPath;
     }
 }
