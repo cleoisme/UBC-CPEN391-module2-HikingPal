@@ -16,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.utility.ScreenshotUtil;
@@ -138,10 +140,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             }
 
         });
-
-
-
-
         return view;
     }
 
@@ -290,35 +288,18 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
                             // TODO: 2017-03-22 save the map
-                            ScreenshotUtil.takeScreenShot(getActivity());
-
+                            boolean result = ScreenshotUtil.shotBitmap(getActivity());
+                            if(result){
+                                Toast.makeText(getActivity(), "截图成功.", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(getActivity(), "截图失败.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
 
-//    public void exerciseButtonClick(final Button exrciseButton, int i){
-//        switch(i){
-//            case 1:
-//                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//                break;
-//
-//            case 2:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//                break;
-//
-//            case 3:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//                break;
-//
-//            case 4:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-//                break;
-//
-//        }
-//
-//    }
 
     public void maptypeButtonClick(int i){
         switch(i){

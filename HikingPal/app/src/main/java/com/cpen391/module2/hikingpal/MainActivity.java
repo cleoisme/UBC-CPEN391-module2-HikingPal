@@ -44,7 +44,6 @@ import com.cpen391.module2.hikingpal.bluetooth.DeviceListActivity;
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
-import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
 import com.cpen391.module2.hikingpal.module.Weather;
 import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
