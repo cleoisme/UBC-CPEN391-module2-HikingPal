@@ -1,10 +1,15 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.utility.ScreenshotUtil;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,11 +34,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
 import static com.cpen391.module2.hikingpal.MainActivity.running;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW;
 
 /**
  * Created by YueyueZhang on 2017-03-06.
@@ -45,7 +51,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerClickListener {
 
-    GoogleMap mMap;
+    public static GoogleMap mMap;
     MapView mapView;
 
 
@@ -61,7 +67,16 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     LatLng latlng;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+
+    }
+
+    public boolean initMap = true;
+
+    public static List<Marker> markerList = new ArrayList<Marker>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -71,26 +86,48 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         points = new ArrayList<LatLng>();
 
         mapView.getMapAsync(new OnMapReadyCallback() {
+
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 mMap.setMyLocationEnabled(true);
                 mMap.setIndoorEnabled(true);
+                //mMap.getUiSettings().setZoomControlsEnabled(true);
+
+                //mMap.getUiSettings().setCompassEnabled(true);
+                mMap.setPadding(0, 5, 0, 100);
+
+//
+//                latlng = new LatLng(49.260482, -123.253919);
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
 
                 mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
                     @Override
                     public void onMyLocationChange(Location location) {
 
-                        //speed = (int) ((location.getSpeed() * 3600) / 1000);
-
-
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(location.getLatitude(), location.getLongitude()), 18));
+                        if(initMap == true) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(location.getLatitude(), location.getLongitude()), 15));
+                            initMap = false;
+                        }
+//                        else{
+//                            mMap.animateCamera(CameraUpdateFactory.newLatLng(
+//                                    new LatLng(location.getLatitude(), location.getLongitude())));
+//                        }
 
                         latlng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                        //if(StartIsPressed==true || ContinueIsPressed==true) {
                         if(running==true){
                             points.add(latlng);
                             drawLine();
@@ -101,6 +138,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             }
 
         });
+
+
 
 
         return view;
@@ -114,15 +153,78 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     }
 
 
+    private int PROXIMITY_RADIUS = 1000;
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=AIzaSyCM6psxnSLbX5RzJJ874mrv5fkG0Ho4Jns");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
+    }
+
+    public static int nearbyCase = 0;
+    public void getNearby(int i){
+        //mMap.clear();
+        int height = 70;
+        int width = 70;
+
+        String nearBy = null;
+        Bitmap nearbyPin;
+        BitmapDrawable Pin = null;
+
+        switch (i){
+            case 1:
+                nearBy = "food";
+                Pin=(BitmapDrawable)getResources().getDrawable(R.drawable.food_pin);
+                break;
+            case 2:
+                nearBy = "park";
+                Pin=(BitmapDrawable)getResources().getDrawable(R.drawable.park_pin);
+                break;
+            case 3:
+                nearBy = "gym";
+                Pin=(BitmapDrawable)getResources().getDrawable(R.drawable.gym_pin);
+                break;
+            case 4:
+                nearBy = "store";
+                Pin=(BitmapDrawable)getResources().getDrawable(R.drawable.store_pin);
+                break;
+        }
+
+        nearbyCase = i;
+        Bitmap b=Pin.getBitmap();
+        nearbyPin = Bitmap.createScaledBitmap(b, width, height, false);
+        String url = getUrl(latlng.latitude, latlng.longitude, nearBy);
+        Object[] DataTransfer = new Object[2];
+        DataTransfer[0] = mMap;
+        DataTransfer[1] = url;
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        getNearbyPlacesData.getPin(nearbyPin);
+        getNearbyPlacesData.execute(DataTransfer);
+    }
+
     Marker startMarker;
     Marker stopMarker;
     public void startRecord() {
+
+        int height = 70;
+        int width = 70;
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.start_pin);
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap icon = Bitmap.createScaledBitmap(b, width, height, false);
+
+        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.start_pin);
+
         startTime = System.currentTimeMillis();
             points.add(latlng);
             startMarker = mMap.addMarker(new MarkerOptions()
                             .position(latlng)
                             .title("start")
-                            .icon(BitmapDescriptorFactory.defaultMarker()));
+                            .icon(BitmapDescriptorFactory.fromBitmap(icon)));
     }
 
     private void drawLine(){
@@ -146,12 +248,17 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
 
     public void stopRecord(){
+        int height = 70;
+        int width = 70;
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.stop_pin);
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap icon = Bitmap.createScaledBitmap(b, width, height, false);
 
         stopTime = System.currentTimeMillis();
         stopMarker = mMap.addMarker(new MarkerOptions()
                 .position(latlng)
                 .title("stop")
-                .icon(BitmapDescriptorFactory.defaultMarker(HUE_YELLOW))
+                .icon(BitmapDescriptorFactory.fromBitmap(icon))
         );
     }
 
@@ -161,14 +268,15 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
-                    .setTitle("finish")
-                    .setMessage("finish?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setTitle("Exit")
+                    .setMessage("Do you want to save the trail before exit?")
+
+                    .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            ScreenshotUtil.takeScreenShot(getActivity());
+                                    //running = false;
                         }
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             mMap.clear();
                             points.clear();
@@ -178,10 +286,61 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             trailButton.setText("Start");
                         }
                     })
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //running = false;
+                            // TODO: 2017-03-22 save the map
+                            ScreenshotUtil.takeScreenShot(getActivity());
+
+                        }
+                    })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
 
+//    public void exerciseButtonClick(final Button exrciseButton, int i){
+//        switch(i){
+//            case 1:
+//                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//                break;
+//
+//            case 2:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+//                break;
+//
+//            case 3:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+//                break;
+//
+//            case 4:
+//                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+//                break;
+//
+//        }
+//
+//    }
+
+    public void maptypeButtonClick(int i){
+        switch(i){
+            case 0:
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+
+            case 1:
+                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                break;
+
+            case 2:
+                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                break;
+
+            case 3:
+                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                break;
+
+        }
+
+    }
 
 
     public double CalculationByDistance(LatLng StartP, LatLng EndP) {

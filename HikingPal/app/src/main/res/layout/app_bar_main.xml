@@ -29,6 +29,7 @@
         android:clickable="true"
         app:fabSize="mini"
         android:layout_gravity="right|center"
+        android:background="@null"
         app:srcCompat="@android:drawable/sym_def_app_icon"
         android:id="@+id/discover_fab" />
 
@@ -37,7 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
-        ></FrameLayout>
+        >
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -65,20 +67,16 @@
         android:layout_height="match_parent"
         android:id="@+id/fragment_container_small"
 
-        android:layout_marginTop="450dp"
+        android:layout_marginTop="50dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_marginBottom="5dp"></FrameLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/fragment_container_long"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="50dp">
-
-    </FrameLayout>
+        android:layout_width="170dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="210dp"></FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
