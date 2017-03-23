@@ -191,7 +191,7 @@ public class MapImageStorage {
         return null;
     }
 
-    private JSONObject getObject(int mapImageId){
+    public JSONObject getObject(int mapImageId){
 
         String root = readFile();
         return extractObject(root, mapImageId);
@@ -217,7 +217,7 @@ public class MapImageStorage {
         return null;
     }
 
-    private JSONObject getObject(String mapPath) {
+    public JSONObject getObject(String mapPath) {
 
         String root = readFile();
         return extractObject(root, mapPath);
