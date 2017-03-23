@@ -5,15 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/new_trail_ll">
 
-
-    <!--<Spinner-->
-        <!--android:id="@+id/spinner1"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:background="#b0ffffff"-->
-        <!--android:entries="@array/map_type"-->
-        <!--android:popupBackground="#ebffffff" />-->
-
     <RelativeLayout
         android:layout_width="130dp"
         android:layout_height="wrap_content"
@@ -45,39 +36,6 @@
 
     </RelativeLayout>
 
-
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="400dp">-->
-        <!--<Button-->
-            <!--android:id="@+id/button1"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Normal"-->
-            <!--android:textSize="12dp"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/button2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Hybrid"-->
-            <!--android:textSize="12dp"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/button3"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Satellite"-->
-            <!--android:textSize="12dp"/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/button4"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Terrain"-->
-            <!--android:textSize="12dp"/>-->
-    <!--</LinearLayout>-->
 
     <LinearLayout
         android:orientation="horizontal"

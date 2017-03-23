@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -91,15 +92,16 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
             String vicinity = googlePlace.get("vicinity");
-            LatLng latLng = new LatLng(lat, lng);
-            markerOptions.position(latLng);
-            markerOptions.title(placeName + " : " + vicinity);
+            LatLng markerlatLng = new LatLng(lat, lng);
+            markerOptions.position(markerlatLng);
+            markerOptions.title(placeName);
+            markerOptions.snippet(placeName + " : " + vicinity);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
             marker = mMap.addMarker(markerOptions);
             markerList.add(marker);
             //move map camera
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            //mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(markerlatLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
         Log.d("end %d", String.valueOf(i));
     }
