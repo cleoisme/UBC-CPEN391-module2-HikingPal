@@ -27,22 +27,9 @@ public class NewTrailFragment extends Fragment {
 
     public NewTrailFragment() {
     }
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState){
-//        super.onCreate(savedInstanceState);
-//
-//    }
 
     public static Button trailButton;
     public static Button finishButton;
-
-
-
-    public static Button button1;
-    public static Button button2;
-    public static Button button3;
-    public static Button button4;
 
     public static Spinner spinner;
     public static ArrayAdapter<CharSequence> adapter;
@@ -62,16 +49,6 @@ public class NewTrailFragment extends Fragment {
         MainActivity.finishButtonClick(finishButton);
 
         Button rateButton = (Button) ll.findViewById(R.id.rate_track);
-
-
-//        button1 = (Button) ll.findViewById(R.id.button1);
-//        MainActivity.exerciseButtonClick(button1, 1);
-//        button2 = (Button) ll.findViewById(R.id.button2);
-//        MainActivity.exerciseButtonClick(button2, 2);
-//        button3 = (Button) ll.findViewById(R.id.button3);
-//        MainActivity.exerciseButtonClick(button3, 3);
-//        button4 = (Button) ll.findViewById(R.id.button4);
-//        MainActivity.exerciseButtonClick(button4, 4);
 
         spinner = (Spinner) ll.findViewById(R.id.spinner1);
         adapter = ArrayAdapter.createFromResource(getActivity(),

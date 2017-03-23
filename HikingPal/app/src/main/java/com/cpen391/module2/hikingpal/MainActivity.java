@@ -3,6 +3,7 @@ package com.cpen391.module2.hikingpal;
 import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -51,6 +52,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
+
+import java.util.Calendar;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -127,14 +130,15 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
-        ft.add(fragment_container, mapFragment,getResources().getString(R.string.map_view_tag));
+        ft.add(fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
         //ft.addToBackStack(null);
         ft.commit();
 
         JSONWeatherTask task = new JSONWeatherTask();
         task.execute(new String[]{"Vancouver"});
 
-
+        //brings up the notification after dark
+        Notifier();
     }
 
     @Override
@@ -232,7 +236,7 @@ public class MainActivity extends AppCompatActivity
             }
             ft.addToBackStack(null);
             ft.commit();
-        }else if(fcs.isDirty()){
+        } else if (fcs.isDirty()) {
             fcs.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
@@ -263,14 +267,14 @@ public class MainActivity extends AppCompatActivity
             Weather weather = new Weather();
             String data = (weatherHTTPClient.getWeatherData());
 
-           try {
-               weather = WeatherJSONParser.getWeather(data);
-               weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
-           } catch (JSONException e) {
-               e.printStackTrace();
-           }
+            try {
+                weather = WeatherJSONParser.getWeather(data);
+                weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-           return weather;
+            return weather;
 
         }
 
@@ -288,7 +292,7 @@ public class MainActivity extends AppCompatActivity
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
             mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
-            if(textView != null) {
+            if (textView != null) {
                 textView.setText(mWeatherText);
                 return;
             }
@@ -315,7 +319,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-        switch(id){
+        switch (id) {
             case R.id.action_settings:
                 return true;
             case R.id.secure_connect_scan:
@@ -347,10 +351,11 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-       // MapViewFragment map = new MapViewFragment();
+        // MapViewFragment map = new MapViewFragment();
 
         switch (fragmentID) {
             case R.id.new_trail:
+
                 buttonNum=1;
                 //NewTrailFragment curFrag1 = new NewTrailFragment();
                 ft.add(fragment_container_small,newtrailFrag, getResources().getString(R.string.new_trail_tag));
@@ -368,12 +373,16 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
+
+                // TODO:
+                // Call GetDataString() on all MapImages and send to bluetooth
+
                 break;
 
             case R.id.fav_trails:
                 FavTrailsFragment curFrag3 = new FavTrailsFragment();
                 ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
-               // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
+                // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
@@ -409,6 +418,7 @@ public class MainActivity extends AppCompatActivity
 
 
     public static boolean running = false;
+
     public static void setButtonText(Button trailButton, int i){
         if(i==1) {
             trailButton.setText("start");
@@ -450,8 +460,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public static void finishButtonClick(final Button finishButton){
-        finishButton.setOnClickListener(new View.OnClickListener(){
+    public static void finishButtonClick(final Button finishButton) {
+        finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mapFragment.finishRecord();
@@ -583,8 +593,8 @@ public class MainActivity extends AppCompatActivity
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_TOAST:
-                        Toast.makeText(getBaseContext(), msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), msg.getData().getString(Constants.TOAST),
+                            Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -660,17 +670,38 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void sendMessageSlow(String message){
+    public void sendMessageSlow(String message) {
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             return;
         }
-        for(int i = 0; i < message.length(); ++i){
+        for (int i = 0; i < message.length(); ++i) {
             Character c = message.charAt(i);
             sendMessage(c.toString());
             try {
                 Thread.sleep(40);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Check current time and show up the notification if necessary
+     */
+    private void Notifier() {
+        Calendar c = Calendar.getInstance();
+        //get current month: 0~11 -> Jan~Dec
+        int month = c.get(Calendar.MONTH);
+        //get current hour
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        //standard time
+        if (month >= 10 || month < 2) {
+            //after 21:00 pm
+            if (hour >= 21) {
+                new AlertDialog.Builder(this)
+                        .setTitle("It is getting dark be careful")
+                        .setMessage("Call your group mate if you are walking alone")
+                        .show();
             }
         }
     }

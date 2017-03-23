@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
+import com.cpen391.module2.hikingpal.utility.ScreenshotUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -136,10 +139,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             }
 
         });
-
-
-
-
         return view;
     }
 
@@ -288,6 +287,12 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
                             // TODO: 2017-03-22 save the map
+                            boolean result = ScreenshotUtil.shotBitmap(getActivity());
+                            if(result){
+                                Toast.makeText(getActivity(), "截图成功.", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(getActivity(), "截图失败.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
