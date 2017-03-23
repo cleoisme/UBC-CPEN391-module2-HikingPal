@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.cpen391.module2.hikingpal.R;
+import com.cpen391.module2.hikingpal.utility.ScreenshotUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -164,17 +165,17 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .setMessage("finish?")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            ScreenshotUtil.takeScreenShot(getActivity());
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
                             mMap.clear();
                             points.clear();
                             buttonNum = 1;
                             totalDistance=0;
                             running = false;
                             trailButton.setText("Start");
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            //running = false;
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
