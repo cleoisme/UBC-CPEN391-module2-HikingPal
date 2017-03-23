@@ -18,24 +18,28 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
-import com.cpen391.module2.hikingpal.utility.ScreenshotUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
@@ -68,7 +72,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
-    LatLng latlng;
+    public static LatLng latlng;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,12 +98,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
@@ -263,6 +261,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         stopMarker.remove();
     }
 
+    Date numPic;
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
                     .setTitle("Exit")
@@ -287,18 +286,87 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
                             // TODO: 2017-03-22 save the map
-                            boolean result = ScreenshotUtil.shotBitmap(getActivity());
-                            if(result){
-                                Toast.makeText(getActivity(), "截图成功.", Toast.LENGTH_SHORT).show();
-                            }else {
-                                Toast.makeText(getActivity(), "截图失败.", Toast.LENGTH_SHORT).show();
+                            if(buttonNum==2){
+                                stopRecord();
                             }
+                            autoZoom();
+                            final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
+                                Bitmap bitmap;
+                                @Override
+                                public void onSnapshotReady(Bitmap snapshot) {
+                                    bitmap = snapshot;
+                                    try {
+                                        // TODO: 2017-03-23  save the pic into database
+                                        numPic = new Date(System.currentTimeMillis());
+                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
+                                        if(result){
+                                             Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
+                                        }else {
+                                                Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
+                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    mMap.clear();
+                                    points.clear();
+                                    buttonNum = 1;
+                                    initMap = true;
+                                    totalDistance=0;
+                                    running = false;
+                                    trailButton.setText("Start");
+
+                                }
+                            };
+
+                            GoogleMap.OnMapLoadedCallback mapLoadedCallback = new GoogleMap.OnMapLoadedCallback() {
+                                @Override
+                                public void onMapLoaded() {
+                                    mMap.snapshot(snapReadyCallback);
+                                }
+                            };
+                            mMap.setOnMapLoadedCallback(mapLoadedCallback);
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
 
+    private void autoZoom(){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        builder.include(startMarker.getPosition());
+        builder.include(stopMarker.getPosition());
+
+        LatLngBounds bounds = builder.build();
+
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.10); // offset from edges of the map 12% of screen
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+        mMap.animateCamera(cu);
+    }
+
+    private static boolean savePic(Bitmap pBitmap,String strName)
+    {
+        FileOutputStream fos = null;
+        try {
+            fos=new FileOutputStream(strName);
+            if(null!=fos) {
+                pBitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                fos.flush();
+                fos.close();
+                return true;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public void maptypeButtonClick(int i){
         switch(i){
