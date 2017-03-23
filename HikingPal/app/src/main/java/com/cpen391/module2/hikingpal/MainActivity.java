@@ -368,6 +368,10 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
+
+                // TODO:
+                // Call GetDataString() on all MapImages and send to bluetooth
+
                 break;
 
             case R.id.fav_trails:
