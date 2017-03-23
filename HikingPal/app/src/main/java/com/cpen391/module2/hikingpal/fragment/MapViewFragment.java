@@ -70,7 +70,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
     public boolean initMap = true;
@@ -295,27 +294,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .show();
     }
 
-//    public void exerciseButtonClick(final Button exrciseButton, int i){
-//        switch(i){
-//            case 1:
-//                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//                break;
-//
-//            case 2:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//                break;
-//
-//            case 3:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//                break;
-//
-//            case 4:
-//                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-//                break;
-//
-//        }
-//
-//    }
 
     public void maptypeButtonClick(int i){
         switch(i){
@@ -387,6 +365,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onInfoWindowClick(Marker marker) {
     }
+
 
     @Override
     public void onMapClick(LatLng latLng) {

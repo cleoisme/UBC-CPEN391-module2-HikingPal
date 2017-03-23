@@ -459,14 +459,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-//    public static void exerciseButtonClick(final Button exerciseButton, final int i){
-//        exerciseButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                mapFragment.exerciseButtonClick(exerciseButton, i);
-//            }
-//        });
-//    }
 
     public static void mapType_spinner(){
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -510,9 +502,10 @@ public class MainActivity extends AppCompatActivity
                 else{
                     getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                     ft.remove(DF);
+                    GetNearbyPlacesData.clearPin();
+                    ft.add(R.id.fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
                     ft.addToBackStack(null);
                     ft.commit();
-                    GetNearbyPlacesData.clearPin();
                 }
                 count++;
             }

@@ -93,7 +93,8 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             String vicinity = googlePlace.get("vicinity");
             LatLng latLng = new LatLng(lat, lng);
             markerOptions.position(latLng);
-            markerOptions.title(placeName + " : " + vicinity);
+            markerOptions.title(placeName);
+            markerOptions.snippet(placeName + " : " + vicinity);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
             marker = mMap.addMarker(markerOptions);
             markerList.add(marker);

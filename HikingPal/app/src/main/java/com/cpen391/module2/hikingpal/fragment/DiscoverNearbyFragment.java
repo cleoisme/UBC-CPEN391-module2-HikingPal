@@ -10,9 +10,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
+
+import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
 
 /**
  * Created by YueyueZhang on 2017-03-13.
@@ -32,6 +37,26 @@ public class DiscoverNearbyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.discover_nearby_frag, container, false);
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
+
+                TextView info= (TextView) v.findViewById(R.id.info);
+
+                info.setText(marker.getSnippet());
+
+                return v;
+            }
+        });
 
         btnRestaurant = (ImageButton) ll.findViewById(R.id.btnRestaurant);
         MainActivity.getNearby(btnRestaurant,1);
