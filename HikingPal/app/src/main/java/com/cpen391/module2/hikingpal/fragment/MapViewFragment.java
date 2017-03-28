@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,7 +40,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
@@ -261,7 +261,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         stopMarker.remove();
     }
 
-    Date numPic;
+    long numPic;
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
                     .setTitle("Exit")
@@ -297,10 +297,26 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     bitmap = snapshot;
                                     try {
                                         // TODO: 2017-03-23  save the pic into database
-                                        numPic = new Date(System.currentTimeMillis());
+                                        numPic = System.currentTimeMillis();
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
                                         if(result){
-                                             Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
+                                            new AlertDialog.Builder(getActivity())
+                                                    .setTitle("Successfully Saved!")
+                                                    .setMessage("Do you want to rate the current track? ")
+                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            ((MainActivity)getActivity()).sendMessage("Q");
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    })
+                                                    .show();
                                         }else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
                                          }
