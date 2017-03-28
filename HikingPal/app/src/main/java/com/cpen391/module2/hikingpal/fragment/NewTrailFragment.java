@@ -40,7 +40,7 @@ public class NewTrailFragment extends Fragment {
         LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.new_trail_frag, container, false);
 
         trailButton = (Button) ll.findViewById(R.id.trail_Button);
-//        buttonNum=1;
+
         setButtonText(trailButton,buttonNum);
 
         MainActivity.trailButtonClick(trailButton);
@@ -48,19 +48,10 @@ public class NewTrailFragment extends Fragment {
         finishButton = (Button) ll.findViewById(R.id.finish_Button);
         MainActivity.finishButtonClick(finishButton);
 
-        Button rateButton = (Button) ll.findViewById(R.id.rate_track);
-
         spinner = (Spinner) ll.findViewById(R.id.spinner1);
         adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.map_type, android.R.layout.simple_spinner_item);
         MainActivity.mapType_spinner();
-
-
-        rateButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ((MainActivity)getActivity()).sendMessage("Q");
-            }
-        });
 
         return ll;
     }
