@@ -8,8 +8,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +52,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.json.JSONException;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
@@ -269,7 +268,6 @@ public class MainActivity extends AppCompatActivity
 
             try {
                 weather = WeatherJSONParser.getWeather(data);
-                weather.iconData = ((new WeatherHTTPClient()).getImage(weather.currentCondition.getIcon()));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -284,11 +282,9 @@ public class MainActivity extends AppCompatActivity
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-            if (weather.iconData != null && weather.iconData.length > 0) {
-                ImageView weatherImage = (ImageView) drawer.findViewById(R.id.weather_icon);
-                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-                weatherImage.setImageBitmap(img);
-            }
+            ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
+            imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
             mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
@@ -704,5 +700,32 @@ public class MainActivity extends AppCompatActivity
                         .show();
             }
         }
+    }
+
+
+    private HashMap<String, Integer> getWeatherIcons() {
+
+        HashMap<String, Integer> weatherIcons = new HashMap<String, Integer>();
+
+        weatherIcons.put("01d", R.drawable.clearskyday);
+        weatherIcons.put("01n", R.drawable.clearskynight);
+        weatherIcons.put("02d", R.drawable.fewcloudsday);
+        weatherIcons.put("02n", R.drawable.fewcloudsnight);
+        weatherIcons.put("O3d", R.drawable.scatteredcloudsday);
+        weatherIcons.put("03n", R.drawable.scatteredcloudsnight);
+        weatherIcons.put("04d", R.drawable.brokencloudsday);
+        weatherIcons.put("04n", R.drawable.brokencloudsnight);
+        weatherIcons.put("09d", R.drawable.showerrainday);
+        weatherIcons.put("09n", R.drawable.showerrainnight);
+        weatherIcons.put("10d", R.drawable.rainday);
+        weatherIcons.put("10n", R.drawable.rainnight);
+        weatherIcons.put("11d", R.drawable.thunderstormday);
+        weatherIcons.put("11n", R.drawable.thunderstormnight);
+        weatherIcons.put("13d", R.drawable.snowday);
+        weatherIcons.put("13n", R.drawable.snownight);
+        weatherIcons.put("50d", R.drawable.mistday);
+        weatherIcons.put("50d", R.drawable.mistnight);
+
+        return weatherIcons;
     }
 }
