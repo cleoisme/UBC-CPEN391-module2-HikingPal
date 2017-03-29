@@ -85,10 +85,23 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_ENABLE_BT = 3;
 
     public static int buttonNum;
+    public MapImageStorage mapImageStorage;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("SetupMapStorage", true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //setup the database
+        mapImageStorage = new MapImageStorage(getApplicationContext());
+        if((savedInstanceState != null ) && (savedInstanceState.getBoolean("SetupMapStorage") != true)){
+            mapImageStorage.setUp();
+        }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 

@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
+import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
@@ -261,7 +263,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         stopMarker.remove();
     }
 
-    long numPic;
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
                     .setTitle("Exit")
@@ -296,11 +297,21 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                 public void onSnapshotReady(Bitmap snapshot) {
                                     bitmap = snapshot;
                                     try {
-                                        // TODO: 2017-03-23  save the pic into database
-                                        numPic = System.currentTimeMillis();
-                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
+                                        long myID = System.currentTimeMillis();
+                                        long myDuration = 1234455;
+                                        long myDistance = 5544321;
+                                        int myRating = 5;
+                                        List<String> mySpots = null;
+                                        String myDate = (new Date(myID)).toString();
+                                        String myPath = "sdcard/hikingPal/saveTrail/" +  myID + ".png";
+
+                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" +  myID + ".png");
+                                        MapImageStorage mis = new MapImageStorage(getActivity());
+                                        mis.writeToStorage(myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+
+                                        // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
+
                                         if(result){
-                                            //Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
                                             new AlertDialog.Builder(getActivity())
                                                     .setTitle("Successfully Saved!")
                                                     .setMessage("Do you want to rate the current track? ")
