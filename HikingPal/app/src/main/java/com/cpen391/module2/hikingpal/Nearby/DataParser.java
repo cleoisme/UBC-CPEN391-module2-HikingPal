@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DataParser {
+
     public List<HashMap<String, String>> parse(String jsonData) {
         JSONArray jsonArray = null;
         JSONObject jsonObject;
@@ -57,8 +58,7 @@ public class DataParser {
         String latitude = "";
         String longitude = "";
         String reference = "";
-
-        Log.d("getPlace", "Entered");
+        String PhotoURL = "N";
 
         try {
             if (!googlePlaceJson.isNull("name")) {
@@ -70,12 +70,20 @@ public class DataParser {
             latitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = googlePlaceJson.getString("reference");
+
+            if (googlePlaceJson.has("photo")) {
+                PhotoURL = googlePlaceJson.getJSONArray("photos").getJSONObject(1).getString("photo_reference");
+            }
+            else{
+                Log.d("oh no","hhh");
+            }
             googlePlaceMap.put("place_name", placeName);
             googlePlaceMap.put("vicinity", vicinity);
             googlePlaceMap.put("lat", latitude);
             googlePlaceMap.put("lng", longitude);
+            googlePlaceMap.put("PhotoURL", PhotoURL);
             googlePlaceMap.put("reference", reference);
-            Log.d("getPlace", "Putting Places");
+            Log.d("PhotoURL", PhotoURL);
         } catch (JSONException e) {
             Log.d("getPlace", "Error");
             e.printStackTrace();

@@ -62,21 +62,21 @@
         android:layout_marginBottom="75dp"></FrameLayout>
 
     <FrameLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_container_small"
-
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="5dp"></FrameLayout>
-
-    <FrameLayout
         android:id="@+id/fragment_container_long"
         android:layout_width="170dp"
         android:layout_height="200dp"
         android:layout_marginLeft="220dp"
         android:layout_marginTop="210dp"></FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical"></FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

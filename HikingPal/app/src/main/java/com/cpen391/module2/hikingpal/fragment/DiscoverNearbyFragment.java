@@ -1,16 +1,21 @@
 package com.cpen391.module2.hikingpal.fragment;
 
+import android.app.AlertDialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
@@ -33,30 +38,71 @@ public class DiscoverNearbyFragment extends Fragment {
     public static ImageButton btnGym;
     public static ImageButton btnStore;
 
+    public static Button saveNbButton;
+
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.discover_nearby_frag, container, false);
+    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.discover_nearby_frag, container, false);
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
+            public boolean onMarkerClick(Marker marker) {
+                AlertDialog dialog;
+                Toast.makeText(getActivity(), "clicked!.", Toast.LENGTH_SHORT).show();
 
-            @Override
-            public View getInfoContents(Marker marker) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
+                builder.setView(v);
 
-                View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
+                ImageView img = (ImageView) v.findViewById(R.id.image);
+                img.setImageURI(Uri.parse(marker.getSnippet()));
 
-                TextView info= (TextView) v.findViewById(R.id.info);
+                Log.d("URL: %s", String.valueOf(Uri.parse(marker.getSnippet())));
+//                TextView info= (TextView) v.findViewById(R.id.info);
+//                info.setText(marker.getSnippet());
+//                builder.setTitle("My Dialog");
+//                builder.setMessage("clicked!");
+                dialog = builder.create();
+                dialog.show();
 
-                info.setText(marker.getSnippet());
-
-                return v;
+                return true;
             }
         });
+
+//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//
+//            @Override
+//            public View getInfoWindow(Marker arg0) {
+//                return null;
+//            }
+//
+//            @Override
+//            public View getInfoContents(Marker marker) {
+//
+//                View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
+//
+//                saveNbButton = (Button) v.findViewById(R.id.saveNbButton);
+//                TextView info= (TextView) v.findViewById(R.id.info);
+//                //TextView title= (TextView) v.findViewById(R.id.title);
+//
+//                //title.setText(marker.getTitle());
+//                info.setText(marker.getSnippet());
+//
+//                saveNbButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(getActivity(), "saved!.", Toast.LENGTH_SHORT).show();
+//
+//
+//                    }
+//                });
+//
+//                return v;
+//            }
+//        });
 
         btnRestaurant = (ImageButton) ll.findViewById(R.id.btnRestaurant);
         MainActivity.getNearby(btnRestaurant,1);
@@ -71,6 +117,7 @@ public class DiscoverNearbyFragment extends Fragment {
 
         return ll;
     }
+
 
     public void didTapButton(View view) {
         final Animation myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);

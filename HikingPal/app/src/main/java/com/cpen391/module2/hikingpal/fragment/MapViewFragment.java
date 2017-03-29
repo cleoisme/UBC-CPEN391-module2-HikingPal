@@ -39,7 +39,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
@@ -261,7 +260,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         stopMarker.remove();
     }
 
-    Date numPic;
+    long numPic;
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
                     .setTitle("Exit")
@@ -286,46 +285,52 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
                             // TODO: 2017-03-22 save the map
-                            if(buttonNum==2){
-                                stopRecord();
+                            if(buttonNum==1){
+                                Toast.makeText(getActivity(), "you have not start a trail yet!.", Toast.LENGTH_SHORT).show();
                             }
-                            autoZoom();
-                            final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
-                                Bitmap bitmap;
-                                @Override
-                                public void onSnapshotReady(Bitmap snapshot) {
-                                    bitmap = snapshot;
-                                    try {
-                                        // TODO: 2017-03-23  save the pic into database
-                                        numPic = new Date(System.currentTimeMillis());
-                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
-                                        if(result){
-                                             Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
-                                        }else {
+                            else {
+                                if (buttonNum == 2) {
+                                    stopRecord();
+                                }
+                                autoZoom();
+                                final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
+                                    Bitmap bitmap;
+
+                                    @Override
+                                    public void onSnapshotReady(Bitmap snapshot) {
+                                        bitmap = snapshot;
+                                        try {
+                                            // TODO: 2017-03-23  save the pic into database
+                                            numPic = System.currentTimeMillis();
+                                            boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
+                                            if (result) {
+                                                Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
+                                            } else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
-                                         }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        mMap.clear();
+                                        points.clear();
+                                        buttonNum = 1;
+                                        initMap = true;
+                                        totalDistance = 0;
+                                        running = false;
+                                        trailButton.setText("Start");
+
                                     }
+                                };
 
-                                    mMap.clear();
-                                    points.clear();
-                                    buttonNum = 1;
-                                    initMap = true;
-                                    totalDistance=0;
-                                    running = false;
-                                    trailButton.setText("Start");
-
-                                }
-                            };
-
-                            GoogleMap.OnMapLoadedCallback mapLoadedCallback = new GoogleMap.OnMapLoadedCallback() {
-                                @Override
-                                public void onMapLoaded() {
-                                    mMap.snapshot(snapReadyCallback);
-                                }
-                            };
-                            mMap.setOnMapLoadedCallback(mapLoadedCallback);
+                                GoogleMap.OnMapLoadedCallback mapLoadedCallback = new GoogleMap.OnMapLoadedCallback() {
+                                    @Override
+                                    public void onMapLoaded() {
+                                        mMap.snapshot(snapReadyCallback);
+                                    }
+                                };
+                                mMap.setOnMapLoadedCallback(mapLoadedCallback);
+                            }
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)

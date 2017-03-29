@@ -138,7 +138,11 @@ public class MainActivity extends AppCompatActivity
 
         //brings up the notification after dark
         Notifier();
+
+
+
     }
+
 
     @Override
     public void onStart() {
@@ -184,6 +188,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.INTERNET,
         };
 
         for (int i = 0; i < permissions.length; i++) {
@@ -283,7 +288,7 @@ public class MainActivity extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
             ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
-            imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+           // imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
 
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
@@ -446,9 +451,9 @@ public class MainActivity extends AppCompatActivity
                     mapFragment.stopRecord();
                 }
                 else if(buttonNum==3){ //resume
+                    buttonNum=2;
                     setButtonText(trailButton,buttonNum);
                     //trailButton.setText("Stop");
-                    buttonNum=2;
                     running = true;
                     mapFragment.continueRecord();
                 }
