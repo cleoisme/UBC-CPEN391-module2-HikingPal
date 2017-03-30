@@ -44,8 +44,8 @@ public class ViewHistoryFragment extends Fragment {
                     final ImageView myImage = imageFiller(myBitmap);
                     ic.addView(myImage, lp);
                     //ic.getLayoutParams().width = 230;
-                    ic.getLayoutParams().height = 260;
-                    ic.setPadding(10, 0, 10, 0);
+                    //ic.getLayoutParams().height = 260;
+                    //ic.setPadding(10, 0, 10, 0);
                 }
             }else{
                 //display nothing
@@ -60,7 +60,7 @@ public class ViewHistoryFragment extends Fragment {
     private ImageView imageFiller(Bitmap myBitmap) {
         ImageView iv = new ImageView(this.getActivity());
         iv.setImageBitmap(myBitmap);
-        iv.setPadding(10, 10, 10, 10);
+        //iv.setPadding(10, 10, 10, 10);
         return iv;
     }
 }

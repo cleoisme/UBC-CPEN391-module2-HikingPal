@@ -298,6 +298,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     bitmap = snapshot;
                                     try {
                                         long myID = System.currentTimeMillis();
+                                        //hardcoded
                                         long myDuration = 1234455;
                                         long myDistance = 5544321;
                                         int myRating = 5;
@@ -307,6 +308,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" +  myID + ".png");
                                         MapImageStorage mis = new MapImageStorage(getActivity());
+                                        //write to storage
                                         mis.writeToStorage(myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
                                         // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
