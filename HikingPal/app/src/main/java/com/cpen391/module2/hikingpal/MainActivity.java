@@ -51,7 +51,9 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
@@ -294,6 +296,14 @@ public class MainActivity extends AppCompatActivity
             super.onPostExecute(weather);
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+            TextView dateText = (TextView) drawer.findViewById(R.id.date_field);
+            if(dateText != null) {
+                Date date = Calendar.getInstance().getTime();
+                SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
+                String dateString = formatter.format(date);
+                dateText.setText(dateString);
+            }
 
             ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
             if(imageView != null) {
