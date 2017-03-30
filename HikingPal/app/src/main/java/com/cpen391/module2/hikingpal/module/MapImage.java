@@ -81,7 +81,7 @@ public class MapImage {
     // Parse all the data to send to bluetooth into a string
     public String GetDataString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(BT_MAP_INIT);
+        sb.append(BT_MAP_DELIMITER);
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myName);
         sb.append(BT_MAP_FIELD_DELIMITER);
@@ -95,7 +95,7 @@ public class MapImage {
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myDate);
         sb.append(BT_MAP_FIELD_DELIMITER);
-        sb.append(BT_MAP_INIT);
+        sb.append(BT_MAP_DELIMITER);
 
         return sb.toString();
     }

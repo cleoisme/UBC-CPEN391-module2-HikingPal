@@ -296,11 +296,13 @@ public class MainActivity extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
             ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
-            imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+            if(imageView != null) {
+                imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+            }
 
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
-            mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
+            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + "degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
                 return;
