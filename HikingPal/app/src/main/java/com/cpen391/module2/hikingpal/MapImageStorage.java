@@ -1,4 +1,4 @@
-package com.cpen391.module2.hikingpal.database;
+package com.cpen391.module2.hikingpal;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -62,7 +62,7 @@ public class MapImageStorage {
         return root;
     }
 
-    public void writeToStorage(int imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage){
+    public void writeToStorage(long imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage){
 
         JSONObject element = create(imageId, myDuration, myDistance, mySpots, myDate, myRating, pathToImage);
 
@@ -74,9 +74,7 @@ public class MapImageStorage {
 
     }
 
-
-
-    private JSONObject create(int imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
+    private JSONObject create(long imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
         JSONObject element = new JSONObject();
         try {
             element.put("imageId", imageId);
@@ -191,13 +189,13 @@ public class MapImageStorage {
         return null;
     }
 
-    public JSONObject getObject(int mapImageId){
+    public JSONObject getObject(long mapImageId){
 
         String root = readFile();
         return extractObject(root, mapImageId);
     }
 
-    private JSONObject extractObject(String root, int mapImageId) {
+    private JSONObject extractObject(String root, long mapImageId) {
 
         try {
             JSONObject  jsonRootObject = new JSONObject(root);
