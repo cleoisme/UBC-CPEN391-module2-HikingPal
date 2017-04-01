@@ -1,7 +1,9 @@
 package com.cpen391.module2.hikingpal.fragment;
 
 import android.app.AlertDialog;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,7 +24,10 @@ import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import java.io.InputStream;
+
 import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
+import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.nearbyCase;
 
 /**
  * Created by YueyueZhang on 2017-03-13.
@@ -51,22 +56,57 @@ public class DiscoverNearbyFragment extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 AlertDialog dialog;
-                Toast.makeText(getActivity(), "clicked!.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "clicked!.", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
                 builder.setView(v);
 
                 ImageView img = (ImageView) v.findViewById(R.id.image);
-                img.setImageURI(Uri.parse(marker.getSnippet()));
 
-                Log.d("URL: %s", String.valueOf(Uri.parse(marker.getSnippet())));
+
+                //Log.d("url N? ",marker.getSnippet());
+                if(marker.getSnippet()==null){
+
+                    if(nearbyCase==1){ //food
+                        img.setImageDrawable(getResources().getDrawable(R.drawable.food));
+                    }
+                    else if(nearbyCase==2){ //park
+                        img.setImageDrawable(getResources().getDrawable(R.drawable.park));
+
+                    }
+                    else if(nearbyCase==3){ //gym
+                        img.setImageDrawable(getResources().getDrawable(R.drawable.gym));
+                        img.setMaxHeight(300);
+                        img.setMaxWidth(300);
+                    }
+                    else if(nearbyCase==4){ //store
+                        img.setImageDrawable(getResources().getDrawable(R.drawable.store));
+
+                    }
+                    //Log.d("url ","nothing");
+                }else {
+                    String URL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference=";
+                    URL = URL + marker.getSnippet() + "&key=AIzaSyCM6psxnSLbX5RzJJ874mrv5fkG0Ho4Jns";
+                    //Log.d("URL: ", String.valueOf(URL));
+
+                    new DownloadImageTask(img).execute(URL);
+                }
+
+
 //                TextView info= (TextView) v.findViewById(R.id.info);
-//                info.setText(marker.getSnippet());
-//                builder.setTitle("My Dialog");
-//                builder.setMessage("clicked!");
+//                info.setText(marker.getTitle());
+                builder.setTitle(marker.getTitle());
                 dialog = builder.create();
                 dialog.show();
+
+                saveNbButton = (Button) v.findViewById(R.id.saveNbButton);
+                saveNbButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getActivity(), "saved!.", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
                 return true;
             }
@@ -116,6 +156,39 @@ public class DiscoverNearbyFragment extends Fragment {
         didTapButton(container);
 
         return ll;
+    }
+
+    class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            super.onPostExecute(result);
+            bmImage.setImageBitmap(result);
+        }
     }
 
 

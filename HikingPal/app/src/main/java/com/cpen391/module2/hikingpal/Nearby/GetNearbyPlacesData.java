@@ -92,13 +92,13 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
             String PhotoURL = googlePlace.get("PhotoURL");
-            String URL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=50&photoreference=";
-            URL = URL + PhotoURL + "&key=AIzaSyCM6psxnSLbX5RzJJ874mrv5fkG0Ho4Jns";
+//            String URL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=";
+//            URL = URL + PhotoURL + "&key=AIzaSyCM6psxnSLbX5RzJJ874mrv5fkG0Ho4Jns";
             String vicinity = googlePlace.get("vicinity");
             LatLng markerlatLng = new LatLng(lat, lng);
             markerOptions.position(markerlatLng);
             markerOptions.title(placeName);
-            markerOptions.snippet(URL);
+            markerOptions.snippet(PhotoURL);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
             marker = mMap.addMarker(markerOptions);
             markerList.add(marker);

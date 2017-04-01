@@ -213,6 +213,10 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
         //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.start_pin);
 
+        Duration = 0;
+        totalDistance = 0;
+        distance = 0;
+
         startTime = System.currentTimeMillis();
             points.add(latlng);
             startMarker = mMap.addMarker(new MarkerOptions()
@@ -221,6 +225,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             .icon(BitmapDescriptorFactory.fromBitmap(icon)));
     }
 
+    double distance = 0;
     private void drawLine(){
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
@@ -228,25 +233,28 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             LatLng point = points.get(i);
             options.add(point);
             if(i>0){
-                totalDistance = totalDistance + CalculationByDistance(points.get(i-1),points.get(i));
-                Log.i("Total Distance: ", +totalDistance + "meter");
-
-//                long currentTime = System.currentTimeMillis();
-//                long seconds = (currentTime - startTime) / 1000;
-//                Log.i("Duration: ", + seconds + "s");
+                distance = distance + CalculationByDistance(points.get(i-1),points.get(i));
+                Log.i("Total Distance: ", +distance + "meter");
 
             }
         }
         line = mMap.addPolyline(options);
     }
 
-
+    public static long Duration;
     public void stopRecord(){
         int height = 70;
         int width = 70;
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.stop_pin);
         Bitmap b=bitmapdraw.getBitmap();
         Bitmap icon = Bitmap.createScaledBitmap(b, width, height, false);
+
+        // TODO: 2017-04-01 save the duration and distance
+        long currentTime = System.currentTimeMillis();
+        Duration = (currentTime - startTime) / 1000;
+        totalDistance = distance;
+        Log.i("Duration: ", + Duration + "s");
+        Log.i("totalDistance: ", + totalDistance + "m");
 
         stopTime = System.currentTimeMillis();
         stopMarker = mMap.addMarker(new MarkerOptions()
@@ -390,7 +398,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             case 3:
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 break;
-
         }
 
     }
