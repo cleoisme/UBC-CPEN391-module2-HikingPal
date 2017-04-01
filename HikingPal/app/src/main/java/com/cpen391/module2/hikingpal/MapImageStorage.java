@@ -1,7 +1,7 @@
-package com.cpen391.module2.hikingpal.database;
-
+package com.cpen391.module2.hikingpal;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +24,11 @@ public class MapImageStorage {
     DataOutputStream dos;
 
     String mapImage = "MapImages";
+
+
+    private final char BT_MAP_INIT = 'W';
+    private final char BT_MAP_DELIMITER = 'Q';
+    private final char BT_MAP_FIELD_DELIMITER = 'V';
 
     Context context;
 
@@ -73,8 +78,6 @@ public class MapImageStorage {
         } catch (FileNotFoundException e) {}
 
     }
-
-
 
     private JSONObject create(int imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
         JSONObject element = new JSONObject();
@@ -243,5 +246,61 @@ public class MapImageStorage {
         return null;
     }
 
+
+    public String getAllMapImages(){
+
+        JSONArray jsonArray = extractArray(readFile(), mapImage);
+        StringBuilder sb = new StringBuilder();
+        sb.append(BT_MAP_INIT);
+
+        int i = 0;
+
+        for(i = 0; i < jsonArray.length(); i++){
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                JSONArray arr = jsonObject.optJSONArray("mySpots");
+                List<String> list = new ArrayList<String>();
+                int j;
+                for(j = 0; j < arr.length(); j++){
+                    list.add(arr.get(j).toString());
+                }
+                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("myRating"),
+                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                        list, jsonObject.optString("myDate"));
+
+                sb.append(object);
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        sb.append(BT_MAP_INIT);
+
+
+        return sb.toString();
+    }
+
+    public String GetDataString(int myName, int myRating, long myDistance, long myDuration, List<String> mySpots, String myDate){
+        StringBuilder sb = new StringBuilder();
+        sb.append(BT_MAP_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(myName);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(myRating);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(myDistance);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(myDuration);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(TextUtils.join(",", mySpots));
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(myDate);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(BT_MAP_DELIMITER);
+        return sb.toString();
+    }
 
 }

@@ -66,16 +66,6 @@
             android:layout_marginRight="5dp" />
 
 
-        <Button
-            android:text="Rate Trail"
-            android:textSize="15dp"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
-            android:id="@+id/rate_track"
-            android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" />
-
     </LinearLayout>
 
 

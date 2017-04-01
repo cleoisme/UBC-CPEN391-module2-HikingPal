@@ -17,8 +17,9 @@ public class MapImage {
     private int myRating;
     private String absPath;
 
-    private final char BT_INIT = 'Q';
-    private final char BT_DELIMITER = 'V';
+    private final char BT_MAP_INIT = 'W';
+    private final char BT_MAP_DELIMITER = 'Q';
+    private final char BT_MAP_FIELD_DELIMITER = 'V';
 
     public MapImage() {
     }
@@ -80,18 +81,21 @@ public class MapImage {
     // Parse all the data to send to bluetooth into a string
     public String GetDataString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(BT_INIT);
+        sb.append(BT_MAP_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myName);
-        sb.append(BT_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myRating);
-        sb.append(BT_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myDistance);
-        sb.append(BT_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myDuration);
-        sb.append(BT_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(TextUtils.join(",", mySpots));
-        sb.append(BT_DELIMITER);
+        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myDate);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(BT_MAP_DELIMITER);
 
         return sb.toString();
     }

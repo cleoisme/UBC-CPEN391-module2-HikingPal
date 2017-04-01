@@ -51,7 +51,9 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
@@ -84,10 +86,23 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_ENABLE_BT = 3;
 
     public static int buttonNum;
+    public MapImageStorage mapImageStorage;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("SetupMapStorage", true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //setup the database
+        mapImageStorage = new MapImageStorage(getApplicationContext());
+        if((savedInstanceState != null ) && (savedInstanceState.getBoolean("SetupMapStorage") != true)){
+            mapImageStorage.setUp();
+        }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -277,12 +292,22 @@ public class MainActivity extends AppCompatActivity
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+            TextView dateText = (TextView) drawer.findViewById(R.id.date_field);
+            if(dateText != null) {
+                Date date = Calendar.getInstance().getTime();
+                SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
+                String dateString = formatter.format(date);
+                dateText.setText(dateString);
+            }
+
             ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
-           // imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+            if(imageView != null) {
+                imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
+            }
 
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
-            mWeatherText = weather.currentCondition.getDescr() + "\nTemp: " + weather.temperature.getTemp();
+            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + "degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
                 return;

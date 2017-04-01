@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.cpen391.module2.hikingpal.MainActivity;
+import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
@@ -296,24 +299,47 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             if(buttonNum==1){
                                 Toast.makeText(getActivity(), "you have not start a trail yet!.", Toast.LENGTH_SHORT).show();
                             }
-                            else {
-                                if (buttonNum == 2) {
-                                    stopRecord();
-                                }
-                                autoZoom();
-                                final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
-                                    Bitmap bitmap;
+                            autoZoom();
+                            final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
+                                Bitmap bitmap;
+                                @Override
+                                public void onSnapshotReady(Bitmap snapshot) {
+                                    bitmap = snapshot;
+                                    try {
+                                        long myID = System.currentTimeMillis();
+                                        //hardcoded
+                                        long myDuration = 1234455;
+                                        long myDistance = 5544321;
+                                        int myRating = 5;
+                                        List<String> mySpots = null;
+                                        String myDate = (new Date(myID)).toString();
+                                        String myPath = "sdcard/hikingPal/saveTrail/" +  myID + ".png";
 
-                                    @Override
-                                    public void onSnapshotReady(Bitmap snapshot) {
-                                        bitmap = snapshot;
-                                        try {
-                                            // TODO: 2017-03-23  save the pic into database
-                                            numPic = System.currentTimeMillis();
-                                            boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + numPic + ".png");
-                                            if (result) {
-                                                Toast.makeText(getActivity(), "successfully saved!.", Toast.LENGTH_SHORT).show();
-                                            } else {
+                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" +  myID + ".png");
+                                        MapImageStorage mis = new MapImageStorage(getActivity());
+                                        //write to storage
+                                        mis.writeToStorage((int) myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+
+                                        // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
+
+                                        if(result){
+                                            new AlertDialog.Builder(getActivity())
+                                                    .setTitle("Successfully Saved!")
+                                                    .setMessage("Do you want to rate the current track? ")
+                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            ((MainActivity)getActivity()).sendMessage("Q");
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    })
+                                                    .show();
+                                        }else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
                                             }
                                         } catch (Exception e) {
@@ -339,7 +365,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                 };
                                 mMap.setOnMapLoadedCallback(mapLoadedCallback);
                             }
-                        }
+
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
