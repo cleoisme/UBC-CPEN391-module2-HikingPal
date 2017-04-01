@@ -216,6 +216,10 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
         //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.start_pin);
 
+        Duration = 0;
+        totalDistance = 0;
+        distance = 0;
+
         startTime = System.currentTimeMillis();
             points.add(latlng);
             startMarker = mMap.addMarker(new MarkerOptions()
@@ -224,6 +228,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             .icon(BitmapDescriptorFactory.fromBitmap(icon)));
     }
 
+    double distance = 0;
     private void drawLine(){
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
@@ -231,25 +236,28 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             LatLng point = points.get(i);
             options.add(point);
             if(i>0){
-                totalDistance = totalDistance + CalculationByDistance(points.get(i-1),points.get(i));
-                Log.i("Total Distance: ", +totalDistance + "meter");
-
-//                long currentTime = System.currentTimeMillis();
-//                long seconds = (currentTime - startTime) / 1000;
-//                Log.i("Duration: ", + seconds + "s");
+                distance = distance + CalculationByDistance(points.get(i-1),points.get(i));
+                Log.i("Total Distance: ", +distance + "meter");
 
             }
         }
         line = mMap.addPolyline(options);
     }
 
-
+    public static long Duration;
     public void stopRecord(){
         int height = 70;
         int width = 70;
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.stop_pin);
         Bitmap b=bitmapdraw.getBitmap();
         Bitmap icon = Bitmap.createScaledBitmap(b, width, height, false);
+
+        // TODO: 2017-04-01 save the duration and distance
+        long currentTime = System.currentTimeMillis();
+        Duration = (currentTime - startTime) / 1000;
+        totalDistance = distance;
+        Log.i("Duration: ", + Duration + "s");
+        Log.i("totalDistance: ", + totalDistance + "m");
 
         stopTime = System.currentTimeMillis();
         stopMarker = mMap.addMarker(new MarkerOptions()
@@ -263,6 +271,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         stopMarker.remove();
     }
 
+    long numPic;
     public void finishRecord(){
                     new AlertDialog.Builder(getActivity())
                     .setTitle("Exit")
@@ -287,8 +296,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
                             // TODO: 2017-03-22 save the map
-                            if(buttonNum==2){
-                                stopRecord();
+                            if(buttonNum==1){
+                                Toast.makeText(getActivity(), "you have not start a trail yet!.", Toast.LENGTH_SHORT).show();
                             }
                             autoZoom();
                             final GoogleMap.SnapshotReadyCallback snapReadyCallback = new GoogleMap.SnapshotReadyCallback() {
@@ -309,7 +318,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" +  myID + ".png");
                                         MapImageStorage mis = new MapImageStorage(getActivity());
                                         //write to storage
-                                        mis.writeToStorage(myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+                                        mis.writeToStorage((int) myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
                                         // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
 
@@ -332,30 +341,31 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                                     .show();
                                         }else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
-                                         }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        mMap.clear();
+                                        points.clear();
+                                        buttonNum = 1;
+                                        initMap = true;
+                                        totalDistance = 0;
+                                        running = false;
+                                        trailButton.setText("Start");
+
                                     }
+                                };
 
-                                    mMap.clear();
-                                    points.clear();
-                                    buttonNum = 1;
-                                    initMap = true;
-                                    totalDistance=0;
-                                    running = false;
-                                    trailButton.setText("Start");
+                                GoogleMap.OnMapLoadedCallback mapLoadedCallback = new GoogleMap.OnMapLoadedCallback() {
+                                    @Override
+                                    public void onMapLoaded() {
+                                        mMap.snapshot(snapReadyCallback);
+                                    }
+                                };
+                                mMap.setOnMapLoadedCallback(mapLoadedCallback);
+                            }
 
-                                }
-                            };
-
-                            GoogleMap.OnMapLoadedCallback mapLoadedCallback = new GoogleMap.OnMapLoadedCallback() {
-                                @Override
-                                public void onMapLoaded() {
-                                    mMap.snapshot(snapReadyCallback);
-                                }
-                            };
-                            mMap.setOnMapLoadedCallback(mapLoadedCallback);
-                        }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
@@ -414,7 +424,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
             case 3:
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 break;
-
         }
 
     }
