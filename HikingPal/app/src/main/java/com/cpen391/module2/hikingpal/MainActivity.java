@@ -401,10 +401,6 @@ public class MainActivity extends AppCompatActivity
                 ft.addToBackStack(null);
                 break;
 
-            case R.id.unused_frag:
-                dfb.hide();
-                break;
-
             case R.id.nav_share:
                 dfb.hide();
                 break;
