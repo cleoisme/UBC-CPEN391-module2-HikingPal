@@ -15,7 +15,6 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -60,11 +59,12 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
-import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
+import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.zoomable;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
     static MapViewFragment mapFragment;
-    NewTrailFragment newtrailFrag = new NewTrailFragment();
+    static NewTrailFragment newtrailFrag;
 
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
         ft.add(fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
-        //ft.addToBackStack(null);
         ft.commit();
 
         JSONWeatherTask task = new JSONWeatherTask();
@@ -226,14 +225,13 @@ public class MainActivity extends AppCompatActivity
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction ft = fm.beginTransaction();
 
-        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+        FrameLayout fc = (FrameLayout) findViewById(R.id.frag_container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout fcl = (FrameLayout) findViewById(R.id.fragment_container_long);
         FrameLayout fcs = (FrameLayout) findViewById(fragment_container_small);
         FrameLayout fcm1 = (FrameLayout) findViewById(fragment_container_med1);
         FrameLayout fcm2 = (FrameLayout) findViewById(fragment_container_med2);
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
-        //setButtonText(trailButton,buttonNum);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -259,6 +257,7 @@ public class MainActivity extends AppCompatActivity
         }else if(fcm1.isDirty()){
             fcm1.removeAllViewsInLayout();
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            fc.removeAllViews();
             dfb.hide();
             Log.d("hhh:","3");
         }else if(fcm2.isDirty()){
@@ -358,26 +357,27 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        MapFragmentManager(id);
+        MyFragmentManager(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void MapFragmentManager(int fragmentID) {
+    public void MyFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        newtrailFrag = new NewTrailFragment();
 
         FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        // MapViewFragment map = new MapViewFragment();
+        MapViewFragment mvf = new MapViewFragment();
 
         switch (fragmentID) {
             case R.id.new_trail:
-
                 buttonNum=1;
                 //NewTrailFragment curFrag1 = new NewTrailFragment();
+            //    ft.add(fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 ft.add(fragment_container_small,newtrailFrag, getResources().getString(R.string.new_trail_tag));
                 Log.d("buttonNum2: %d", String.valueOf(buttonNum));
                // ft.add(R.id.fragment_container, map, getResources().getString(R.string.map_view_tag));
@@ -388,8 +388,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.view_history:
                 ViewHistoryFragment curFrag2 = new ViewHistoryFragment();
+                mvf = new MapViewFragment();
+                zoomable = 1;
+                ft.add(R.id.frag_container, mvf, getResources().getString(R.string.map_view_tag));
                 ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-                //ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);

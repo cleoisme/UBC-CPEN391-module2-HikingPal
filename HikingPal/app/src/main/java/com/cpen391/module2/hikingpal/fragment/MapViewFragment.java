@@ -66,6 +66,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     public static long startTime;
     public static long stopTime;
     public static double totalDistance = 0;
+    public static int zoomable = 0;
 
     private ArrayList<LatLng> points;
     Polyline line;
@@ -117,10 +118,11 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     @Override
                     public void onMyLocationChange(Location location) {
 
-                        if(initMap == true) {
+                        if(initMap == true && zoomable==0) {
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(location.getLatitude(), location.getLongitude()), 15));
                             initMap = false;
+                            zoomable = 1;
                         }
 //                        else{
 //                            mMap.animateCamera(CameraUpdateFactory.newLatLng(
@@ -286,6 +288,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                         public void onClick(DialogInterface dialog, int which) {
                             mMap.clear();
                             points.clear();
+                            zoomable = 0;
                             buttonNum = 1;
                             totalDistance=0;
                             running = false;
@@ -356,6 +359,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         points.clear();
                                         buttonNum = 1;
                                         initMap = true;
+                                        zoomable = 0;
                                         totalDistance = 0;
                                         running = false;
                                         trailButton.setText("Start");
