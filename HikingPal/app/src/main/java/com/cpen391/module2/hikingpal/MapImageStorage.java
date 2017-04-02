@@ -199,22 +199,27 @@ public class MapImageStorage {
 
         StringBuilder sb = new StringBuilder();
         sb.append(BT_MAP_INIT);
-        mapImagePath.replaceAll("/", "\\/");
-        JSONObject jsonObject = getObject(mapImagePath);
+        JSONObject jobject = new JSONObject();
+        try {
+            jobject.put("mapPath", mapImagePath);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObject = getObject(jobject);
         JSONArray arr = jsonObject.optJSONArray("mySpots");
         List<String> list = new ArrayList<String>();
         int j;
         for(j = 0; j < arr.length(); j++){
             try {
                 list.add(arr.get(j).toString());
-                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
-                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
-                        list, jsonObject.optString("myDate"));
-                sb.append(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+        String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
+                jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                list, jsonObject.optString("myDate"));
+        sb.append(object);
 
         sb.append(BT_MAP_INIT);
         return sb.toString();
@@ -231,14 +236,14 @@ public class MapImageStorage {
         for(j = 0; j < arr.length(); j++){
             try {
                 list.add(arr.get(j).toString());
-                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
-                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
-                        list, jsonObject.optString("myDate"));
-                sb.append(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+        String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
+                jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                list, jsonObject.optString("myDate"));
+        sb.append(object);
 
         sb.append(BT_MAP_INIT);
         return sb.toString();
@@ -276,6 +281,12 @@ public class MapImageStorage {
         return extractObject(root, mapPath);
     }
 
+    public JSONObject getObject(JSONObject jsonObject) {
+
+        String root = readFile();
+        return extractObject(root, jsonObject);
+    }
+
     private JSONObject extractObject(String root, String mapImageId) {
 
         try {
@@ -296,6 +307,27 @@ public class MapImageStorage {
         return null;
     }
 
+    private JSONObject extractObject(String root, JSONObject jsonObject) {
+
+        try {
+            JSONObject  jsonRootObject = new JSONObject(root);
+
+            // Get the food array from root object
+            JSONArray jsonArray = jsonRootObject.optJSONArray(mapImage);
+
+            int i = 0;
+            for(i = 0; i < jsonArray.length(); i++){
+                JSONObject element = (JSONObject) jsonArray.get(i);
+                String mapPath = jsonObject.optString("mapPath");
+                String pathToImage = element.optString("pathToImage");
+                if(mapPath.contains(pathToImage)){
+                    return element;
+                }
+            }
+        } catch (JSONException e) {}
+
+        return null;
+    }
 
     public String getAllMapImages(){
 
