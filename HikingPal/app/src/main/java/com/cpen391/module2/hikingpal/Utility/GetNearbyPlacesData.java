@@ -2,12 +2,13 @@
  * Copyright © 2017 · Android Tutorial Point
  */
 
-package com.cpen391.module2.hikingpal.Nearby;
+package com.cpen391.module2.hikingpal.Utility;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.cpen391.module2.hikingpal.parser.DataParser;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
