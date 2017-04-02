@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/view_history_ll"
-    android:background="@color/colorPrimary"
+    android:background="#00ffffff"
     android:orientation="horizontal"
     android:paddingTop="0dp"
     android:paddingStart="0dp"
@@ -15,16 +15,34 @@
         android:layout_height="match_parent"
         android:id="@+id/scroll_view"
         android:layout_gravity="left"
+        android:background="#00ffffff"
         android:isScrollContainer="true">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/image_line"
-            android:gravity="left">
+            android:orientation="vertical"
+            android:background="#986a6c99">
+
+            <LinearLayout
+                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/image_line"
+                android:gravity="left">
+
+           </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/title_line"
+                android:gravity="left">
+            </LinearLayout>
 
         </LinearLayout>
+
     </HorizontalScrollView>
 
 </FrameLayout>
