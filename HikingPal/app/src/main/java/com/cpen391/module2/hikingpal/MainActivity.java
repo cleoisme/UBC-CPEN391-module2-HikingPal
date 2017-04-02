@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity
 
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
-            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + "degree Celsius";
+            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
                 return;

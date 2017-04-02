@@ -15,6 +15,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.R;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class ViewHistoryFragment extends Fragment {
                     ic.setPadding(0, 20, 0, 0);
                     ic.setBackgroundColor(getResources().getColor(red));
                     Bitmap myBitmap = BitmapFactory.decodeFile(child.getAbsolutePath());
-                    final ImageView myImage = imageFiller(myBitmap);
+                    final ImageView myImage = imageFiller(myBitmap, child.getAbsolutePath());
                     ic.addView(myImage, lp);
                 }
             }else{
@@ -65,7 +66,9 @@ public class ViewHistoryFragment extends Fragment {
         return ll;
     }
 
-    private ImageView imageFiller(Bitmap myBitmap) {
+    private ImageView imageFiller(Bitmap myBitmap, String path) {
+
+        final String mapImagePath = path;
         ImageView iv = new ImageView(this.getActivity());
         iv.setImageBitmap(myBitmap);
         iv.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +81,8 @@ public class ViewHistoryFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // TODO: 2017-04-01 send the corresponding data to the touchscreen
-
+                                MapImageStorage mapImageStorage = new MapImageStorage(getContext());
+                                String mapImageString = mapImageStorage.getMapImage(mapImagePath);
 
                             }
                         })
