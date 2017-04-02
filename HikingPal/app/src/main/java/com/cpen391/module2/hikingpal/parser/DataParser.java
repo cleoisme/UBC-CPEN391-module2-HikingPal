@@ -1,4 +1,4 @@
-package com.cpen391.module2.hikingpal.Nearby;
+package com.cpen391.module2.hikingpal.parser;
 
 /**
  * Created by luvianwang on 2017-03-21.

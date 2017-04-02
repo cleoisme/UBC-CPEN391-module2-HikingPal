@@ -35,6 +35,8 @@
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
+    <string name="group_chat">Chat within Group</string>
+    <string name="announcement">Group Announcements</string>
 
 
     <string-array name="map_type">
