@@ -67,9 +67,9 @@ public class MapImageStorage {
         return root;
     }
 
-    public void writeToStorage(int imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage){
+    public void writeToStorage(int imageId, int subscribe, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage){
 
-        JSONObject element = create(imageId, myDuration, myDistance, mySpots, myDate, myRating, pathToImage);
+        JSONObject element = create(imageId, subscribe, myDuration, myDistance, mySpots, myDate, myRating, pathToImage);
 
         String jsonRoot = readFile();
 
@@ -79,10 +79,11 @@ public class MapImageStorage {
 
     }
 
-    private JSONObject create(int imageId, long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
+    private JSONObject create(int imageId, int subscribe,  long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
         JSONObject element = new JSONObject();
         try {
             element.put("imageId", imageId);
+            element.put("subscribe", subscribe);
             element.put("myDuration", myDuration);
             element.put("myDistance", myDistance);
             JSONArray array = new JSONArray(mySpots);
@@ -194,6 +195,55 @@ public class MapImageStorage {
         return null;
     }
 
+    public String getMapImage(String mapImagePath) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(BT_MAP_INIT);
+        mapImagePath.replaceAll("/", "\\/");
+        JSONObject jsonObject = getObject(mapImagePath);
+        JSONArray arr = jsonObject.optJSONArray("mySpots");
+        List<String> list = new ArrayList<String>();
+        int j;
+        for(j = 0; j < arr.length(); j++){
+            try {
+                list.add(arr.get(j).toString());
+                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
+                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                        list, jsonObject.optString("myDate"));
+                sb.append(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        sb.append(BT_MAP_INIT);
+        return sb.toString();
+    }
+
+    public String getMapImage(int mapImageId) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(BT_MAP_INIT);
+        JSONObject jsonObject = getObject(mapImageId);
+        JSONArray arr = jsonObject.optJSONArray("mySpots");
+        List<String> list = new ArrayList<String>();
+        int j;
+        for(j = 0; j < arr.length(); j++){
+            try {
+                list.add(arr.get(j).toString());
+                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
+                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                        list, jsonObject.optString("myDate"));
+                sb.append(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        sb.append(BT_MAP_INIT);
+        return sb.toString();
+    }
+
     public JSONObject getObject(int mapImageId){
 
         String root = readFile();
@@ -264,7 +314,7 @@ public class MapImageStorage {
                 for(j = 0; j < arr.length(); j++){
                     list.add(arr.get(j).toString());
                 }
-                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("myRating"),
+                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
                         jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
                         list, jsonObject.optString("myDate"));
 
@@ -283,11 +333,13 @@ public class MapImageStorage {
         return sb.toString();
     }
 
-    public String GetDataString(int myName, int myRating, long myDistance, long myDuration, List<String> mySpots, String myDate){
+    public String GetDataString(int myName, int subscribe, int myRating, long myDistance, long myDuration, List<String> mySpots, String myDate){
         StringBuilder sb = new StringBuilder();
         sb.append(BT_MAP_DELIMITER);
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myName);
+        sb.append(BT_MAP_FIELD_DELIMITER);
+        sb.append(subscribe);
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myRating);
         sb.append(BT_MAP_FIELD_DELIMITER);

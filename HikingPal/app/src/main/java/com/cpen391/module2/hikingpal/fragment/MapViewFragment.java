@@ -313,12 +313,13 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         int myRating = 5;
                                         List<String> mySpots = null;
                                         String myDate = (new Date(myID)).toString();
+                                        int subscribe = 0;
                                         String myPath = "sdcard/hikingPal/saveTrail/" +  myID + ".png";
 
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" +  myID + ".png");
-                                        MapImageStorage mis = new MapImageStorage(getActivity());
+                                        MapImageStorage mis = new MapImageStorage(getContext());
                                         //write to storage
-                                        mis.writeToStorage((int) myID, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+                                        mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
                                         // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
 
