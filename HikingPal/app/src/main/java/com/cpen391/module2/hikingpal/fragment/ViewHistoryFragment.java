@@ -15,6 +15,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.R;
 
@@ -83,6 +84,8 @@ public class ViewHistoryFragment extends Fragment {
                                 // TODO: 2017-04-01 send the corresponding data to the touchscreen
                                 MapImageStorage mapImageStorage = new MapImageStorage(getContext());
                                 String mapImageString = mapImageStorage.getMapImage(mapImagePath);
+                                MainActivity mainActivity = (MainActivity) getActivity();
+                                mainActivity.sendMessageSlow("Z" + mapImageString+ "Z");
 
                             }
                         })
