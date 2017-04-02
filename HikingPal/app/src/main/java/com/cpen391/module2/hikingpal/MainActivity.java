@@ -35,10 +35,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cpen391.module2.hikingpal.Nearby.GetNearbyPlacesData;
+import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
+import com.cpen391.module2.hikingpal.Utility.WeatherHTTPClient;
 import com.cpen391.module2.hikingpal.bluetooth.BluetoothChatService;
 import com.cpen391.module2.hikingpal.bluetooth.Constants;
 import com.cpen391.module2.hikingpal.bluetooth.DeviceListActivity;
+import com.cpen391.module2.hikingpal.fragment.AnnouncementFragment;
+import com.cpen391.module2.hikingpal.fragment.ChatFragment;
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
@@ -60,6 +63,7 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
@@ -307,7 +311,7 @@ public class MainActivity extends AppCompatActivity
 
 
             TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
-            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + "degree Celsius";
+            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
                 return;
@@ -389,10 +393,6 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.addToBackStack(null);
-
-                // TODO:
-                // Call GetDataString() on all MapImages and send to bluetooth
-
                 break;
 
             case R.id.fav_trails:
@@ -404,11 +404,15 @@ public class MainActivity extends AppCompatActivity
                 ft.addToBackStack(null);
                 break;
 
-            case R.id.nav_share:
+            case R.id.chat:
+                ChatFragment curFrag4 = new ChatFragment();
+                ft.add(fragment_container_large, curFrag4, getResources().getString(R.string.group_chat));
                 dfb.hide();
                 break;
 
-            case R.id.nav_send:
+            case R.id.announcement:
+                AnnouncementFragment curFrag5 = new AnnouncementFragment();
+                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
                 dfb.hide();
                 break;
 

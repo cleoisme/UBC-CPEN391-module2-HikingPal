@@ -1,4 +1,4 @@
-package com.cpen391.module2.hikingpal;
+package com.cpen391.module2.hikingpal.Utility;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

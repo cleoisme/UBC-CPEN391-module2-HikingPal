@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.R;
 
 import java.io.File;
@@ -76,6 +77,7 @@ public class ViewHistoryFragment extends Fragment {
     }
 
     private ImageView imageFiller(Bitmap myBitmap) {
+
         ImageView iv = new ImageView(this.getActivity());
         iv.setImageBitmap(myBitmap);
         iv.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +90,7 @@ public class ViewHistoryFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // TODO: 2017-04-01 send the corresponding data to the touchscreen
-
+                                MapImageStorage mapImageStorage = new MapImageStorage(getContext());
 
                             }
                         })
