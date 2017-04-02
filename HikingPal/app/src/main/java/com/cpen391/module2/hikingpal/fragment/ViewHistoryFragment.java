@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.MapImageStorage;
 import com.cpen391.module2.hikingpal.R;
 
@@ -58,7 +59,7 @@ public class ViewHistoryFragment extends Fragment {
                     //left, top, right, bot
                     img.setPadding(20, 20, 20, 20);
                     Bitmap myBitmap = BitmapFactory.decodeFile(child.getAbsolutePath());
-                    final ImageView myImage = imageFiller(myBitmap);
+                    final ImageView myImage = imageFiller(myBitmap, child.getAbsolutePath());
                     myImage.setScaleType(ImageView.ScaleType.FIT_START);
                     img.addView(myImage, lp);
                     final TextView title = new TextView(this.getActivity());
@@ -76,8 +77,9 @@ public class ViewHistoryFragment extends Fragment {
         return ll;
     }
 
-    private ImageView imageFiller(Bitmap myBitmap) {
+    private ImageView imageFiller(Bitmap myBitmap, String path) {
 
+        final String mapImagePath = path;
         ImageView iv = new ImageView(this.getActivity());
         iv.setImageBitmap(myBitmap);
         iv.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +93,10 @@ public class ViewHistoryFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // TODO: 2017-04-01 send the corresponding data to the touchscreen
                                 MapImageStorage mapImageStorage = new MapImageStorage(getContext());
+                                String mapImageString = mapImageStorage.getMapImage(mapImagePath);
+                                MainActivity mainActivity = (MainActivity) getActivity();
+                                mainActivity.sendMessageSlow( mapImageString);
+
 
                             }
                         })
