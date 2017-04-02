@@ -335,7 +335,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                                ((MainActivity) getActivity()).sendMessage("Q");
+                                                                ((MainActivity) getActivity()).sendMessage("P");
                                                             }
                                                         })
                                                         .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {

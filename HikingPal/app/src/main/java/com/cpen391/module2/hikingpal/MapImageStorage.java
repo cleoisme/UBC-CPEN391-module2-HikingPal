@@ -371,8 +371,6 @@ public class MapImageStorage {
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myName);
         sb.append(BT_MAP_FIELD_DELIMITER);
-        sb.append(subscribe);
-        sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myRating);
         sb.append(BT_MAP_FIELD_DELIMITER);
         sb.append(myDistance);

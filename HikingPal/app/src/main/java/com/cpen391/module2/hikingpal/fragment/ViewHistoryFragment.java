@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.MapImageStorage;
@@ -21,7 +22,7 @@ import com.cpen391.module2.hikingpal.R;
 
 import java.io.File;
 
-import static com.cpen391.module2.hikingpal.R.color.red;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * Created by YueyueZhang on 2017-03-12.
@@ -38,10 +39,13 @@ public class ViewHistoryFragment extends Fragment {
 
         //get the HorizontalScrollView
         HorizontalScrollView sv = (HorizontalScrollView) ll.getChildAt(0);
-        //get the image_line LinearLayout
-        LinearLayout ic = (LinearLayout) sv.getChildAt(0);
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //get the image_line LinearLayout
+        LinearLayout frame = (LinearLayout) sv.getChildAt(0);
+        LinearLayout img = (LinearLayout)frame.getChildAt(0);
+        LinearLayout title_line = (LinearLayout)frame.getChildAt(1);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(300, WRAP_CONTENT);
 
         File myFolder = new File("sdcard/hikingPal/saveTrail/");
         File[] myFiles = myFolder.listFiles();
@@ -49,13 +53,19 @@ public class ViewHistoryFragment extends Fragment {
         if(myFolder.isDirectory()){
             if( myFiles != null){
                 for (File child : myFiles){
-                    ic.getLayoutParams().width = 20;
-                    ic.getLayoutParams().height = 300;
-                    ic.setPadding(0, 20, 0, 0);
-                    ic.setBackgroundColor(getResources().getColor(red));
+                    img.getLayoutParams().width = WRAP_CONTENT;
+                    img.getLayoutParams().height = 470;
+                    //ic.LayoutParams.setMargins();
+                    //left, top, right, bot
+                    img.setPadding(20, 20, 20, 20);
                     Bitmap myBitmap = BitmapFactory.decodeFile(child.getAbsolutePath());
                     final ImageView myImage = imageFiller(myBitmap, child.getAbsolutePath());
-                    ic.addView(myImage, lp);
+                    myImage.setScaleType(ImageView.ScaleType.FIT_START);
+                    img.addView(myImage, lp);
+                    final TextView title = new TextView(this.getActivity());
+                    title.setText(child.getName());
+                    title.setPadding(30,0,20,10);
+                    title_line.addView(title, lp);
                 }
             }else{
                 //display nothing
@@ -85,7 +95,8 @@ public class ViewHistoryFragment extends Fragment {
                                 MapImageStorage mapImageStorage = new MapImageStorage(getContext());
                                 String mapImageString = mapImageStorage.getMapImage(mapImagePath);
                                 MainActivity mainActivity = (MainActivity) getActivity();
-                                mainActivity.sendMessageSlow("Z" + mapImageString+ "Z");
+                                mainActivity.sendMessageSlow( mapImageString);
+
 
                             }
                         })

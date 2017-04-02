@@ -94,8 +94,6 @@ public class DiscoverNearbyFragment extends Fragment {
                 }
 
 
-//                TextView info= (TextView) v.findViewById(R.id.info);
-//                info.setText(marker.getTitle());
                 builder.setTitle(marker.getTitle());
                 dialog = builder.create();
                 dialog.show();
@@ -111,38 +109,6 @@ public class DiscoverNearbyFragment extends Fragment {
                 return true;
             }
         });
-
-//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-//
-//            @Override
-//            public View getInfoWindow(Marker arg0) {
-//                return null;
-//            }
-//
-//            @Override
-//            public View getInfoContents(Marker marker) {
-//
-//                View v = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
-//
-//                saveNbButton = (Button) v.findViewById(R.id.saveNbButton);
-//                TextView info= (TextView) v.findViewById(R.id.info);
-//                //TextView title= (TextView) v.findViewById(R.id.title);
-//
-//                //title.setText(marker.getTitle());
-//                info.setText(marker.getSnippet());
-//
-//                saveNbButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Toast.makeText(getActivity(), "saved!.", Toast.LENGTH_SHORT).show();
-//
-//
-//                    }
-//                });
-//
-//                return v;
-//            }
-//        });
 
         btnRestaurant = (ImageButton) ll.findViewById(R.id.btnRestaurant);
         MainActivity.getNearby(btnRestaurant,1);
