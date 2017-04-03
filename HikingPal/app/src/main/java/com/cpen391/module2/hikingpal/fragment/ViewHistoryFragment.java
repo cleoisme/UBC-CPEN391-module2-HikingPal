@@ -7,14 +7,18 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.HikingPalStorage;
@@ -23,6 +27,7 @@ import com.cpen391.module2.hikingpal.R;
 import java.io.File;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
 
 /**
  * Created by YueyueZhang on 2017-03-12.
@@ -42,33 +47,81 @@ public class ViewHistoryFragment extends Fragment {
 
         //get the image_line LinearLayout
         LinearLayout frame = (LinearLayout) sv.getChildAt(0);
-        LinearLayout img = (LinearLayout)frame.getChildAt(0);
-        LinearLayout title_line = (LinearLayout)frame.getChildAt(1);
+        LinearLayout img = (LinearLayout)frame.getChildAt(1);
+        LinearLayout title_line = (LinearLayout)frame.getChildAt(2);
+        LinearLayout del_line = (LinearLayout)frame.getChildAt(0);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(300, WRAP_CONTENT);
 
-        File myFolder = new File("sdcard/hikingPal/saveTrail/");
-        File[] myFiles = myFolder.listFiles();
+        final File myFolder = new File("sdcard/hikingPal/saveTrail/");
+        final File[] myFiles = myFolder.listFiles();
 
         if(myFolder.isDirectory()){
             if( myFiles != null){
-                for (File child : myFiles){
+                for (final File child : myFiles){
                     img.getLayoutParams().width = WRAP_CONTENT;
                     img.getLayoutParams().height = 470;
                     //ic.LayoutParams.setMargins();
                     //left, top, right, bot
-                    img.setPadding(20, 20, 20, 20);
+                    img.setPadding(20, 40, 20, 20);
                     Bitmap myBitmap = BitmapFactory.decodeFile(child.getAbsolutePath());
                     final ImageView myImage = imageFiller(myBitmap, child.getAbsolutePath());
                     myImage.setScaleType(ImageView.ScaleType.FIT_START);
                     img.addView(myImage, lp);
+
                     final TextView title = new TextView(this.getActivity());
+                    final String img_name = child.getName();
                     title.setText(child.getName());
                     title.setPadding(30,0,20,10);
+                    title.setTextColor(0xFFFDFDFD);
                     title_line.addView(title, lp);
+
+                    final ImageButton del = new ImageButton(this.getActivity());
+                    del.setImageResource(R.drawable.delete);
+                    del.setPadding(230,15,0,0);
+                    del.setBackgroundColor(0x00ffffff);
+                    del_line.addView(del,lp);
+                    del.setOnClickListener(new View.OnClickListener(){
+
+                        @Override
+                        public void onClick(View view) {
+                            Log.d("del clicked",img_name);
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("Delete?")
+                                    .setMessage("Do you want to delete this saved trail permanently? ")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            File current_img = new File(myFolder,img_name);
+                                            boolean deleted = current_img.delete();
+                                            if(deleted==true){
+                                                Log.d("del clicked","deleted");
+                                            }
+                                            // TODO: 2017-04-03  delete the trail from the database
+
+                                            FragmentTransaction tr = getFragmentManager().beginTransaction();
+                                            curFrag2 = new ViewHistoryFragment();
+
+                                            tr.replace(R.id.fragment_container_med1, curFrag2);
+                                            tr.commit();
+
+                                            Toast.makeText(getActivity(), "trail deleted!", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            //do nothing
+                                        }
+                                    })
+                                    .show();
+
+                        }
+                    });
                 }
-            }else{
-                //display nothing
+            }
+            else{
             }
         }else{
             //display nothing
@@ -78,7 +131,6 @@ public class ViewHistoryFragment extends Fragment {
     }
 
     private ImageView imageFiller(Bitmap myBitmap, String path) {
-
         final String mapImagePath = path;
         ImageView iv = new ImageView(this.getActivity());
         iv.setImageBitmap(myBitmap);
@@ -96,8 +148,6 @@ public class ViewHistoryFragment extends Fragment {
                                 String mapImageString = hikingPalStorage.getMapImage(mapImagePath);
                                 MainActivity mainActivity = (MainActivity) getActivity();
                                 mainActivity.sendMessageSlow( mapImageString);
-
-
                             }
                         })
                         .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
