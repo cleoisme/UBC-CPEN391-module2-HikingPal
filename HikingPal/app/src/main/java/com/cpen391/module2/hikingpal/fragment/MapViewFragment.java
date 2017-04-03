@@ -73,6 +73,17 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     private ArrayList<LatLng> points;
     Polyline line;
 
+    //properties saved in database
+    public static long myID = 0;
+    public static String myDate = null;
+    public static String myPath = null;
+    public static long myDuration = 0;
+    public static long myDistance = 0;
+    public static List<String> mySpots = null;
+    public static int myRating = -1;
+    //hardcoded
+    public static int subscribe = 0;
+
     public MapViewFragment() {
 
     }
@@ -85,6 +96,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     public boolean initMap = true;
+    static private MapImageStorage mapImageStorage;
 
     public static List<Marker> markerList = new ArrayList<Marker>();
     @Override
@@ -94,6 +106,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         points = new ArrayList<LatLng>();
+        mapImageStorage = new MapImageStorage(getContext());
 
         mapView.getMapAsync(new OnMapReadyCallback() {
 
@@ -126,10 +139,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             initMap = false;
                             zoomable = 1;
                         }
-//                        else{
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLng(
-//                                    new LatLng(location.getLatitude(), location.getLongitude())));
-//                        }
 
                         latlng = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -315,53 +324,34 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     @Override
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
-                                        try {
-                                            final long myID = System.currentTimeMillis();
-                                            final String myDate = (new Date(myID)).toString();
-                                            final String myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
 
-                                            boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
+                                        myID = System.currentTimeMillis();
 
-                                            //hardcoded
-                                            final long myDuration = Duration;
-                                            final long myDistance = (long) totalDistance;
+                                        //save the image
+                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
 
-                                            final List<String> mySpots = null;
-                                            final MapImageStorage mis = new MapImageStorage(getActivity());
-                                            final int subscribe = 0;
-                                            //write to storage
+                                        if (result) {
+                                            new AlertDialog.Builder(getActivity())
+                                                    .setTitle("Successfully Saved!")
+                                                    .setMessage("Do you want to rate the current track? ")
+                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            ((MainActivity) getActivity()).sendMessage("P");
+                                                            //TODO: 2017-04-03 update the rating for the current image before saving it
 
-                                            // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
-
-                                            if (result) {
-                                                new AlertDialog.Builder(getActivity())
-                                                        .setTitle("Successfully Saved!")
-                                                        .setMessage("Do you want to rate the current track? ")
-                                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                                ((MainActivity) getActivity()).sendMessage("P");
-                                                                //TODO: 2017-04-03 update the rating for the current image before saving it
-
-
-                                                            }
-                                                        })
-                                                        .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                                int myRating = -1;
-                                                                mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
-
-                                                            }
-                                                        })
-                                                        .show();
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            saveToStorage();
+                                                        }
+                                                    })
+                                                    .show();
                                             } else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
 
                                         FragmentTransaction tr = getFragmentManager().beginTransaction();
                                         curFrag2 = new ViewHistoryFragment();
@@ -394,6 +384,20 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+    }
+
+    //the save function that can be used in MainActivity
+    public static void saveToStorage() {
+        myDate = (new Date(myID)).toString();
+        myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
+        myDuration = Duration;
+        myDistance = (long) totalDistance;
+        mySpots = null;
+        //hardcoded
+        subscribe = 0;
+
+        //write to storage
+        mapImageStorage.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
     }
 
 
