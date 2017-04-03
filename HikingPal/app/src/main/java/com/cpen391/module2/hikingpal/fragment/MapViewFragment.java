@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
+import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
 import static com.cpen391.module2.hikingpal.MainActivity.running;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 
@@ -351,6 +353,13 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
+
+
+                                        FragmentTransaction tr = getFragmentManager().beginTransaction();
+                                        curFrag2 = new ViewHistoryFragment();
+                                        tr.replace(R.id.fragment_container_med1, curFrag2);
+                                        tr.hide(curFrag2);
+                                        tr.commit();
 
                                         mMap.clear();
                                         points.clear();

@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/view_history_ll"
-    android:background="#00ffffff"
+    android:background="#986a6c99"
     android:orientation="horizontal"
     android:paddingTop="0dp"
     android:paddingStart="0dp"
     android:paddingLeft="0dp">
+
+
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -22,15 +24,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#986a6c99">
+            android:background="#00ffffff">
+
 
             <LinearLayout
-                 android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/del_line"
+                android:layout_marginBottom="-50dp"
+                android:orientation="horizontal"
+                android:background="#00ffffff"
+                android:translationZ="10dp">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/image_line"
+                android:background="#00ffffff"
                 android:gravity="left">
-
            </LinearLayout>
 
             <LinearLayout
@@ -38,11 +52,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/title_line"
+                android:background="#00ffffff"
                 android:gravity="left">
             </LinearLayout>
+
 
         </LinearLayout>
 
     </HorizontalScrollView>
+
+
 
 </FrameLayout>
