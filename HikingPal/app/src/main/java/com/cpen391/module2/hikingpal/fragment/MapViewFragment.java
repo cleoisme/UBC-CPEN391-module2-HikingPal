@@ -20,8 +20,8 @@ import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.MapImageStorage;
-import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
+import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -314,20 +314,20 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
                                         try {
-                                            long myID = System.currentTimeMillis();
-                                            //hardcoded
-                                            long myDuration = Duration;
-                                            long myDistance = (long) totalDistance;
-                                            int myRating = 5;
-                                            List<String> mySpots = null;
-                                            String myDate = (new Date(myID)).toString();
-                                            int subscribe = 0;
-                                            String myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
+                                            final long myID = System.currentTimeMillis();
+                                            final String myDate = (new Date(myID)).toString();
+                                            final String myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
 
                                             boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
-                                            MapImageStorage mis = new MapImageStorage(getActivity());
+
+                                            //hardcoded
+                                            final long myDuration = Duration;
+                                            final long myDistance = (long) totalDistance;
+
+                                            final List<String> mySpots = null;
+                                            final MapImageStorage mis = new MapImageStorage(getActivity());
+                                            final int subscribe = 0;
                                             //write to storage
-                                            mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
                                             // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
 
@@ -339,11 +339,16 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                                 ((MainActivity) getActivity()).sendMessage("P");
+                                                                //TODO: 2017-04-03 update the rating for the current image before saving it
+
+
                                                             }
                                                         })
                                                         .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int i) {
+                                                                int myRating = -1;
+                                                                mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
                                                             }
                                                         })
@@ -381,6 +386,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
+
 
     private void autoZoom(){
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
