@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -52,6 +53,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,11 +61,10 @@ import java.util.HashMap;
 
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
+import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
-import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
-import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.zoomable;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
@@ -87,6 +88,13 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+
+    public static FloatingActionButton dfb;
+
+    public static ViewHistoryFragment curFrag2;
+    public static FavTrailsFragment curFrag3;
+    ChatFragment curFrag4;
+    AnnouncementFragment curFrag5;
 
     private StringBuilder mBluetoothData = new StringBuilder();
     private static final char BLUETOOTH_RATE = 'P';
@@ -114,6 +122,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        File direct = new File(Environment.getExternalStorageDirectory()+"/hikingPal/saveTrail");
+
+        if(!direct.exists()) {
+            if(direct.mkdir());
+            Log.d("hhh","folder created");
+        }
 
         //setup the database
         mapImageStorage = new MapImageStorage(getApplicationContext());
@@ -171,6 +185,13 @@ public class MainActivity extends AppCompatActivity
 
         //brings up the notification after dark
         Notifier();
+        app_start = true;
+        newtrailFrag = new NewTrailFragment();
+        dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
+        curFrag2 = new ViewHistoryFragment();
+        curFrag3 = new FavTrailsFragment();
+        curFrag4 = new ChatFragment();
+        curFrag5 = new AnnouncementFragment();
 
     }
 
@@ -212,6 +233,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.INTERNET,
+
         };
 
         for (int i = 0; i < permissions.length; i++) {
@@ -240,49 +262,47 @@ public class MainActivity extends AppCompatActivity
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction ft = fm.beginTransaction();
 
-        FrameLayout fc = (FrameLayout) findViewById(R.id.frag_container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout fcl = (FrameLayout) findViewById(R.id.fragment_container_long);
-        FrameLayout fcs = (FrameLayout) findViewById(fragment_container_small);
-        FrameLayout fcm1 = (FrameLayout) findViewById(fragment_container_med1);
-        FrameLayout fcm2 = (FrameLayout) findViewById(fragment_container_med2);
-        FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-            Log.d("hhh:","1");
         }else if(fcl.isDirty()){
             fcl.removeAllViewsInLayout();
             if(mapFragment != null){
                 GetNearbyPlacesData.clearPin();
-                ft.add(R.id.fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+                ft.show(newtrailFrag);
                 setButtonText(trailButton,buttonNum);
-                Log.d("buttonNum: %d", String.valueOf(buttonNum));
                 count++;
+                getSupportActionBar().setTitle("New Trail");
             }
-            ft.addToBackStack(null);
             ft.commit();
-        } else if (fcs.isDirty()) {
-            fcs.removeAllViewsInLayout();
+        } else if (newtrailFrag.isVisible()) {
+            ft.hide(newtrailFrag);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
-            // TODO: 2017-03-22 need to warn user to save before clear the map
-            mMap.clear();
-            Log.d("hhh:","2");
-        }else if(fcm1.isDirty()){
-            fcm1.removeAllViewsInLayout();
+            ft.commit();
+        }else if (curFrag2.isVisible()) {
+            ft.hide(curFrag2);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            fc.removeAllViews();
-            dfb.hide();
-            Log.d("hhh:","3");
-        }else if(fcm2.isDirty()){
-            fcm2.removeAllViewsInLayout();
+            ft.commit();
+        }else if(curFrag3.isVisible()){
+            ft.hide(curFrag3);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            dfb.hide();
-            Log.d("hhh:","4");
-        }else {
+            ft.commit();
+        }
+        else if(curFrag4.isVisible()){
+            ft.hide(curFrag4);
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            ft.commit();
+        }
+        else if(curFrag4.isVisible()){
+            ft.hide(curFrag4);
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+            ft.commit();
+        }
+        else {
             super.onBackPressed();
-            Log.d("hhh:","5");
         }
     }
 
@@ -378,57 +398,73 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+    boolean app_start;
     public void MyFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        newtrailFrag = new NewTrailFragment();
 
-        FloatingActionButton dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
-        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        MapViewFragment mvf = new MapViewFragment();
+        if(app_start == true) {
+            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+            ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
+            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+            ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
+            buttonNum=1;
+            count = 1;
+            app_start = false;
+        }
 
         switch (fragmentID) {
             case R.id.new_trail:
-                buttonNum=1;
-                //NewTrailFragment curFrag1 = new NewTrailFragment();
-            //    ft.add(fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
-                ft.add(fragment_container_small,newtrailFrag, getResources().getString(R.string.new_trail_tag));
-                Log.d("buttonNum2: %d", String.valueOf(buttonNum));
-               // ft.add(R.id.fragment_container, map, getResources().getString(R.string.map_view_tag));
+                ft.hide(curFrag2);
+                ft.hide(curFrag3);
+                ft.hide(curFrag4);
+                ft.hide(curFrag5);
+                ft.show(newtrailFrag);
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 DiscoverFabOnClick(dfb, mapFragment);
-                ft.addToBackStack(null);
                 break;
 
             case R.id.view_history:
-                ViewHistoryFragment curFrag2 = new ViewHistoryFragment();
-                mvf = new MapViewFragment();
-                zoomable = 1;
-                ft.add(R.id.frag_container, mvf, getResources().getString(R.string.map_view_tag));
-                ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
-                ft.addToBackStack(null);
+                ft.hide(newtrailFrag);
+                ft.hide(curFrag3);
+                ft.hide(curFrag4);
+                ft.hide(curFrag5);
+                ft.show(curFrag2);
+                //ft.addToBackStack(null);
                 break;
 
             case R.id.fav_trails:
-                FavTrailsFragment curFrag3 = new FavTrailsFragment();
-                ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
-                // ft.add(R.id.fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
-                getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
+                ft.hide(newtrailFrag);
+                ft.hide(curFrag2);
+                ft.hide(curFrag4);
+                ft.hide(curFrag5);
                 dfb.hide();
-                ft.addToBackStack(null);
+                ft.show(curFrag3);
+                getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
+                //ft.addToBackStack(null);
                 break;
 
             case R.id.chat:
-                ChatFragment curFrag4 = new ChatFragment();
-                ft.add(fragment_container_large, curFrag4, getResources().getString(R.string.group_chat));
                 dfb.hide();
+                ft.hide(newtrailFrag);
+                ft.hide(curFrag2);
+                ft.hide(curFrag3);
+                ft.hide(curFrag5);
+                ft.show(curFrag4);
+                //ft.addToBackStack(null);
                 break;
 
             case R.id.announcement:
-                AnnouncementFragment curFrag5 = new AnnouncementFragment();
-                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
+                ft.hide(newtrailFrag);
+                ft.hide(curFrag2);
+                ft.hide(curFrag3);
+                ft.hide(curFrag4);
+                ft.show(curFrag5);
                 dfb.hide();
                 break;
 
@@ -522,7 +558,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    int count=1;
+    public static int count=1;
     static DiscoverNearbyFragment DF;
     public void DiscoverFabOnClick(FloatingActionButton dfb, final MapViewFragment mv) {
         final MapViewFragment map = mv;
@@ -538,6 +574,7 @@ public class MainActivity extends AppCompatActivity
                 if(count%2!=0){
                     getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
                     ft.add(R.id.fragment_container_long, DF, getResources().getString(R.string.discover_nearby_tag));
+                    ft.hide(newtrailFrag);
                     ft.addToBackStack(null);
                     ft.commit();
                 }
@@ -545,7 +582,7 @@ public class MainActivity extends AppCompatActivity
                     getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                     ft.remove(DF);
                     GetNearbyPlacesData.clearPin();
-                    ft.add(R.id.fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+                    ft.show(newtrailFrag);
                     ft.addToBackStack(null);
                     ft.commit();
                 }
