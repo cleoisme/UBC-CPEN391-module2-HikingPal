@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             ImageView imageView =  (ImageView) navigationView.findViewById(R.id.weather_icon);
-            if(imageView != null) {
+            if(imageView != null && weather.currentCondition.getIcon() != null) {
                 imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
             }
 
@@ -736,7 +736,7 @@ public class MainActivity extends AppCompatActivity
         weatherIcons.put("01n", R.drawable.clearskynight);
         weatherIcons.put("02d", R.drawable.fewcloudsday);
         weatherIcons.put("02n", R.drawable.fewcloudsnight);
-        weatherIcons.put("O3d", R.drawable.scatteredcloudsday);
+        weatherIcons.put("03d", R.drawable.scatteredcloudsday);
         weatherIcons.put("03n", R.drawable.scatteredcloudsnight);
         weatherIcons.put("04d", R.drawable.brokencloudsday);
         weatherIcons.put("04n", R.drawable.brokencloudsnight);
