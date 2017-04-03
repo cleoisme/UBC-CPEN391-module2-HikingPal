@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity
      * @param subTitle status
      */
     private void setStatus(CharSequence subTitle) {
-        final ActionBar actionBar = getActionBar();
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
             return;
         }
