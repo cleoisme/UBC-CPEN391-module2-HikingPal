@@ -1,7 +1,6 @@
 package com.cpen391.module2.hikingpal;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_ALL_MAP_PERMISSIONS = 1;
     static MapViewFragment mapFragment;
-    NewTrailFragment newtrailFrag = new NewTrailFragment();
+    static NewTrailFragment newtrailFrag;
 
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
@@ -97,9 +96,22 @@ public class MainActivity extends AppCompatActivity
     ChatFragment curFrag4;
     AnnouncementFragment curFrag5;
 
+    private StringBuilder mBluetoothData = new StringBuilder();
+    private static final char BLUETOOTH_RATE = 'P';
+    private static final char BLUETOOTH_WEATHER = 'Z';
+
+    private enum State{
+        None,
+        Rate,
+        Weather
+    };
+
+    private State state = State.None;
 
     public static int buttonNum;
     public MapImageStorage mapImageStorage;
+
+    View navigationView;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -135,6 +147,8 @@ public class MainActivity extends AppCompatActivity
         //Inflate the container
         setContentView(R.layout.activity_main);
 
+        navigationView = ((NavigationView)findViewById(R.id.nav_view)).getHeaderView(0);
+
         obtainPermissions();
         CheckGooglePlayServices();
 
@@ -164,7 +178,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
         mapFragment = new MapViewFragment();
         ft.add(fragment_container, mapFragment, getResources().getString(R.string.map_view_tag));
-        //ft.addToBackStack(null);
         ft.commit();
 
         JSONWeatherTask task = new JSONWeatherTask();
@@ -173,6 +186,7 @@ public class MainActivity extends AppCompatActivity
         //brings up the notification after dark
         Notifier();
         app_start = true;
+        newtrailFrag = new NewTrailFragment();
         dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
         curFrag2 = new ViewHistoryFragment();
         curFrag3 = new FavTrailsFragment();
@@ -242,7 +256,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //// TODO: 2017-04-02 bug need to be fixed
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
@@ -315,9 +328,8 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-            TextView dateText = (TextView) drawer.findViewById(R.id.date_field);
+            TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
                 SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
@@ -325,13 +337,13 @@ public class MainActivity extends AppCompatActivity
                 dateText.setText(dateString);
             }
 
-            ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
+            ImageView imageView =  (ImageView) navigationView.findViewById(R.id.weather_icon);
             if(imageView != null) {
                 imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
             }
 
 
-            TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
+            TextView textView = (TextView) navigationView.findViewById(R.id.weather_info);
             mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
@@ -379,7 +391,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        MapFragmentManager(id);
+        MyFragmentManager(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -387,17 +399,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    boolean app_start = true;
-    public void MapFragmentManager(int fragmentID) {
+    boolean app_start;
+    public void MyFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-
-        //fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//        // MapViewFragment map = new MapViewFragment();
-//        ViewHistoryFragment curFrag2 = new ViewHistoryFragment();
-//        FavTrailsFragment curFrag3 = new FavTrailsFragment();
-//        ChatFragment curFrag4 = new ChatFragment();
-//        AnnouncementFragment curFrag5 = new AnnouncementFragment();
 
         if(app_start == true) {
             ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
@@ -422,7 +427,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.view_history:
-                //ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.hide(newtrailFrag);
@@ -605,7 +610,7 @@ public class MainActivity extends AppCompatActivity
      * @param subTitle status
      */
     private void setStatus(CharSequence subTitle) {
-        final ActionBar actionBar = getActionBar();
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
             return;
         }
@@ -628,7 +633,7 @@ public class MainActivity extends AppCompatActivity
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
+                            MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherText + BLUETOOTH_WEATHER);
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -648,7 +653,24 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getBaseContext(), readMessage + " Stars!", Toast.LENGTH_SHORT).show();
+
+                    if(state == State.None && mBluetoothData.length() == 0){
+                        if(readMessage.charAt(0) == BLUETOOTH_RATE) {
+                            state = State.Rate;
+                        }
+                    }
+                    else {
+                        if(state == State.Rate && readMessage.charAt(0) == BLUETOOTH_RATE) {
+                            int stars = Integer.parseInt(mBluetoothData.toString());
+                            Toast.makeText(getBaseContext(), stars + " Stars!", Toast.LENGTH_SHORT).show();
+                            mBluetoothData.setLength(0);
+                            state = State.None;
+                        }
+                        else{
+                            mBluetoothData.append(readMessage);
+                        }
+                    }
+
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -742,7 +764,7 @@ public class MainActivity extends AppCompatActivity
             Character c = message.charAt(i);
             sendMessage(c.toString());
             try {
-                Thread.sleep(40);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -779,7 +801,7 @@ public class MainActivity extends AppCompatActivity
         weatherIcons.put("01n", R.drawable.clearskynight);
         weatherIcons.put("02d", R.drawable.fewcloudsday);
         weatherIcons.put("02n", R.drawable.fewcloudsnight);
-        weatherIcons.put("O3d", R.drawable.scatteredcloudsday);
+        weatherIcons.put("03d", R.drawable.scatteredcloudsday);
         weatherIcons.put("03n", R.drawable.scatteredcloudsnight);
         weatherIcons.put("04d", R.drawable.brokencloudsday);
         weatherIcons.put("04n", R.drawable.brokencloudsnight);
