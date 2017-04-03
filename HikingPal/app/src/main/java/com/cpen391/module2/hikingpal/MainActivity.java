@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity
     public static int buttonNum;
     public MapImageStorage mapImageStorage;
 
+    View navigationView;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -119,6 +121,8 @@ public class MainActivity extends AppCompatActivity
 
         //Inflate the container
         setContentView(R.layout.activity_main);
+
+        navigationView = ((NavigationView)findViewById(R.id.nav_view)).getHeaderView(0);
 
         obtainPermissions();
         CheckGooglePlayServices();
@@ -293,9 +297,8 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-            TextView dateText = (TextView) drawer.findViewById(R.id.date_field);
+            TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
                 SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
@@ -303,13 +306,13 @@ public class MainActivity extends AppCompatActivity
                 dateText.setText(dateString);
             }
 
-            ImageView imageView = (ImageView) drawer. findViewById(R.id.weather_icon);
+            ImageView imageView =  (ImageView) navigationView.findViewById(R.id.weather_icon);
             if(imageView != null) {
                 imageView.setImageResource(getWeatherIcons().get(weather.currentCondition.getIcon()));
             }
 
 
-            TextView textView = (TextView) drawer.findViewById(R.id.weather_info);
+            TextView textView = (TextView) navigationView.findViewById(R.id.weather_info);
             mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
