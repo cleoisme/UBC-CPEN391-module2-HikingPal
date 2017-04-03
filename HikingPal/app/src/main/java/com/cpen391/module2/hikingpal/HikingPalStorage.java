@@ -3,6 +3,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.cpen391.module2.hikingpal.module.Announcement;
+import com.cpen391.module2.hikingpal.module.Message;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,13 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MapImageStorage {
+public class HikingPalStorage {
 
     FileOutputStream fos;
     DataOutputStream dos;
 
     String mapImage = "MapImages";
-
+    String messagesRoot = "Messages";
+    String announcementsRoot = "Announcements";
 
     private final char BT_MAP_INIT = 'W';
     private final char BT_MAP_DELIMITER = 'Q';
@@ -33,10 +37,12 @@ public class MapImageStorage {
     Context context;
 
     private final static String storage = "storage.json";
+    private final static String messages = "messages.json";
+    private final static String announcements = "announcements.json";
 
     private SharedPreferences settings;
 
-    public MapImageStorage(Context context){
+    public HikingPalStorage(Context context){
         this.context = context;
         this.settings = context.getSharedPreferences("prefs", 0);
     }
@@ -46,21 +52,33 @@ public class MapImageStorage {
         return new ArrayList<String>(Arrays.asList(mapImageArray));
     }
 
+    public List<String> getMessageList() {
+        String[] messageArray = {messages};
+        return new ArrayList<String>(Arrays.asList(messageArray));
+    }
+
+    public List<String> getAnnouncementList() {
+        String[] announcementArray = {announcements};
+        return new ArrayList<String>(Arrays.asList(announcementArray));
+    }
 
     public void setUp() {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(storage, Context.MODE_PRIVATE));
-            write(outputStreamWriter, makeRoot().toString());
+            write(outputStreamWriter, makeRoot(getMapImageList()).toString());
+            OutputStreamWriter outputStreamWriterMessages = new OutputStreamWriter(context.openFileOutput(messages, Context.MODE_PRIVATE));
+            write(outputStreamWriterMessages, makeRoot(getMessageList()).toString());
+            OutputStreamWriter outputStreamWriterAnnouncements = new OutputStreamWriter(context.openFileOutput(announcements, Context.MODE_PRIVATE));
+            write(outputStreamWriterAnnouncements, makeRoot(getAnnouncementList()).toString());
+
         } catch (FileNotFoundException e) {}
     }
 
-
-    private JSONObject makeRoot() {
+    private JSONObject makeRoot(List<String> rootList) {
         JSONObject root =  new JSONObject();
-        List<String> mapImageList = getMapImageList();
         try{
-            for(int i = 0; i < mapImageList.size(); i++){
-                root.put(mapImageList.get(i), new JSONArray());
+            for(int i = 0; i < rootList.size(); i++){
+                root.put(rootList.get(i), new JSONArray());
             }
         } catch (JSONException e) {}
 
@@ -71,12 +89,51 @@ public class MapImageStorage {
 
         JSONObject element = create(imageId, subscribe, myDuration, myDistance, mySpots, myDate, myRating, pathToImage);
 
-        String jsonRoot = readFile();
-
+        String jsonRoot = readFile(storage);
         try {
             write(new OutputStreamWriter(context.openFileOutput(storage, Context.MODE_PRIVATE)), add_to_root(element, jsonRoot, mapImage));
         } catch (FileNotFoundException e) {}
+    }
 
+    public void writeToMessages(int id, int sender, String content) {
+
+        JSONObject element = createMessage(id, sender, content);
+        String jsonRoot = readFile(messages);
+        try {
+            write(new OutputStreamWriter(context.openFileOutput(messages, Context.MODE_PRIVATE)), add_to_root(element, jsonRoot, messagesRoot));
+        } catch (FileNotFoundException e) {}
+
+    }
+
+    private JSONObject createMessage(int id, int sender, String content) {
+        JSONObject element = new JSONObject();
+        try {
+            element.put("id", id);
+            element.put("sender", sender);
+            element.put("content", content);
+
+        } catch (JSONException e) {}
+        return element;
+
+    }
+
+    public void writeToAnnouncements(int id, String content, String title){
+
+        JSONObject element = createAnnoucement(id, content, title);
+        String jsonRoot = readFile(announcements);
+        try {
+            write(new OutputStreamWriter(context.openFileOutput(announcements, Context.MODE_PRIVATE)), add_to_root(element, jsonRoot, announcementsRoot));
+        } catch (FileNotFoundException e) {}
+    }
+
+    private JSONObject createAnnoucement(int id, String content, String title) {
+        JSONObject element = new JSONObject();
+        try {
+            element.put("id", id);
+            element.put("content", content);
+            element.put("title", title);
+        } catch (JSONException e) {}
+        return element;
     }
 
     private JSONObject create(int imageId, int subscribe,  long myDuration, long myDistance, List<String> mySpots, String myDate, int myRating, String pathToImage) {
@@ -96,11 +153,10 @@ public class MapImageStorage {
 
     }
 
-
-    private String readFile(){
+    private String readFile(String storageType){
         InputStreamReader isr;
         try{
-            isr = new InputStreamReader(context.openFileInput(storage));
+            isr = new InputStreamReader(context.openFileInput(storageType));
             return read(isr);
         } catch (FileNotFoundException e){
 
@@ -128,39 +184,28 @@ public class MapImageStorage {
         return root;
     }
 
-    private String add_to_root(JSONObject element, String root, String mapImageType) {
+    private String add_to_root(JSONObject element, String root, String type) {
         assert(element != null);
         try {
             JSONObject jsonRootObject;
             JSONArray jsonArray;
-            // If root object exists
             if (root != "") {
-                // Make a JSON Object from root String
                 jsonRootObject = new JSONObject(root);
-                // Get the JSON Array containing "Foods"
-                jsonArray = jsonRootObject.optJSONArray(mapImageType);
+                jsonArray = jsonRootObject.optJSONArray(type);
                 if (jsonArray != null) {
-                    // Append the new element
                     jsonArray.put(element);
                 }
                 else {
                     jsonArray = new JSONArray();
-                    // Put the new element into the array
                     jsonArray.put(element);
-                    // Add the JSON Array to JSON Root Object
-                    jsonRootObject.put(mapImageType, jsonArray);
+                    jsonRootObject.put(type, jsonArray);
                 }
             }
-            // If root does not exist
             else {
-                // Make a new JSON Root Object
                 jsonRootObject = new JSONObject();
-                // Make a new JSON Array
                 jsonArray = new JSONArray();
-                // Put the new element into the array
                 jsonArray.put(element);
-                // Add the JSON Array to JSON Root Object
-                jsonRootObject.put(mapImageType, jsonArray);
+                jsonRootObject.put(type, jsonArray);
             }
 
             return jsonRootObject.toString();
@@ -178,7 +223,7 @@ public class MapImageStorage {
     }
 
     public JSONArray getArray(String restaurant) {
-        String root = readFile();
+        String root = readFile(storage);
         return extractArray(root, restaurant);
     }
 
@@ -186,7 +231,6 @@ public class MapImageStorage {
         try {
             JSONObject  jsonRootObject = new JSONObject(root);
 
-            // Get the food array from root object
             JSONArray jsonArray = jsonRootObject.optJSONArray(attribute);
 
             return jsonArray;
@@ -249,13 +293,96 @@ public class MapImageStorage {
         return sb.toString();
     }
 
-    public JSONObject getObject(int mapImageId){
+    public List<Message> getAllMessages() {
+        JSONArray jsonArray = extractArray(readFile(messages), messagesRoot);
+        List<Message> messageList = new ArrayList<Message>();
+        int i;
+        for(i = 0; i < jsonArray.length(); i++){
+            try {
+                JSONObject element = jsonArray.getJSONObject(i);
+                Message message = new Message();
+                message.setContent(element.optString("content"));
+                message.setId(element.optLong("id"));
+                message.setSender(element.optInt("sender"));
+                messageList.add(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        String root = readFile();
-        return extractObject(root, mapImageId);
+        }
+        return messageList;
     }
 
-    private JSONObject extractObject(String root, int mapImageId) {
+    public List<Announcement> getAllAnnoucements() {
+        JSONArray jsonArray = extractArray(readFile(announcements), announcementsRoot);
+        List<Announcement> announcementList = new ArrayList<Announcement>();
+        int j;
+        for(j = 0; j < jsonArray.length(); j++){
+            try {
+                JSONObject element = jsonArray.getJSONObject(j);
+                Announcement announcement = new Announcement();
+                announcement.setContent(element.optString("content"));
+                announcement.setId(element.optLong("id"));
+                announcement.setTitle(element.optString("title"));
+                announcementList.add(announcement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return announcementList;
+    }
+
+    public Message getMessage(long id){
+
+        String root = readFile(messages);
+        JSONObject jobject =  extractObject(root, id, "id");
+        Message message = new Message();
+        message.setContent(jobject.optString("content"));
+        message.setId(jobject.optLong("id"));
+        message.setSender(jobject.optInt("sender"));
+        return message;
+    }
+
+    public Announcement getAnnouncment(long id){
+
+        String root = readFile(announcements);
+        JSONObject jobject =  extractObject(root, id, "id");
+        Announcement announcement = new Announcement();
+        announcement.setContent(jobject.optString("content"));
+        announcement.setId(jobject.optLong("id"));
+        announcement.setTitle(jobject.optString("title"));
+        return announcement;
+    }
+
+    public void removeMessage(long id) {
+
+        String root = readFile(messages);
+        if(root == "") return;
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(messages, Context.MODE_PRIVATE));
+            write(outputStreamWriter, removeFromStorage(root, messagesRoot, id).toString());
+        } catch (FileNotFoundException e) {}
+
+    }
+
+    public void removeAnnouncement(long id) {
+
+        String root = readFile(announcements);
+        if(root == "") return;
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(announcements, Context.MODE_PRIVATE));
+            write(outputStreamWriter, removeFromStorage(root, announcements, id).toString());
+        } catch (FileNotFoundException e) {}
+
+    }
+
+    public JSONObject getObject(int mapImageId){
+
+        String root = readFile(storage);
+        return extractObject(root, mapImageId, "imageId");
+    }
+
+    private JSONObject extractObject(String root, int mapImageId, String fieldType) {
 
         try {
             JSONObject  jsonRootObject = new JSONObject(root);
@@ -266,7 +393,27 @@ public class MapImageStorage {
             int i = 0;
             for(i = 0; i < jsonArray.length(); i++){
                 JSONObject element = jsonArray.getJSONObject(i);
-                if(element.optInt("imageId") == mapImageId){
+                if(element.optInt(fieldType) == mapImageId){
+                    return element;
+                }
+            }
+        } catch (JSONException e) {}
+
+        return null;
+    }
+
+    private JSONObject extractObject(String root, long id, String fieldType) {
+
+        try {
+            JSONObject  jsonRootObject = new JSONObject(root);
+
+            // Get the food array from root object
+            JSONArray jsonArray = jsonRootObject.optJSONArray(mapImage);
+
+            int i = 0;
+            for(i = 0; i < jsonArray.length(); i++){
+                JSONObject element = jsonArray.getJSONObject(i);
+                if(element.optLong(fieldType) == id){
                     return element;
                 }
             }
@@ -277,17 +424,19 @@ public class MapImageStorage {
 
     public JSONObject getObject(String mapPath) {
 
-        String root = readFile();
-        return extractObject(root, mapPath);
+        String root = readFile(storage);
+        return extractObject(root, mapPath, "pathToImage");
     }
+
+
 
     public JSONObject getObject(JSONObject jsonObject) {
 
-        String root = readFile();
+        String root = readFile(storage);
         return extractObject(root, jsonObject);
     }
 
-    private JSONObject extractObject(String root, String mapImageId) {
+    private JSONObject extractObject(String root, String mapImageId, String fieldType) {
 
         try {
             JSONObject  jsonRootObject = new JSONObject(root);
@@ -298,7 +447,7 @@ public class MapImageStorage {
             int i = 0;
             for(i = 0; i < jsonArray.length(); i++){
                 JSONObject element = jsonArray.getJSONObject(i);
-                if(element.optString("pathToImage").equals(mapImageId)){
+                if(element.optString(fieldType).equals(mapImageId)){
                     return element;
                 }
             }
@@ -331,7 +480,7 @@ public class MapImageStorage {
 
     public String getAllMapImages(){
 
-        JSONArray jsonArray = extractArray(readFile(), mapImage);
+        JSONArray jsonArray = extractArray(readFile(storage), mapImage);
         StringBuilder sb = new StringBuilder();
         sb.append(BT_MAP_INIT);
 
@@ -360,8 +509,6 @@ public class MapImageStorage {
         }
 
         sb.append(BT_MAP_INIT);
-
-
         return sb.toString();
     }
 
@@ -385,4 +532,72 @@ public class MapImageStorage {
         return sb.toString();
     }
 
+    public void removeMapImage(String path) {
+
+        String root = readFile(storage);
+        if(root == "") return;
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(storage, Context.MODE_PRIVATE));
+            write(outputStreamWriter, removeFromStorage(root, mapImage, path).toString());
+        } catch (FileNotFoundException e) {}
+    }
+
+
+    private JSONObject removeFromStorage(String root, String array, String path){
+
+        try {
+            if (root != "") {
+                JSONObject jsonRootObject = new JSONObject(root);
+                JSONArray jsonArray = jsonRootObject.optJSONArray(array);
+                JSONObject jsonNewRoot = new JSONObject();
+                JSONObject jobject = new JSONObject();
+                try {
+                    jobject.put("mapPath", path);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JSONArray newArray = new JSONArray();
+                boolean remove = true;
+                for(int i = 0; i < jsonArray.length(); i++) {
+                    if(!jobject.optString("mapPath").equals(jsonArray.getJSONObject(i).optString("pathToImage").toString())){
+                        newArray.put(jsonArray.get(i));
+                    }
+                    else {
+                        remove = false;
+                    }
+                }
+                jsonNewRoot.put(array, newArray);
+                return jsonNewRoot;
+            }
+
+        }  catch (JSONException e) {}
+
+        return null;
+    }
+
+    private JSONObject removeFromStorage(String root, String array, long id){
+
+        try {
+            if (root != "") {
+                JSONObject jsonRootObject = new JSONObject(root);
+                JSONArray jsonArray = jsonRootObject.optJSONArray(array);
+                JSONObject jsonNewRoot = new JSONObject();
+                JSONArray newArray = new JSONArray();
+                boolean remove = true;
+                for(int i = 0; i < jsonArray.length(); i++) {
+                    if(id == jsonArray.getJSONObject(i).optLong("id")){
+                        newArray.put(jsonArray.get(i));
+                    }
+                    else {
+                        remove = false;
+                    }
+                }
+                jsonNewRoot.put(array, newArray);
+                return jsonNewRoot;
+            }
+
+        }  catch (JSONException e) {}
+
+        return null;
+    }
 }

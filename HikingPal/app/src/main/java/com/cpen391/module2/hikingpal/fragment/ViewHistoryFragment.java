@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cpen391.module2.hikingpal.MainActivity;
-import com.cpen391.module2.hikingpal.MapImageStorage;
+import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.R;
 
 import java.io.File;
@@ -92,8 +92,8 @@ public class ViewHistoryFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // TODO: 2017-04-01 send the corresponding data to the touchscreen
-                                MapImageStorage mapImageStorage = new MapImageStorage(getContext());
-                                String mapImageString = mapImageStorage.getMapImage(mapImagePath);
+                                HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
+                                String mapImageString = hikingPalStorage.getMapImage(mapImagePath);
                                 MainActivity mainActivity = (MainActivity) getActivity();
                                 mainActivity.sendMessageSlow( mapImageString);
 

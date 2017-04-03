@@ -19,7 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
-import com.cpen391.module2.hikingpal.MapImageStorage;
+import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -325,7 +325,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                             String myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
 
                                             boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
-                                            MapImageStorage mis = new MapImageStorage(getActivity());
+                                            HikingPalStorage mis = new HikingPalStorage(getActivity());
                                             //write to storage
                                             mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
 
