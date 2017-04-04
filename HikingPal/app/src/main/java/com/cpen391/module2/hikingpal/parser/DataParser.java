@@ -71,7 +71,6 @@ public class DataParser {
             longitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = googlePlaceJson.getString("reference");
 
-            // TODO: 2017-03-28 get image not working!
             if (!googlePlaceJson.isNull("photos")) {
                 PhotoURL = googlePlaceJson.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
                 Log.d("oh yes","hhhh");

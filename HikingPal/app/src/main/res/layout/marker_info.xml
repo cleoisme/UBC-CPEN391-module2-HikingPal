@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/image"
         android:text="save"
-        android:weightSum="1"/>
+        android:weightSum="1"
+        android:visibility="invisible"/>
 
     <!--<TextView-->
         <!--android:id="@+id/info"-->

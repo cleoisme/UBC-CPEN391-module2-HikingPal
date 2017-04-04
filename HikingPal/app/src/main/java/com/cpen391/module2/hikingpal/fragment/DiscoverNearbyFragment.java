@@ -25,7 +25,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
 import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.mMap;
 import static com.cpen391.module2.hikingpal.fragment.MapViewFragment.nearbyCase;
 
@@ -45,16 +48,20 @@ public class DiscoverNearbyFragment extends Fragment {
 
     public static Button saveNbButton;
 
+    public static List<String> myspots_list = new ArrayList<String>();
+    public static int ms_i;
 
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final LinearLayout ll = (LinearLayout)inflater.inflate(R.layout.discover_nearby_frag, container, false);
 
+        myspots_list.clear();
+        ms_i=0;
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
+            public boolean onMarkerClick(final Marker marker) {
                 AlertDialog dialog;
                 //Toast.makeText(getActivity(), "clicked!.", Toast.LENGTH_SHORT).show();
 
@@ -64,7 +71,6 @@ public class DiscoverNearbyFragment extends Fragment {
 
                 ImageView img = (ImageView) v.findViewById(R.id.image);
 
-
                 //Log.d("url N? ",marker.getSnippet());
                 if(marker.getSnippet()==null){
 
@@ -73,7 +79,6 @@ public class DiscoverNearbyFragment extends Fragment {
                     }
                     else if(nearbyCase==2){ //park
                         img.setImageDrawable(getResources().getDrawable(R.drawable.park));
-
                     }
                     else if(nearbyCase==3){ //gym
                         img.setImageDrawable(getResources().getDrawable(R.drawable.gym));
@@ -82,7 +87,6 @@ public class DiscoverNearbyFragment extends Fragment {
                     }
                     else if(nearbyCase==4){ //store
                         img.setImageDrawable(getResources().getDrawable(R.drawable.store));
-
                     }
                     //Log.d("url ","nothing");
                 }else {
@@ -93,18 +97,30 @@ public class DiscoverNearbyFragment extends Fragment {
                     new DownloadImageTask(img).execute(URL);
                 }
 
-
                 builder.setTitle(marker.getTitle());
                 dialog = builder.create();
                 dialog.show();
 
                 saveNbButton = (Button) v.findViewById(R.id.saveNbButton);
-                saveNbButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getActivity(), "saved!.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if(buttonNum==1){
+                    saveNbButton.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    saveNbButton.setVisibility(View.VISIBLE);
+                    saveNbButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(myspots_list.contains(marker.getTitle())==false){
+                                Toast.makeText(getActivity(), "saved!.", Toast.LENGTH_SHORT).show();
+                                myspots_list.add(ms_i,marker.getTitle());
+                                ms_i++;
+                            }else {
+                                Toast.makeText(getActivity(), "already saved!.", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.d("myspots_list", String.valueOf(myspots_list));
+                        }
+                    });
+                }
 
                 return true;
             }

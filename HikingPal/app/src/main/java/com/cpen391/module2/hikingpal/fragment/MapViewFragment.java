@@ -19,10 +19,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.HikingPalStorage;
-import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
+import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -48,6 +48,8 @@ import java.util.List;
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
 import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
 import static com.cpen391.module2.hikingpal.MainActivity.running;
+import static com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment.myspots_list;
+import static com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment.ms_i;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 
 /**
@@ -116,7 +118,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                 mMap = googleMap;
 
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
+
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
@@ -266,7 +268,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         Bitmap b=bitmapdraw.getBitmap();
         Bitmap icon = Bitmap.createScaledBitmap(b, width, height, false);
 
-        // TODO: 2017-04-01 save the duration and distance
         long currentTime = System.currentTimeMillis();
         Duration = (currentTime - startTime) / 1000;
         totalDistance = distance;
@@ -302,6 +303,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             points.clear();
                             zoomable = 0;
                             buttonNum = 1;
+                            myspots_list.clear();
+                            ms_i = 0;
                             totalDistance=0;
                             running = false;
                             trailButton.setText("Start");
@@ -310,7 +313,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             //running = false;
-                            // TODO: 2017-03-22 save the map
                             if(buttonNum==1){
                                 Toast.makeText(getActivity(), "you have not start a trail yet!.", Toast.LENGTH_SHORT).show();
                             }
@@ -362,6 +364,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         points.clear();
                                         buttonNum = 1;
                                         initMap = true;
+                                        myspots_list.clear();
+                                        ms_i = 0;
                                         zoomable = 0;
                                         totalDistance = 0;
                                         running = false;
@@ -391,7 +395,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
         myDuration = Duration;
         myDistance = (long) totalDistance;
-        mySpots = null;
+        mySpots = myspots_list;
         myRating = rating;
         //hardcoded
         subscribe = 0;

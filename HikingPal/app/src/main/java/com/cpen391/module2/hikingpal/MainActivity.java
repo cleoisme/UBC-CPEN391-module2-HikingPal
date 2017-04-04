@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -159,12 +158,13 @@ public class MainActivity extends AppCompatActivity
         dfab.hide();
 
         //setup the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
             }
@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     void obtainPermissions() {
-
         String[] permissions = {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -277,12 +276,10 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        FrameLayout fcl = (FrameLayout) findViewById(R.id.fragment_container_long);
-
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else if(fcl.isDirty()){
-            fcl.removeAllViewsInLayout();
+        }else if(DF.isVisible()){
+            ft.remove(DF);
             if(mapFragment != null){
                 GetNearbyPlacesData.clearPin();
                 ft.show(newtrailFrag);
@@ -377,12 +374,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
