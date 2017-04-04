@@ -7,7 +7,7 @@ public class Message {
     private String message;
     private int sender;
 
-    public Message(int id, String message, int sender) {
+    public Message(long id, String message, int sender) {
         this.id = id;
         this.message = message;
         this.sender = sender;
