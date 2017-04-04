@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.module.Message;
 import com.cpen391.module2.hikingpal.module.MessageAdapter;
@@ -36,7 +37,8 @@ public class ChatFragment extends Fragment {
     private static RecyclerView.Adapter mAdapter;
     private static LinearLayoutManager mLayoutManager;
     private static List<Message> messageList = new ArrayList<Message>();
-    static int i = 1;
+    static int msg_id;
+    HikingPalStorage hikingPalStorage;
 
     @Nullable
     @Override
@@ -53,21 +55,52 @@ public class ChatFragment extends Fragment {
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        hikingPalStorage = new HikingPalStorage(getContext());
+        if(hikingPalStorage.getAllMessages()!=null) {
+            messageList = hikingPalStorage.getAllMessages();
+            msg_id = messageList.size();
+        }else {
+            msg_id=0;
+        }
 
         mAdapter = new MessageAdapter(getActivity().getBaseContext(), messageList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mLayoutManager.scrollToPosition(i);
+        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v,
+                                       int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    mRecyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if(mRecyclerView.getAdapter().getItemCount()>=1) {
+                                mRecyclerView.smoothScrollToPosition(
+                                        mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
+                        }
+                    }, 100);
+                }
+            }
+        });
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String textContent = sendText.getText().toString();
                 if(textContent!=null) {
-                    messageList.add(new Message(i,textContent,0));
-                    i++;
+
+                    messageList.add(new Message(msg_id,textContent,0));
+                    hikingPalStorage.writeToMessages(msg_id,0,textContent);
+                    msg_id++;
                     mAdapter.notifyDataSetChanged();
                     sendText.setText("");
+                    if(mRecyclerView.getAdapter().getItemCount()>=1) {
+                        mRecyclerView.smoothScrollToPosition(
+                                mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
                     Log.d("msg", String.valueOf(messageList));
                 }
             }
@@ -75,6 +108,7 @@ public class ChatFragment extends Fragment {
 
         return ll;
     }
+
 
     public void hindkb() {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(getContext().INPUT_METHOD_SERVICE);
@@ -84,4 +118,14 @@ public class ChatFragment extends Fragment {
             }
         }
     }
+
+    // TODO: 2017-04-04 get data from bluetooth
+    public void received_msg(String content){
+        messageList.add(new Message(msg_id,content,1));
+        hikingPalStorage.writeToMessages(msg_id,0,content);
+        msg_id++;
+        mAdapter.notifyDataSetChanged();
+    }
+
+
 }

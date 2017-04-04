@@ -48,7 +48,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.mTextView.setText(messageList.get(position).getContent());
-
     }
 
     @Override
@@ -60,11 +59,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
 
-        //if () {
+        if (message.getSender()==0) {
             return SENDER;
-        //} else {
-          //  return RECIPIENT;
-        //}
+        } else {
+            return RECIPIENT;
+        }
 
     }
 
