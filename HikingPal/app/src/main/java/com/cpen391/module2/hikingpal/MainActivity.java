@@ -42,7 +42,6 @@ import com.cpen391.module2.hikingpal.bluetooth.DeviceListActivity;
 import com.cpen391.module2.hikingpal.fragment.AnnouncementFragment;
 import com.cpen391.module2.hikingpal.fragment.ChatFragment;
 import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
-import com.cpen391.module2.hikingpal.fragment.FavTrailsFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
@@ -63,7 +62,6 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
-import static com.cpen391.module2.hikingpal.R.id.fragment_container_med2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
@@ -93,7 +91,6 @@ public class MainActivity extends AppCompatActivity
     public static FloatingActionButton dfb;
 
     public static ViewHistoryFragment curFrag2;
-    public static FavTrailsFragment curFrag3;
     public static ChatFragment curFrag4;
     public static AnnouncementFragment curFrag5;
 
@@ -202,7 +199,6 @@ public class MainActivity extends AppCompatActivity
         newtrailFrag = new NewTrailFragment();
         dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
         curFrag2 = new ViewHistoryFragment();
-        curFrag3 = new FavTrailsFragment();
         curFrag4 = new ChatFragment();
         curFrag5 = new AnnouncementFragment();
         DF = new DiscoverNearbyFragment();
@@ -300,12 +296,7 @@ public class MainActivity extends AppCompatActivity
             ft.hide(curFrag2);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
-        }else if(curFrag3.isVisible()){
-            ft.hide(curFrag3);
-            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            ft.commit();
-        }
-        else if(curFrag4.isVisible()){
+        }else if(curFrag4.isVisible()){
             ft.hide(curFrag4);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
@@ -423,7 +414,6 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
             ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-            ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
             ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
             ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
             buttonNum=1;
@@ -439,7 +429,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
         dfb.hide();
         ft.hide(newtrailFrag);
-        ft.hide(curFrag3);
         ft.hide(curFrag4);
         ft.hide(curFrag5);
         ft.show(curFrag2);
@@ -452,7 +441,6 @@ public class MainActivity extends AppCompatActivity
         if(app_start == true) {
             ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
             ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-            ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
             ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
             ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
             buttonNum=1;
@@ -464,7 +452,6 @@ public class MainActivity extends AppCompatActivity
         switch (fragmentID) {
             case R.id.new_trail:
                 ft.hide(curFrag2);
-                ft.hide(curFrag3);
                 ft.hide(curFrag4);
                 ft.hide(curFrag5);
                 ft.show(newtrailFrag);
@@ -477,7 +464,6 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.hide(newtrailFrag);
-                ft.hide(curFrag3);
                 ft.hide(curFrag4);
                 ft.hide(curFrag5);
                 ft.show(curFrag2);
@@ -486,24 +472,10 @@ public class MainActivity extends AppCompatActivity
                 //ft.addToBackStack(null);
                 break;
 
-            case R.id.fav_trails:
-                ft.hide(newtrailFrag);
-                ft.hide(curFrag2);
-                ft.hide(curFrag4);
-                ft.hide(curFrag5);
-                dfb.hide();
-                ft.show(curFrag3);
-                ft.remove(DF);
-                count =1;
-                getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
-                //ft.addToBackStack(null);
-                break;
-
             case R.id.chat:
                 dfb.hide();
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag2);
-                ft.hide(curFrag3);
                 ft.hide(curFrag5);
                 ft.show(curFrag4);
                 ft.remove(DF);
@@ -515,7 +487,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.announcement:
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag2);
-                ft.hide(curFrag3);
                 ft.hide(curFrag4);
                 ft.show(curFrag5);
                 ft.remove(DF);

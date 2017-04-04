@@ -12,10 +12,6 @@
                 android:icon="@drawable/ic_menu_viewhistory"
                 android:title="View Trail History" />
 
-            <item
-                android:id="@+id/fav_trails"
-                android:icon="@drawable/ic_menu_unused"
-                android:title="My Favorite Trails" />
         </menu>
     </item>
 
