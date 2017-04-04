@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
     private State state = State.None;
 
     public static int buttonNum;
-    public MapImageStorage mapImageStorage;
+    public HikingPalStorage hikingPalStorage;
 
     View navigationView;
 
@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         //setup the database
-        mapImageStorage = new MapImageStorage(getApplicationContext());
+        hikingPalStorage = new HikingPalStorage(getApplicationContext());
         if((savedInstanceState != null ) && (savedInstanceState.getBoolean("SetupMapStorage") != true)){
-            mapImageStorage.setUp();
+            hikingPalStorage.setUp();
         }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

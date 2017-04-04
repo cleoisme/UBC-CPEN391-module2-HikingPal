@@ -20,9 +20,9 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
-import com.cpen391.module2.hikingpal.MapImageStorage;
-import com.cpen391.module2.hikingpal.R;
+import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
+import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -96,7 +96,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     public boolean initMap = true;
-    static private MapImageStorage mapImageStorage;
+    static private HikingPalStorage mapImageStorage;
 
     public static List<Marker> markerList = new ArrayList<Marker>();
     @Override
@@ -106,7 +106,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         points = new ArrayList<LatLng>();
-        mapImageStorage = new MapImageStorage(getContext());
+        mapImageStorage = new HikingPalStorage(getContext());
 
         mapView.getMapAsync(new OnMapReadyCallback() {
 
@@ -324,7 +324,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     @Override
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
-
                                         myID = System.currentTimeMillis();
 
                                         //save the image
