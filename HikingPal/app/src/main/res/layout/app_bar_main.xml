@@ -89,7 +89,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragment_container_large">
+        android:id="@+id/fragment_container_large"
+
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="50dp">
 
     </FrameLayout>
 
@@ -97,7 +101,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragment_container_large2">
+        android:id="@+id/fragment_container_large2"
+
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="50dp">
 
     </FrameLayout>
 
