@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity
     private StringBuffer mOutStringBuffer;
 
     private String mWeatherText = null;
+    private String mWeatherIcon = null;
 
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
@@ -351,7 +352,8 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            MainActivity.this.sendMessageSlow("Z" + mWeatherText + "Z");
+            mWeatherIcon = weather.currentCondition.getIcon();
+            MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherIcon + mWeatherText + BLUETOOTH_WEATHER );
         }
     }
 
@@ -663,7 +665,7 @@ public class MainActivity extends AppCompatActivity
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherText + BLUETOOTH_WEATHER);
+                            MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherIcon + mWeatherText + BLUETOOTH_WEATHER);
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -851,7 +853,7 @@ public class MainActivity extends AppCompatActivity
         weatherIcons.put("13d", R.drawable.snowday);
         weatherIcons.put("13n", R.drawable.snownight);
         weatherIcons.put("50d", R.drawable.mistday);
-        weatherIcons.put("50d", R.drawable.mistnight);
+        weatherIcons.put("50n", R.drawable.mistnight);
 
         return weatherIcons;
     }
