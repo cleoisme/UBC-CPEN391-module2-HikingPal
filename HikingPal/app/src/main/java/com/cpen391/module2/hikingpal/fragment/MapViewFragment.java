@@ -67,6 +67,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     public static long stopTime;
     public static double totalDistance = 0;
     public static int zoomable = 0;
+    public static int rating = 0;
 
     private ArrayList<LatLng> points;
     Polyline line;

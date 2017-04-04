@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity
     private enum State{
         None,
         Rate,
-        Weather
+        Weather,
+        Map,
     };
 
     private State state = State.None;
@@ -628,6 +629,7 @@ public class MainActivity extends AppCompatActivity
                     else {
                         if(state == State.Rate && readMessage.charAt(0) == BLUETOOTH_RATE) {
                             int stars = Integer.parseInt(mBluetoothData.toString());
+                            mapFragment.rating = stars + 1;
                             Toast.makeText(getBaseContext(), stars + " Stars!", Toast.LENGTH_SHORT).show();
                             mBluetoothData.setLength(0);
                             state = State.None;
