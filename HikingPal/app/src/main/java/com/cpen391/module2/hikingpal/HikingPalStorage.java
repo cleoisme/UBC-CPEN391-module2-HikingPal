@@ -324,6 +324,7 @@ public class HikingPalStorage {
         JSONArray jsonArray = extractArray(readFile(announcements), announcementsRoot);
         List<Announcement> announcementList = new ArrayList<Announcement>();
         int j;
+        if (jsonArray == null) return null;
         for(j = 0; j < jsonArray.length(); j++){
             try {
                 JSONObject element = jsonArray.getJSONObject(j);
