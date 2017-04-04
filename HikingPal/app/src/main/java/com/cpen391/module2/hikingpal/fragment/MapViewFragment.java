@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.cpen391.module2.hikingpal.MainActivity;
-import com.cpen391.module2.hikingpal.MapImageStorage;
+import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.Utility.GetNearbyPlacesData;
 import com.cpen391.module2.hikingpal.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -45,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
+import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
 import static com.cpen391.module2.hikingpal.MainActivity.running;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 
@@ -72,6 +74,17 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     private ArrayList<LatLng> points;
     Polyline line;
 
+    //properties saved in database
+    public static long myID = 0;
+    public static String myDate = null;
+    public static String myPath = null;
+    public static long myDuration = 0;
+    public static long myDistance = 0;
+    public static List<String> mySpots = null;
+    public static int myRating = -1;
+    //hardcoded
+    public static int subscribe = 0;
+
     public MapViewFragment() {
 
     }
@@ -84,6 +97,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     public boolean initMap = true;
+    static private HikingPalStorage mapImageStorage;
 
     public static List<Marker> markerList = new ArrayList<Marker>();
     @Override
@@ -93,6 +107,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         points = new ArrayList<LatLng>();
+        mapImageStorage = new HikingPalStorage(getContext());
 
         mapView.getMapAsync(new OnMapReadyCallback() {
 
@@ -125,10 +140,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                             initMap = false;
                             zoomable = 1;
                         }
-//                        else{
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLng(
-//                                    new LatLng(location.getLatitude(), location.getLongitude())));
-//                        }
 
                         latlng = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -314,47 +325,39 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     @Override
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
-                                        try {
-                                            long myID = System.currentTimeMillis();
-                                            //hardcoded
-                                            long myDuration = Duration;
-                                            long myDistance = (long) totalDistance;
-                                            int myRating = 5;
-                                            List<String> mySpots = null;
-                                            String myDate = (new Date(myID)).toString();
-                                            int subscribe = 0;
-                                            String myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
+                                        myID = System.currentTimeMillis();
 
-                                            boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
-                                            MapImageStorage mis = new MapImageStorage(getActivity());
-                                            //write to storage
-                                            mis.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+                                        //save the image
+                                        boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
 
-                                            // TODO: 2017-03-28 test if we write it correctly, use the read operation/log.e
+                                        if (result) {
+                                            new AlertDialog.Builder(getActivity())
+                                                    .setTitle("Successfully Saved!")
+                                                    .setMessage("Do you want to rate the current track? ")
+                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            ((MainActivity) getActivity()).sendMessage("P");
+                                                            //TODO: 2017-04-03 update the rating for the current image before saving it
 
-                                            if (result) {
-                                                new AlertDialog.Builder(getActivity())
-                                                        .setTitle("Successfully Saved!")
-                                                        .setMessage("Do you want to rate the current track? ")
-                                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                                ((MainActivity) getActivity()).sendMessage("P");
-                                                            }
-                                                        })
-                                                        .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                            }
-                                                        })
-                                                        .show();
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            saveToStorage();
+                                                        }
+                                                    })
+                                                    .show();
                                             } else {
                                                 Toast.makeText(getActivity(), "failed to save!.", Toast.LENGTH_SHORT).show();
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
+
+                                        FragmentTransaction tr = getFragmentManager().beginTransaction();
+                                        curFrag2 = new ViewHistoryFragment();
+                                        tr.replace(R.id.fragment_container_med1, curFrag2);
+                                        tr.hide(curFrag2);
+                                        tr.commit();
 
                                         mMap.clear();
                                         points.clear();
@@ -382,6 +385,21 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
     }
+
+    //the save function that can be used in MainActivity
+    public static void saveToStorage() {
+        myDate = (new Date(myID)).toString();
+        myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
+        myDuration = Duration;
+        myDistance = (long) totalDistance;
+        mySpots = null;
+        //hardcoded
+        subscribe = 0;
+
+        //write to storage
+        mapImageStorage.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+    }
+
 
     private void autoZoom(){
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
