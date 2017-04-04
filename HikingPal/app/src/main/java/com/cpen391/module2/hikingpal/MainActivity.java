@@ -710,7 +710,7 @@ public class MainActivity extends AppCompatActivity
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
 
-                    Toast.makeText(getBaseContext(), readMessage, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getBaseContext(), readMessage, Toast.LENGTH_SHORT).show();
                     if(readMessage.charAt(0) == 'Y'){
                         // todo
                     }
