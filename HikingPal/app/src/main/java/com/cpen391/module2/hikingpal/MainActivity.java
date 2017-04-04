@@ -694,7 +694,7 @@ public class MainActivity extends AppCompatActivity
                     else {
                         if(state == State.Rate && readMessage.charAt(0) == BLUETOOTH_RATE) {
                             int stars = Integer.parseInt(mBluetoothData.toString());
-                            mapFragment.rating = stars + 1;
+                            mapFragment.rating = stars;
                             mapFragment.saveToStorage();
                             Toast.makeText(getBaseContext(), stars + " Stars!", Toast.LENGTH_SHORT).show();
                             mBluetoothData.setLength(0);

@@ -251,16 +251,16 @@ public class HikingPalStorage {
             e.printStackTrace();
         }
         JSONObject jsonObject = getObject(jobject);
-        JSONArray arr = jsonObject.optJSONArray("mySpots");
+//        JSONArray arr = jsonObject.optJSONArray("mySpots");
         List<String> list = new ArrayList<String>();
-        int j;
-        for(j = 0; j < arr.length(); j++){
-            try {
-                list.add(arr.get(j).toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+//        int j;
+//        for(j = 0; j < arr.length(); j++){
+//            try {
+//                list.add(arr.get(j).toString());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
         String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
                 jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
                 list, jsonObject.optString("myDate"));
