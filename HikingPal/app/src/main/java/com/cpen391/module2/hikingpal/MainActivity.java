@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity
     AnnouncementFragment curFrag5;
 
     private StringBuilder mBluetoothData = new StringBuilder();
-    private static final char BLUETOOTH_RATE = 'P';
-    private static final char BLUETOOTH_WEATHER = 'Z';
+    public static final char BLUETOOTH_RATE = 'P';
+    public static final char BLUETOOTH_WEATHER = 'Z';
 
     private enum State{
         None,
@@ -399,8 +399,36 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     boolean app_start;
+
+    private void SetupFragment(){
+        if(app_start) {
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+            ft.add(fragment_container_med2, curFrag3, getResources().getString(R.string.fav_trail_tag));
+            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+            ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
+            buttonNum=1;
+            count = 1;
+            app_start = false;
+        }
+    }
+
+    private void HandleViewHistory(){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
+        dfb.hide();
+        ft.hide(newtrailFrag);
+        ft.hide(curFrag3);
+        ft.hide(curFrag4);
+        ft.hide(curFrag5);
+        ft.show(curFrag2);
+    }
+
     public void MyFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -415,6 +443,7 @@ public class MainActivity extends AppCompatActivity
             count = 1;
             app_start = false;
         }
+
 
         switch (fragmentID) {
             case R.id.new_trail:
@@ -655,6 +684,11 @@ public class MainActivity extends AppCompatActivity
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
 
+                    Toast.makeText(getBaseContext(), readMessage, Toast.LENGTH_SHORT).show();
+                    if(readMessage.charAt(0) == 'Y'){
+                        // todo
+                    }
+
                     if(state == State.None && mBluetoothData.length() == 0){
                         if(readMessage.charAt(0) == BLUETOOTH_RATE) {
                             state = State.Rate;
@@ -664,6 +698,7 @@ public class MainActivity extends AppCompatActivity
                         if(state == State.Rate && readMessage.charAt(0) == BLUETOOTH_RATE) {
                             int stars = Integer.parseInt(mBluetoothData.toString());
                             mapFragment.rating = stars + 1;
+                            mapFragment.saveToStorage();
                             Toast.makeText(getBaseContext(), stars + " Stars!", Toast.LENGTH_SHORT).show();
                             mBluetoothData.setLength(0);
                             state = State.None;
@@ -766,7 +801,7 @@ public class MainActivity extends AppCompatActivity
             Character c = message.charAt(i);
             sendMessage(c.toString());
             try {
-                Thread.sleep(50);
+                Thread.sleep(60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

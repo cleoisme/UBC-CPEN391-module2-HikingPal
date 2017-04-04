@@ -337,9 +337,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                                            ((MainActivity) getActivity()).sendMessage("P");
-                                                            //TODO: 2017-04-03 update the rating for the current image before saving it
-
+                                                            // MainActivity will be responsible for calling saveToStorage after getting rating
+                                                            ((MainActivity) getActivity()).sendMessageSlow(Character.toString(MainActivity.BLUETOOTH_RATE));
                                                         }
                                                     })
                                                     .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
@@ -393,6 +392,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         myDuration = Duration;
         myDistance = (long) totalDistance;
         mySpots = null;
+        myRating = rating;
         //hardcoded
         subscribe = 0;
 
