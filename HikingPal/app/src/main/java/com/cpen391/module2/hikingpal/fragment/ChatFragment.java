@@ -89,9 +89,9 @@ public class ChatFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: 2017-04-04 need to check if the bluetooth is connected
                 String textContent = sendText.getText().toString();
                 if(textContent!=null) {
-
                     messageList.add(new Message(msg_id,textContent,0));
                     hikingPalStorage.writeToMessages(msg_id,0,textContent);
                     msg_id++;
