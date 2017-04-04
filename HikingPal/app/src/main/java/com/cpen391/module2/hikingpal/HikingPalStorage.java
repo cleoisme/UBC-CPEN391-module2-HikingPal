@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.cpen391.module2.hikingpal.module.Announcement;
-import com.cpen391.module2.hikingpal.module.Message;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -293,25 +292,26 @@ public class HikingPalStorage {
         return sb.toString();
     }
 
-    public List<Message> getAllMessages() {
-        JSONArray jsonArray = extractArray(readFile(messages), messagesRoot);
-        List<Message> messageList = new ArrayList<Message>();
-        int i;
-        for(i = 0; i < jsonArray.length(); i++){
-            try {
-                JSONObject element = jsonArray.getJSONObject(i);
-                Message message = new Message();
-                message.setContent(element.optString("content"));
-                message.setId(element.optLong("id"));
-                message.setSender(element.optInt("sender"));
-                messageList.add(message);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return messageList;
-    }
+    //// TODO: 2017-04-03  
+//    public List<Message> getAllMessages() {
+//        JSONArray jsonArray = extractArray(readFile(messages), messagesRoot);
+//        List<Message> messageList = new ArrayList<Message>();
+//        int i;
+//        for(i = 0; i < jsonArray.length(); i++){
+//            try {
+//                JSONObject element = jsonArray.getJSONObject(i);
+//                Message message = new Message();
+//                message.setContent(element.optString("content"));
+//                message.setId(element.optLong("id"));
+//                message.setSender(element.optInt("sender"));
+//                messageList.add(message);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//        return messageList;
+//    }
 
     public List<Announcement> getAllAnnoucements() {
         JSONArray jsonArray = extractArray(readFile(announcements), announcementsRoot);
@@ -332,16 +332,16 @@ public class HikingPalStorage {
         return announcementList;
     }
 
-    public Message getMessage(long id){
-
-        String root = readFile(messages);
-        JSONObject jobject =  extractObject(root, id, "id");
-        Message message = new Message();
-        message.setContent(jobject.optString("content"));
-        message.setId(jobject.optLong("id"));
-        message.setSender(jobject.optInt("sender"));
-        return message;
-    }
+//    public Message getMessage(long id){
+//
+//        String root = readFile(messages);
+//        JSONObject jobject =  extractObject(root, id, "id");
+//        Message message = new Message();
+//        message.setContent(jobject.optString("content"));
+//        message.setId(jobject.optLong("id"));
+//        message.setSender(jobject.optInt("sender"));
+//        return message;
+//    }
 
     public Announcement getAnnouncment(long id){
 
