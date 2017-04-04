@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity
 
     public static ViewHistoryFragment curFrag2;
     public static FavTrailsFragment curFrag3;
-    ChatFragment curFrag4;
-    AnnouncementFragment curFrag5;
+    public static ChatFragment curFrag4;
+    public static AnnouncementFragment curFrag5;
 
     private StringBuilder mBluetoothData = new StringBuilder();
     private static final char BLUETOOTH_RATE = 'P';
@@ -162,7 +162,18 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                if(curFrag4.isVisible()){
+                    curFrag4.hindkb();
+                }
+                super.onDrawerOpened(drawerView);
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -192,6 +203,7 @@ public class MainActivity extends AppCompatActivity
         curFrag3 = new FavTrailsFragment();
         curFrag4 = new ChatFragment();
         curFrag5 = new AnnouncementFragment();
+        DF = new DiscoverNearbyFragment();
 
     }
 
@@ -296,8 +308,8 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
         }
-        else if(curFrag4.isVisible()){
-            ft.hide(curFrag4);
+        else if(curFrag5.isVisible()){
+            ft.hide(curFrag5);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
         }
@@ -328,7 +340,6 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
 
-
             TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
@@ -344,7 +355,7 @@ public class MainActivity extends AppCompatActivity
 
 
             TextView textView = (TextView) navigationView.findViewById(R.id.weather_info);
-            mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
+            //mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
             if (textView != null) {
                 textView.setText(mWeatherText);
                 return;
@@ -395,6 +406,9 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        if(curFrag4.isVisible()) {
+            curFrag4.hindkb();
+        }
         return true;
     }
 
@@ -435,6 +449,8 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(curFrag4);
                 ft.hide(curFrag5);
                 ft.show(curFrag2);
+                ft.remove(DF);
+                count =1;
                 //ft.addToBackStack(null);
                 break;
 
@@ -445,6 +461,8 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(curFrag5);
                 dfb.hide();
                 ft.show(curFrag3);
+                ft.remove(DF);
+                count =1;
                 getSupportActionBar().setTitle(getResources().getString(R.string.fav_trail_tag));
                 //ft.addToBackStack(null);
                 break;
@@ -456,6 +474,9 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(curFrag3);
                 ft.hide(curFrag5);
                 ft.show(curFrag4);
+                ft.remove(DF);
+                count =1;
+                getSupportActionBar().setTitle("Chat");
                 //ft.addToBackStack(null);
                 break;
 
@@ -465,7 +486,10 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(curFrag3);
                 ft.hide(curFrag4);
                 ft.show(curFrag5);
+                ft.remove(DF);
+                count =1;
                 dfb.hide();
+                getSupportActionBar().setTitle("Announcement");
                 break;
 
             default:
@@ -558,24 +582,24 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public static int count=1;
+    public static int count;
     static DiscoverNearbyFragment DF;
     public void DiscoverFabOnClick(FloatingActionButton dfb, final MapViewFragment mv) {
-        final MapViewFragment map = mv;
         dfb.show();
         dfb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
-                fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                //fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 FragmentTransaction ft = fm.beginTransaction();
-                DF = new DiscoverNearbyFragment();
+
 
                 if(count%2!=0){
                     getSupportActionBar().setTitle(getResources().getString(R.string.discover_nearby_tag));
                     ft.add(R.id.fragment_container_long, DF, getResources().getString(R.string.discover_nearby_tag));
+                    //ft.replace(R.id.fragment_container_long,DF);
                     ft.hide(newtrailFrag);
-                    ft.addToBackStack(null);
+                    //ft.addToBackStack(null);
                     ft.commit();
                 }
                 else{
@@ -583,7 +607,7 @@ public class MainActivity extends AppCompatActivity
                     ft.remove(DF);
                     GetNearbyPlacesData.clearPin();
                     ft.show(newtrailFrag);
-                    ft.addToBackStack(null);
+                    //ft.addToBackStack(null);
                     ft.commit();
                 }
                 count++;

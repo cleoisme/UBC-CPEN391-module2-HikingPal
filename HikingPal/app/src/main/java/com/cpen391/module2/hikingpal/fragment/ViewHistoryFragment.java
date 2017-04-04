@@ -101,6 +101,8 @@ public class ViewHistoryFragment extends Fragment {
 
                                             FragmentTransaction tr = getFragmentManager().beginTransaction();
                                             curFrag2 = new ViewHistoryFragment();
+                                            HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
+                                            hikingPalStorage.removeMapImage(img_name);
 
                                             tr.replace(R.id.fragment_container_med1, curFrag2);
                                             tr.commit();

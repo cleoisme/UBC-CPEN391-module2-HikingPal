@@ -4,10 +4,13 @@ package com.cpen391.module2.hikingpal.module;
 public class Message {
 
     private long id;
-    private String content;
+    private String message;
     private int sender;
 
-    public Message() {
+    public Message(int id, String message, int sender) {
+        this.id = id;
+        this.message = message;
+        this.sender = sender;
     }
 
     public long getId(){
@@ -15,7 +18,7 @@ public class Message {
     }
 
     public String getContent(){
-        return content;
+        return message;
     }
 
     public int getSender() {
@@ -27,7 +30,7 @@ public class Message {
     }
 
     public void setContent(String content){
-        this.content = content;
+        this.message = content;
     }
 
     public void setSender(int sender){
