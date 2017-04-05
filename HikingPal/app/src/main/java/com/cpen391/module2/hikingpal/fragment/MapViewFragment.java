@@ -41,6 +41,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -388,7 +390,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     //the save function that can be used in MainActivity
     public static void saveToStorage() {
-        myDate = (new Date(myID)).toString();
+        myDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(myID)).toString();
         myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
         myDuration = Duration;
         myDistance = (long) totalDistance;

@@ -32,9 +32,9 @@ public class HikingPalStorage {
     String messagesRoot = "Messages";
     String announcementsRoot = "Announcements";
 
-    private final char BT_MAP_INIT = 'W';
+    private final char BT_MAP_INIT = 'X';
     private final char BT_MAP_DELIMITER = 'Q';
-    private final char BT_MAP_FIELD_DELIMITER = 'V';
+    private final char BT_MAP_FIELD_DELIMITER = 'U';
 
     Context context;
 
@@ -252,16 +252,16 @@ public class HikingPalStorage {
             e.printStackTrace();
         }
         JSONObject jsonObject = getObject(jobject);
-//        JSONArray arr = jsonObject.optJSONArray("mySpots");
+        JSONArray arr = jsonObject.optJSONArray("mySpots");
         List<String> list = new ArrayList<String>();
-//        int j;
-//        for(j = 0; j < arr.length(); j++){
-//            try {
-//                list.add(arr.get(j).toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        int j;
+        for(j = 0; j < arr.length(); j++){
+            try {
+                list.add(arr.get(j).toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
                 jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
                 list, jsonObject.optString("myDate"));
