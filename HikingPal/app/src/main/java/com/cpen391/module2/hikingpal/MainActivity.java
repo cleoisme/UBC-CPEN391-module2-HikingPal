@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,6 +113,8 @@ public class MainActivity extends AppCompatActivity
     public HikingPalStorage hikingPalStorage;
 
     View navigationView;
+    public static ProgressBar waitIcon;
+    public static View waiting_view;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -146,6 +151,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         navigationView = ((NavigationView)findViewById(R.id.nav_view)).getHeaderView(0);
+
 
         obtainPermissions();
         CheckGooglePlayServices();
@@ -202,6 +208,12 @@ public class MainActivity extends AppCompatActivity
         curFrag4 = new ChatFragment();
         curFrag5 = new AnnouncementFragment();
         DF = new DiscoverNearbyFragment();
+
+        //waiting_view = findViewById(R.id.container_waiting);
+        //waiting_view.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        waiting_view = findViewById(R.id.container_waiting);
+        waitIcon = (ProgressBar)findViewById(R.id.loading_spinner);
+        //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
     }
 
@@ -283,25 +295,40 @@ public class MainActivity extends AppCompatActivity
                 count++;
                 getSupportActionBar().setTitle("New Trail");
             }
+            me.getItem(1).setVisible(false);
+            me.getItem(2).setVisible(false);
+            me.getItem(3).setVisible(false);
             ft.commit();
         } else if (newtrailFrag.isVisible()) {
             ft.hide(newtrailFrag);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             dfb.hide();
             ft.commit();
+            me.getItem(1).setVisible(false);
+            me.getItem(2).setVisible(false);
+            me.getItem(3).setVisible(false);
         }else if (curFrag2.isVisible()) {
             ft.hide(curFrag2);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
+            me.getItem(1).setVisible(false);
+            me.getItem(2).setVisible(false);
+            me.getItem(3).setVisible(false);
         }else if(curFrag4.isVisible()){
             ft.hide(curFrag4);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
+            me.getItem(1).setVisible(false);
+            me.getItem(2).setVisible(false);
+            me.getItem(3).setVisible(false);
         }
         else if(curFrag5.isVisible()){
             ft.hide(curFrag5);
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
             ft.commit();
+            me.getItem(1).setVisible(false);
+            me.getItem(2).setVisible(false);
+            me.getItem(3).setVisible(false);
         }
         else {
             super.onBackPressed();
@@ -356,10 +383,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    Menu me;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        me = menu;
         return true;
     }
 
@@ -367,11 +395,51 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
         switch (id) {
-            case R.id.action_settings:
+            case R.id.trail_settings:
+                //Toast.makeText(MainActivity.this, "nnn", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Send all Trails?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                curFrag2.sendAllTrails();
+                            }
+                        })
+                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
+                return true;
+            case R.id.chat_settings:
+                //Toast.makeText(MainActivity.this, "hhh", Toast.LENGTH_SHORT).show();
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Delete all conversations?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                curFrag4.delAllConv();
+                            }
+                        })
+                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+                return true;
+
+            case R.id.ann_settings:
+                Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
+                // TODO: 2017-04-04 @cleo 
                 return true;
             case R.id.secure_connect_scan:
                 Intent serverIntent = new Intent(this, DeviceListActivity.class);
@@ -382,6 +450,21 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void waiting(){
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                waiting_view.setVisibility(View.VISIBLE);
+            }
+
+            public void onFinish() {
+                waiting_view.setVisibility(View.INVISIBLE);
+            }
+
+        }.start();
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -444,6 +527,10 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentID) {
             case R.id.new_trail:
+                me.getItem(1).setVisible(false);
+                me.getItem(2).setVisible(false);
+                me.getItem(3).setVisible(false);
+                
                 ft.hide(curFrag2);
                 ft.hide(curFrag4);
                 ft.hide(curFrag5);
@@ -453,6 +540,9 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.view_history:
+                me.getItem(1).setVisible(true);
+                me.getItem(2).setVisible(false);
+                me.getItem(3).setVisible(false);
 
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
@@ -461,28 +551,37 @@ public class MainActivity extends AppCompatActivity
                 ft.hide(curFrag5);
                 ft.show(curFrag2);
                 ft.remove(DF);
+                GetNearbyPlacesData.clearPin();
                 count =1;
                 //ft.addToBackStack(null);
                 break;
 
             case R.id.chat:
+                me.getItem(1).setVisible(false);
+                me.getItem(2).setVisible(true);
+                me.getItem(3).setVisible(false);
                 dfb.hide();
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag2);
                 ft.hide(curFrag5);
                 ft.show(curFrag4);
                 ft.remove(DF);
+                GetNearbyPlacesData.clearPin();
                 count =1;
                 getSupportActionBar().setTitle("Chat");
                 //ft.addToBackStack(null);
                 break;
 
             case R.id.announcement:
+                me.getItem(1).setVisible(false);
+                me.getItem(2).setVisible(false);
+                me.getItem(3).setVisible(true);
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag2);
                 ft.hide(curFrag4);
                 ft.show(curFrag5);
                 ft.remove(DF);
+                GetNearbyPlacesData.clearPin();
                 count =1;
                 dfb.hide();
                 getSupportActionBar().setTitle("Announcement");

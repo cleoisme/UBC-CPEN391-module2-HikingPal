@@ -91,6 +91,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
+    //// TODO: 2017-04-04 current location: latlng
     public static LatLng latlng;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,10 +128,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
                 //mMap.getUiSettings().setCompassEnabled(true);
                 mMap.setPadding(0, 5, 0, 100);
-
-//
-//                latlng = new LatLng(49.260482, -123.253919);
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
 
                 mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
                     @Override

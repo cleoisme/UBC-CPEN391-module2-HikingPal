@@ -2,6 +2,7 @@ package com.cpen391.module2.hikingpal.fragment;
 
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +23,8 @@ import com.cpen391.module2.hikingpal.module.MessageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.cpen391.module2.hikingpal.MainActivity.waiting_view;
 
 /**
  * Created by YueyueZhang on 2017-04-01.
@@ -91,7 +94,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 // TODO: 2017-04-04 need to check if the bluetooth is connected
                 String textContent = sendText.getText().toString();
-                if(textContent!=null) {
+                if(textContent!="") {
                     messageList.add(new Message(msg_id,textContent,0));
                     hikingPalStorage.writeToMessages(msg_id,0,textContent);
                     msg_id++;
@@ -109,6 +112,25 @@ public class ChatFragment extends Fragment {
         return ll;
     }
 
+
+    public void delAllConv(){
+
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                hindkb();
+                waiting_view.setVisibility(View.VISIBLE);
+                hikingPalStorage.removeAllMessage();
+            }
+            public void onFinish() {
+                waiting_view.setVisibility(View.INVISIBLE);
+                messageList.clear();
+                msg_id=0;
+                mAdapter.notifyDataSetChanged();
+            }
+
+        }.start();
+    }
 
     public void hindkb() {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(getContext().INPUT_METHOD_SERVICE);

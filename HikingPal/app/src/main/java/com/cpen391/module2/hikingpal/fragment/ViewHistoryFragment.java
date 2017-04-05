@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,14 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.HikingPalStorage;
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
 
 import java.io.File;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
+import static com.cpen391.module2.hikingpal.MainActivity.waiting_view;
 
 /**
  * Created by YueyueZhang on 2017-03-12.
@@ -51,13 +53,16 @@ public class ViewHistoryFragment extends Fragment {
         LinearLayout title_line = (LinearLayout)frame.getChildAt(2);
         LinearLayout del_line = (LinearLayout)frame.getChildAt(0);
 
+        TextView no_trail = (TextView) ll.findViewById(R.id.no_trail);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(300, WRAP_CONTENT);
 
         final File myFolder = new File("sdcard/hikingPal/saveTrail/");
         final File[] myFiles = myFolder.listFiles();
 
         if(myFolder.isDirectory()){
-            if( myFiles != null){
+            if( myFiles.length != 0){
+                no_trail.setVisibility(View.INVISIBLE);
                 for (final File child : myFiles){
                     img.getLayoutParams().width = WRAP_CONTENT;
                     img.getLayoutParams().height = 470;
@@ -124,6 +129,7 @@ public class ViewHistoryFragment extends Fragment {
                 }
             }
             else{
+                no_trail.setVisibility(View.VISIBLE);
             }
         }else{
             //display nothing
@@ -145,7 +151,6 @@ public class ViewHistoryFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                // TODO: 2017-04-01 send the corresponding data to the touchscreen
                                 HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
                                 String mapImageString = hikingPalStorage.getMapImage(mapImagePath);
                                 MainActivity mainActivity = (MainActivity) getActivity();
@@ -163,4 +168,38 @@ public class ViewHistoryFragment extends Fragment {
         });
         return iv;
     }
-}
+
+    public void sendAllTrails() {
+
+        HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
+
+        final File myFolder = new File("sdcard/hikingPal/saveTrail/");
+        final File[] myFiles = myFolder.listFiles();
+
+        if (myFolder.isDirectory()) {
+            if (myFiles.length != 0) {
+                for (final File child : myFiles) {
+                    new CountDownTimer(5000, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                            waiting_view.setVisibility(View.VISIBLE);
+                            // TODO: 2017-04-04 need to be fixed
+//                    String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath());
+//                    MainActivity mainActivity = (MainActivity) getActivity();
+//                    mainActivity.sendMessageSlow(mapImageString);
+                            Log.d("sending",child.getAbsolutePath());
+                        }
+                        public void onFinish() {
+                            waiting_view.setVisibility(View.INVISIBLE);
+                        }
+
+                    }.start();
+                }
+
+            }else{
+                Toast.makeText(getActivity(), "No saved trails", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        }
+    }
