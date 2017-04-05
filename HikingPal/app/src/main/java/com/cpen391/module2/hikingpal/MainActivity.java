@@ -51,7 +51,6 @@ import com.cpen391.module2.hikingpal.module.Weather;
 import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.maps.MapView;
 
 import org.json.JSONException;
 
@@ -127,6 +126,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         File direct = new File(Environment.getExternalStorageDirectory()+"/hikingPal/saveTrail");
 
         if(!direct.exists()) {
@@ -396,6 +396,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.trail_settings:
+
                 //Toast.makeText(MainActivity.this, "nnn", Toast.LENGTH_SHORT).show();
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Send all Trails?")
@@ -408,6 +409,7 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //nothing
+                                curFrag4.received_msg("hello from the other side");
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -591,6 +593,7 @@ public class MainActivity extends AppCompatActivity
         }
         ft.commit();
     }
+
 
     public static void getNearby(final ImageButton nearbyButton, final int i){
         nearbyButton.setOnClickListener(new View.OnClickListener() {

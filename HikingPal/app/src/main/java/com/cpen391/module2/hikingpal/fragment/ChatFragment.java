@@ -1,10 +1,16 @@
 package com.cpen391.module2.hikingpal.fragment;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.cpen391.module2.hikingpal.HikingPalStorage;
+import com.cpen391.module2.hikingpal.MainActivity;
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.module.Message;
 import com.cpen391.module2.hikingpal.module.MessageAdapter;
@@ -94,7 +101,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 // TODO: 2017-04-04 need to check if the bluetooth is connected
                 String textContent = sendText.getText().toString();
-                if(textContent!="") {
+                if(textContent.length()!=0) {
                     messageList.add(new Message(msg_id,textContent,0));
                     hikingPalStorage.writeToMessages(msg_id,0,textContent);
                     msg_id++;
@@ -144,10 +151,32 @@ public class ChatFragment extends Fragment {
     // TODO: 2017-04-04 get data from bluetooth
     public void received_msg(String content){
         messageList.add(new Message(msg_id,content,1));
-        hikingPalStorage.writeToMessages(msg_id,0,content);
+        hikingPalStorage.writeToMessages(msg_id,1,content);
         msg_id++;
         mAdapter.notifyDataSetChanged();
+        addNotification("New Message from DE2!");
     }
+
+
+    public void addNotification(String message) {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(getActivity())
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("HikingPal")
+                        .setContentText(message)
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setPriority(Notification.PRIORITY_HIGH);
+
+        Intent notificationIntent = new Intent(getActivity(), MainActivity.class);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(getActivity(), 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
+    }
+
 
 
 }
