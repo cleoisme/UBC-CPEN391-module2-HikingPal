@@ -139,8 +139,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
             android:layout_gravity="center"
-            android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/progress" />
+            android:indeterminate="true" />
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
