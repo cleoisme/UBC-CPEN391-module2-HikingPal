@@ -146,7 +146,12 @@ public class HikingPalStorage {
             element.put("subscribe", subscribe);
             element.put("myDuration", myDuration);
             element.put("myDistance", myDistance);
-            JSONArray array = new JSONArray(mySpots);
+            JSONArray array;
+            if(mySpots == null || mySpots.size() == 0) {
+                mySpots = new ArrayList<String>();
+                mySpots.add("default spot string");
+            }
+            array = new JSONArray(mySpots);
             element.put("mySpots", array);
             element.put("myDate", myDate);
             element.put("myRating", myRating);
