@@ -667,5 +667,19 @@ public class HikingPalStorage {
     }
 
     public void removeAllAnnouncement() {
+
+        String root = readFile(announcements);
+        if(root == "") return;
+        try {
+            JSONObject jsonRootObject = new JSONObject(root);
+            JSONArray array = new JSONArray();
+            jsonRootObject.put(announcementsRoot, array);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(announcements, Context.MODE_PRIVATE));
+            write(outputStreamWriter, jsonRootObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+
+        }
     }
 }

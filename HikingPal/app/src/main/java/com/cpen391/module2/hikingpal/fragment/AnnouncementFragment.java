@@ -28,7 +28,6 @@ import java.util.List;
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 import static com.cpen391.module2.hikingpal.MainActivity.waiting_view;
 import static com.cpen391.module2.hikingpal.R.dimen.button_margin;
-import static com.cpen391.module2.hikingpal.fragment.ChatFragment.msg_id;
 
 /**
  * Created by YueyueZhang on 2017-04-01.
@@ -154,7 +153,6 @@ public class AnnouncementFragment extends Fragment{
             public void onFinish() {
                 waiting_view.setVisibility(View.INVISIBLE);
                 myList.clear();
-                mAdapter.notifyDataSetChanged();
             }
 
         }.start();

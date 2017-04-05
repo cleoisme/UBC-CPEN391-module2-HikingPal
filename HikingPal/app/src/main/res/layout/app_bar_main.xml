@@ -108,6 +108,17 @@
         android:layout_marginTop="50dp">
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/popup_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/popup_container">
+        </LinearLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/container_waiting"
@@ -127,8 +138,7 @@
             android:indeterminateTintMode="src_atop"
             android:indeterminateTint="#1cb36d"
             android:layout_gravity="center"
-        xmlns:android="http://schemas.android.com/apk/res/android" />
-
+            xmlns:android="http://schemas.android.com/apk/res/android" />
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
