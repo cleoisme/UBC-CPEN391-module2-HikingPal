@@ -170,33 +170,45 @@ public class ViewHistoryFragment extends Fragment {
 
     public void sendAllTrails() {
 
-        HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
+        final HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
 
         File myFolder = new File("sdcard/hikingPal/saveTrail/");
-        File[] myFiles = myFolder.listFiles();
-        StringBuilder sb = new StringBuilder();
+        final File[] myFiles = myFolder.listFiles();
+        final StringBuilder sb = new StringBuilder();
         sb.append(hikingPalStorage.BT_MAP_INIT);
-
-        waiting_view.setVisibility(View.VISIBLE);
 
         if (myFolder.isDirectory()) {
             if (myFiles.length != 0) {
-                for (final File child : myFiles) {
-                    String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath(), false);
-                    sb.append(mapImageString);
-                    sb.setLength(sb.length() - 1); // Remove last map delimiter (otherwise 2 in a row)
-                    Log.d("sending", child.getAbsolutePath());
-                }
+
+                new CountDownTimer(5000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+
+                        for (final File child : myFiles) {
+                            String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath(), false);
+                            sb.append(mapImageString);
+                            sb.setLength(sb.length() - 1); // Remove last map delimiter (otherwise 2 in a row)
+                            Log.d("sending", child.getAbsolutePath());
+                        }
+
+                        sb.append(hikingPalStorage.BT_MAP_DELIMITER);
+                        sb.append(hikingPalStorage.BT_MAP_INIT);
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.sendMessageSlow(sb.toString());
+
+                        waiting_view.setVisibility(View.VISIBLE);
+
+                    }
+                    public void onFinish() {
+                        waiting_view.setVisibility(View.INVISIBLE);
+                    }
+
+                }.start();
+
             } else {
                 Toast.makeText(getActivity(), "No saved trails", Toast.LENGTH_SHORT).show();
             }
         }
 
-        sb.append(hikingPalStorage.BT_MAP_DELIMITER);
-        sb.append(hikingPalStorage.BT_MAP_INIT);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.sendMessageSlow(sb.toString());
 
-        waiting_view.setVisibility(View.INVISIBLE);
     }
 }
