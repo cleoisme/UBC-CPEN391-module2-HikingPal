@@ -49,9 +49,9 @@ public class ViewHistoryFragment extends Fragment {
 
         //get the image_line LinearLayout
         LinearLayout frame = (LinearLayout) sv.getChildAt(0);
-        LinearLayout img = (LinearLayout)frame.getChildAt(1);
-        LinearLayout title_line = (LinearLayout)frame.getChildAt(2);
-        LinearLayout del_line = (LinearLayout)frame.getChildAt(0);
+        LinearLayout img = (LinearLayout) frame.getChildAt(1);
+        LinearLayout title_line = (LinearLayout) frame.getChildAt(2);
+        LinearLayout del_line = (LinearLayout) frame.getChildAt(0);
 
         TextView no_trail = (TextView) ll.findViewById(R.id.no_trail);
 
@@ -60,10 +60,10 @@ public class ViewHistoryFragment extends Fragment {
         final File myFolder = new File("sdcard/hikingPal/saveTrail/");
         final File[] myFiles = myFolder.listFiles();
 
-        if(myFolder.isDirectory()){
-            if( myFiles.length != 0){
+        if (myFolder.isDirectory()) {
+            if (myFiles.length != 0) {
                 no_trail.setVisibility(View.INVISIBLE);
-                for (final File child : myFiles){
+                for (final File child : myFiles) {
                     img.getLayoutParams().width = WRAP_CONTENT;
                     img.getLayoutParams().height = 470;
                     //ic.LayoutParams.setMargins();
@@ -77,30 +77,30 @@ public class ViewHistoryFragment extends Fragment {
                     final TextView title = new TextView(this.getActivity());
                     final String img_name = child.getName();
                     title.setText(child.getName());
-                    title.setPadding(30,0,20,10);
+                    title.setPadding(30, 0, 20, 10);
                     title.setTextColor(0xFFFDFDFD);
                     title_line.addView(title, lp);
 
                     final ImageButton del = new ImageButton(this.getActivity());
                     del.setImageResource(R.drawable.delete);
-                    del.setPadding(230,15,0,0);
+                    del.setPadding(230, 15, 0, 0);
                     del.setBackgroundColor(0x00ffffff);
-                    del_line.addView(del,lp);
-                    del.setOnClickListener(new View.OnClickListener(){
+                    del_line.addView(del, lp);
+                    del.setOnClickListener(new View.OnClickListener() {
 
                         @Override
                         public void onClick(View view) {
-                            Log.d("del clicked",img_name);
+                            Log.d("del clicked", img_name);
                             new AlertDialog.Builder(getActivity())
                                     .setTitle("Delete?")
                                     .setMessage("Do you want to delete this saved trail permanently? ")
                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            File current_img = new File(myFolder,img_name);
+                                            File current_img = new File(myFolder, img_name);
                                             boolean deleted = current_img.delete();
-                                            if(deleted==true){
-                                                Log.d("del clicked","deleted");
+                                            if (deleted == true) {
+                                                Log.d("del clicked", "deleted");
                                             }
                                             // TODO: 2017-04-03  delete the trail from the database
 
@@ -127,11 +127,10 @@ public class ViewHistoryFragment extends Fragment {
                         }
                     });
                 }
-            }
-            else{
+            } else {
                 no_trail.setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
             //display nothing
         }
 
@@ -152,9 +151,9 @@ public class ViewHistoryFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
-                                String mapImageString = hikingPalStorage.getMapImage(mapImagePath);
+                                String mapImageString = hikingPalStorage.getMapImage(mapImagePath, true);
                                 MainActivity mainActivity = (MainActivity) getActivity();
-                                mainActivity.sendMessageSlow( mapImageString);
+                                mainActivity.sendMessageSlow(mapImageString);
                             }
                         })
                         .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
@@ -171,36 +170,45 @@ public class ViewHistoryFragment extends Fragment {
 
     public void sendAllTrails() {
 
-        HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
+        final HikingPalStorage hikingPalStorage = new HikingPalStorage(getContext());
 
-        final File myFolder = new File("sdcard/hikingPal/saveTrail/");
+        File myFolder = new File("sdcard/hikingPal/saveTrail/");
         final File[] myFiles = myFolder.listFiles();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(hikingPalStorage.BT_MAP_INIT);
 
         if (myFolder.isDirectory()) {
             if (myFiles.length != 0) {
-                for (final File child : myFiles) {
-                    new CountDownTimer(5000, 1000) {
-                        public void onTick(long millisUntilFinished) {
 
-                            waiting_view.setVisibility(View.VISIBLE);
-                            // TODO: 2017-04-04 need to be fixed
-//                          String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath());
-//                          MainActivity mainActivity = (MainActivity) getActivity();
-//                          mainActivity.sendMessageSlow(mapImageString);
-                            Log.d("sending",child.getAbsolutePath());
+                new CountDownTimer(5000, 1000) {
+                    public void onTick(long millisUntilFinished) {
 
-                        }
-                        public void onFinish() {
-                            waiting_view.setVisibility(View.INVISIBLE);
+                        for (final File child : myFiles) {
+                            String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath(), false);
+                            sb.append(mapImageString);
+                            sb.setLength(sb.length() - 1); // Remove last map delimiter (otherwise 2 in a row)
+                            Log.d("sending", child.getAbsolutePath());
                         }
 
-                    }.start();
-                }
+                        sb.append(hikingPalStorage.BT_MAP_DELIMITER);
+                        sb.append(hikingPalStorage.BT_MAP_INIT);
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.sendMessageSlow(sb.toString());
 
-            }else{
+                        waiting_view.setVisibility(View.VISIBLE);
+
+                    }
+                    public void onFinish() {
+                        waiting_view.setVisibility(View.INVISIBLE);
+                    }
+
+                }.start();
+
+            } else {
                 Toast.makeText(getActivity(), "No saved trails", Toast.LENGTH_SHORT).show();
             }
         }
 
-        }
+
     }
+}

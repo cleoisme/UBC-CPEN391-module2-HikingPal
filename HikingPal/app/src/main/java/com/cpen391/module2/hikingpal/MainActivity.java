@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     private StringBuilder mBluetoothData = new StringBuilder();
     public static final char BLUETOOTH_RATE = 'P';
     public static final char BLUETOOTH_WEATHER = 'Z';
+    public static final char BLUETOOTH_GPS = 'Y';
 
     private enum State{
         None,
@@ -378,8 +379,6 @@ public class MainActivity extends AppCompatActivity
                 textView.setText(mWeatherText);
                 return;
             }
-            
-            MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherIcon + mWeatherText + BLUETOOTH_WEATHER );
         }
     }
 
@@ -739,6 +738,27 @@ public class MainActivity extends AppCompatActivity
         actionBar.setSubtitle(subTitle);
     }
 
+    private String GetGpsString(){
+        if(MapViewFragment.latlng == null){
+            return "";
+        }
+        String lat = String.format("%.3f", Math.abs(MapViewFragment.latlng.latitude));
+        String lon = String.format("%.3f", Math.abs(MapViewFragment.latlng.longitude));
+        if(MapViewFragment.latlng.latitude < 0){
+            lat += "S";
+        }
+        else{
+            lat += "N";
+        }
+        if(MapViewFragment.latlng.longitude < 0){
+            lon += "W";
+        }
+        else{
+            lon += "E";
+        }
+        return lat + " " + lon;
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -755,6 +775,7 @@ public class MainActivity extends AppCompatActivity
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            MainActivity.this.sendMessageSlow(BLUETOOTH_GPS + GetGpsString() + BLUETOOTH_GPS);
                             MainActivity.this.sendMessageSlow(BLUETOOTH_WEATHER + mWeatherIcon + mWeatherText + BLUETOOTH_WEATHER);
                             break;
                         case BluetoothChatService.STATE_CONNECTING:

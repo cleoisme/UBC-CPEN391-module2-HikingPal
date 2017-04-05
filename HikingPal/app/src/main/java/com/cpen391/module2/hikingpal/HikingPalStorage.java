@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.cpen391.module2.hikingpal.module.Announcement;
+import com.cpen391.module2.hikingpal.module.MapImage;
 import com.cpen391.module2.hikingpal.module.Message;
 
 import org.json.JSONArray;
@@ -32,9 +33,9 @@ public class HikingPalStorage {
     String messagesRoot = "Messages";
     String announcementsRoot = "Announcements";
 
-    private final char BT_MAP_INIT = 'W';
-    private final char BT_MAP_DELIMITER = 'Q';
-    private final char BT_MAP_FIELD_DELIMITER = 'V';
+    public final char BT_MAP_INIT = 'X';
+    public final char BT_MAP_DELIMITER = 'Q';
+    public final char BT_MAP_FIELD_DELIMITER = 'U';
 
     Context context;
 
@@ -241,10 +242,13 @@ public class HikingPalStorage {
         return null;
     }
 
-    public String getMapImage(String mapImagePath) {
+    public String getMapImage(String mapImagePath, boolean single) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(BT_MAP_INIT);
+        if(single) {
+            sb.append(BT_MAP_INIT);
+        }
+
         JSONObject jobject = new JSONObject();
         try {
             jobject.put("mapPath", mapImagePath);
@@ -252,22 +256,24 @@ public class HikingPalStorage {
             e.printStackTrace();
         }
         JSONObject jsonObject = getObject(jobject);
-//        JSONArray arr = jsonObject.optJSONArray("mySpots");
+        JSONArray arr = jsonObject.optJSONArray("mySpots");
         List<String> list = new ArrayList<String>();
-//        int j;
-//        for(j = 0; j < arr.length(); j++){
-//            try {
-//                list.add(arr.get(j).toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        int j;
+        for(j = 0; j < arr.length(); j++){
+            try {
+                list.add(arr.get(j).toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
                 jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
                 list, jsonObject.optString("myDate"));
         sb.append(object);
 
-        sb.append(BT_MAP_INIT);
+        if(single) {
+            sb.append(BT_MAP_INIT);
+        }
         return sb.toString();
     }
 
@@ -491,7 +497,48 @@ public class HikingPalStorage {
         return null;
     }
 
-    public String getAllMapImages(){
+
+    public List<MapImage> getAllMapImages(){
+
+        JSONArray jsonArray = extractArray(readFile(storage), mapImage);
+        List<MapImage> mapImageList = new ArrayList<MapImage>();
+        int j;
+        if (jsonArray == null) return null;
+        for(j = 0; j < jsonArray.length(); j++){
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(j);
+                JSONArray arr = jsonObject.optJSONArray("mySpots");
+                List<String> list = new ArrayList<String>();
+                int i;
+                for(i = 0; i < arr.length(); i++){
+                    list.add(arr.get(j).toString());
+                }
+                String object = GetDataString(jsonObject.optInt("imageId"), jsonObject.optInt("subscribe"), jsonObject.optInt("myRating"),
+                        jsonObject.optLong("myDistance"), jsonObject.optLong("myDuration"),
+                        list, jsonObject.optString("myDate"));
+
+                MapImage mapImage = new MapImage();
+                mapImage.setImageId(jsonObject.optInt("imageId"));
+                mapImage.setAbsPath(jsonObject.optString("pathToImage"));
+                mapImage.setMyDate(jsonObject.optString("myDate"));
+                mapImage.setMyDistance(jsonObject.optLong("myDistance"));
+                mapImage.setMyDuration(jsonObject.optLong("myDuration"));
+                mapImage.setMyRating(jsonObject.optInt("myRating"));
+                mapImage.setMySpots(list);
+                mapImageList.add(mapImage);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mapImageList;
+
+    }
+
+
+
+    public String getAllMapImagesFormattedString(){
 
         JSONArray jsonArray = extractArray(readFile(storage), mapImage);
         StringBuilder sb = new StringBuilder();
