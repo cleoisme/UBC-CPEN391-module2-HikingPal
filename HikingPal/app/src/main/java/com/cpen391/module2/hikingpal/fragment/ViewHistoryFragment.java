@@ -180,14 +180,15 @@ public class ViewHistoryFragment extends Fragment {
             if (myFiles.length != 0) {
                 for (final File child : myFiles) {
                     new CountDownTimer(5000, 1000) {
-
                         public void onTick(long millisUntilFinished) {
+
                             waiting_view.setVisibility(View.VISIBLE);
                             // TODO: 2017-04-04 need to be fixed
-//                    String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath());
-//                    MainActivity mainActivity = (MainActivity) getActivity();
-//                    mainActivity.sendMessageSlow(mapImageString);
+//                          String mapImageString = hikingPalStorage.getMapImage(child.getAbsolutePath());
+//                          MainActivity mainActivity = (MainActivity) getActivity();
+//                          mainActivity.sendMessageSlow(mapImageString);
                             Log.d("sending",child.getAbsolutePath());
+
                         }
                         public void onFinish() {
                             waiting_view.setVisibility(View.INVISIBLE);
