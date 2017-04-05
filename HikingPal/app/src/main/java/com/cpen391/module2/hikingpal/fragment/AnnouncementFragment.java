@@ -21,6 +21,7 @@ import com.cpen391.module2.hikingpal.HikingPalStorage;
 import com.cpen391.module2.hikingpal.R;
 import com.cpen391.module2.hikingpal.module.Announcement;
 
+import java.util.Date;
 import java.util.List;
 
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
@@ -50,28 +51,41 @@ public class AnnouncementFragment extends Fragment{
         //get the LinearLayout and layoutParams for new buttons
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        //get all announcement from the database, new to old here
+        // TODO: 2017-04-04  All announcement sent from touchscreen need to be written to database first
         List<Announcement> myList = hps.getAllAnnoucements();
 
         if (myList == null){
-            Button bt = new Button(this.getActivity());
+            //for testing purpose
+            final Announcement announcement = new Announcement();
+            announcement.setTitle("Test Title");
+            announcement.setId(System.currentTimeMillis());
+            announcement.setContent("I am detailed information.");
 
-            bt.setGravity(Gravity.LEFT);
-            bt.setAllCaps(false);
-            bt.setPadding(getResources().getDimensionPixelSize(button_margin), getResources().getDimensionPixelSize(button_margin), getResources().getDimensionPixelSize(button_margin), getResources().getDimensionPixelSize(button_margin));
-            bt.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.button_press_colors));
-            bt.setTextColor(ContextCompat.getColor(getContext(),R.color.primaryTextColor));
+            final Button bt = createButton(announcement);
 
-            SpannableString buttonText = new SpannableString("Test Title" + "\n"
-                    + "Test Content" + "\n");
+            bt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SingleAnnounceFrag fragment = new SingleAnnounceFrag();
+                    fragment.setAnnouncement(announcement);
+                    fragment.setPrevFrag(LISTALLANNOUNCEMENT);
 
-            int index = buttonText.toString().indexOf("\n");
-            buttonText.setSpan(new RelativeSizeSpan(2), 0, index, SPAN_INCLUSIVE_INCLUSIVE);
-            buttonText.setSpan(new RelativeSizeSpan((float) 1.5), index, buttonText.length(), SPAN_INCLUSIVE_INCLUSIVE);
-            bt.setText(buttonText);
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    Fragment currentFrag = fm.findFragmentById(R.id.fragment_container_large);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                    //hide the current frag
+                    transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_left);
+                    transaction.remove(currentFrag);
+                    transaction.add(R.id.fragment_container_large, fragment, String.valueOf(bt.getId()));
+
+                    //reopen the all announcement frag
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
 
             ll.addView(bt, lp);
-
         }else{
             //iterate the announcement list to create button for each announcement
             for (final Announcement announcement : myList) {
@@ -116,7 +130,7 @@ public class AnnouncementFragment extends Fragment{
         bt.setTextColor(ContextCompat.getColor(getContext(),R.color.primaryTextColor));
 
         SpannableString buttonText = new SpannableString(announcement.getTitle() + "\n"
-                + announcement.getId() + "\n");
+                                    + new Date(announcement.getId()) + "\n");
 
         int index = buttonText.toString().indexOf("\n");
         buttonText.setSpan(new RelativeSizeSpan(2), 0, index, SPAN_INCLUSIVE_INCLUSIVE);
