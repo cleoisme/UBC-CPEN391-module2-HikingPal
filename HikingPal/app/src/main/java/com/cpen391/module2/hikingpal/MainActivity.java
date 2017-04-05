@@ -56,7 +56,6 @@ import com.cpen391.module2.hikingpal.module.Weather;
 import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.maps.MapView;
 
 import org.json.JSONException;
 
@@ -224,14 +223,14 @@ public class MainActivity extends AppCompatActivity
         waitIcon = (ProgressBar)findViewById(R.id.loading_spinner);
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
-        //add the popup checking
-        while(true){
-            if(image_ID != 0) {
-                imagePopup(hikingPalStorage, image_ID);
-            }else{
-                break;
-            }
-        }
+        // TODO: 2017-04-05 receive the ID from bluetooth here
+//        while(true){
+//            if(image_ID != 0) {
+//                imagePopup(hikingPalStorage, image_ID);
+//            }else{
+//                break;
+//            }
+//        }
     }
 
 
@@ -956,7 +955,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+// TODO: 2017-04-05 test this function, need to add the popup animation
     private void imagePopup(HikingPalStorage hps, long id){
         final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
         final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
@@ -975,20 +974,20 @@ public class MainActivity extends AppCompatActivity
 
         List<MapImage> myList = hps.getAllMapImages();
 
-        for(MapImage mapImage : myList){
-            if(mapImage.getImageId() == id){
-                Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
-                ImageView iv = new ImageView(this);
-                iv.setImageBitmap(image);
-                iv.setScaleType(ImageView.ScaleType.FIT_START);
-                ll.addView(iv);
-                ll.addView(bt);
-
-            }else{
-                break;
+        if(myList != null) {
+            for (MapImage mapImage : myList) {
+                if (mapImage.getImageId() == id) {
+                    Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
+                    ImageView iv = new ImageView(this);
+                    iv.setImageBitmap(image);
+                    iv.setScaleType(ImageView.ScaleType.FIT_START);
+                    ll.addView(iv);
+                    ll.addView(bt);
+                } else {
+                    break;
+                }
             }
         }
-
     }
 
     private HashMap<String, Integer> getWeatherIcons() {
