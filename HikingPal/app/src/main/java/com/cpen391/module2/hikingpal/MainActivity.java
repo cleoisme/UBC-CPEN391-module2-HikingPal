@@ -56,6 +56,7 @@ import com.cpen391.module2.hikingpal.module.Weather;
 import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.maps.MapView;
 
 import org.json.JSONException;
 
@@ -752,6 +753,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private String GetGpsString(){
+        if(MapViewFragment.latlng == null){
+            return "";
+        }
         String lat = String.format("%.3f", Math.abs(MapViewFragment.latlng.latitude));
         String lon = String.format("%.3f", Math.abs(MapViewFragment.latlng.longitude));
         if(MapViewFragment.latlng.latitude < 0){

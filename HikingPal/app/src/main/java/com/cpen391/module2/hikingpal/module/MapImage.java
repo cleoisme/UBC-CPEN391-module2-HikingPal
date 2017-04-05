@@ -2,6 +2,8 @@ package com.cpen391.module2.hikingpal.module;
 
 import android.text.TextUtils;
 
+import java.util.List;
+
 /**
  * Created by YueyueZhang on 2017-03-13.
  * we dont actually need this
@@ -12,7 +14,7 @@ public class MapImage {
     private int imageId;      //time
     private long myDuration;
     private long myDistance;
-    private String[] mySpots;
+    private List<String> mySpots;
     private String myDate;
     private String myName;    // set time as default, allowing user to modify it
     private int myRating;     // obtain from the touchscreen
@@ -29,7 +31,7 @@ public class MapImage {
         return absPath;
     }
 
-    public String[] getMySpots() {
+    public List<String> getMySpots() {
         return mySpots;
     }
 
@@ -69,7 +71,7 @@ public class MapImage {
         this.myDate = myDate;
     }
 
-    public void setMySpots(String[] mySpots) {
+    public void setMySpots(List<String> mySpots) {
         this.mySpots = mySpots;
     }
 
