@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.Pack200;
 
 public class HikingPalStorage {
 
@@ -664,5 +665,23 @@ public class HikingPalStorage {
         }  catch (JSONException e) {}
 
         return null;
+    }
+
+    public void removeAllAnnouncements(){
+
+        String root = readFile(announcements);
+        if(root == "") return;
+        try {
+            JSONObject jsonRootObject = new JSONObject(root);
+            JSONArray array = new JSONArray();
+            jsonRootObject.put(announcementsRoot, array);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(announcements, Context.MODE_PRIVATE));
+            write(outputStreamWriter, jsonRootObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+
+        }
+
     }
 }
