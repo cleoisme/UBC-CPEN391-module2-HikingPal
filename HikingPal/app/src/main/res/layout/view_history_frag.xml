@@ -10,8 +10,6 @@
     android:paddingStart="0dp"
     android:paddingLeft="0dp">
 
-
-
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,6 +59,16 @@
 
     </HorizontalScrollView>
 
+    <TextView
+        android:id="@+id/no_trail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="50dp"
+        android:text="No saved trail!"
+        android:textColor="#FFFFFFFF"
+        android:textSize="25dp"
+        android:visibility="invisible"
+        android:gravity="center"/>
 
 
 </FrameLayout>

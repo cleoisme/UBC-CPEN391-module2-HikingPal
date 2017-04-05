@@ -3,6 +3,7 @@ package com.cpen391.module2.hikingpal;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cpen391.module2.hikingpal.module.Announcement;
 import com.cpen391.module2.hikingpal.module.Message;
@@ -362,13 +363,17 @@ public class HikingPalStorage {
         return announcement;
     }
 
-    public void removeMessage(long id) {
-
+    public void removeAllMessage() {
         String root = readFile(messages);
         if(root == "") return;
+        JSONArray jsonArray = extractArray(readFile(messages), messagesRoot);
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(messages, Context.MODE_PRIVATE));
-            write(outputStreamWriter, removeFromStorage(root, messagesRoot, id).toString());
+            int i;
+            for(i=0;i<jsonArray.length();i++) {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(messages, Context.MODE_PRIVATE));
+                write(outputStreamWriter, removeFromStorage(root, messagesRoot, i+1).toString());
+                Log.d("del", String.valueOf(i));
+            }
         } catch (FileNotFoundException e) {}
 
     }
