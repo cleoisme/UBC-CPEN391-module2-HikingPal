@@ -665,4 +665,7 @@ public class HikingPalStorage {
 
         return null;
     }
+
+    public void removeAllAnnouncement() {
+    }
 }

@@ -439,8 +439,25 @@ public class MainActivity extends AppCompatActivity
                 return true;
 
             case R.id.ann_settings:
-                Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
-                // TODO: 2017-04-04 @cleo 
+                //Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Delete all announcement?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                curFrag5.delAllAnn();
+                            }
+                        })
+                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
                 return true;
             case R.id.secure_connect_scan:
                 Intent serverIntent = new Intent(this, DeviceListActivity.class);
