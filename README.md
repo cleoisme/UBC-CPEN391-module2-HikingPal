@@ -29,7 +29,8 @@ Feature List:
                Allow user to delete all announcement
  
 ### DE2 Side:
-   Components: DE2 Board, Touch screen, SD Card, Blue tooth (Swiches, Buttons, LCD, Virtual Keyboard, Graphics)
+    Components: DE2 Board, Touch screen, SD Card, Blue tooth (Swiches, Buttons, LCD, Virtual Keyboard, Graphics)
+   
       - Generally:
             Send the image id to the Android side, and the matched MapImage pops up no matter which fragment the user is currently on
             Display the current coordinates on LCD
