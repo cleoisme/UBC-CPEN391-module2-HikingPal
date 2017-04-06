@@ -30,6 +30,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         // TODO: 2017-04-05 receive the ID from bluetooth here
-        imagePopup(hikingPalStorage, 123456);
+        //imagePopup(hikingPalStorage, 123456);
 
         ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
         ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
@@ -237,7 +239,7 @@ public class MainActivity extends AppCompatActivity
         ft.hide(curFrag2);
         ft.hide(curFrag4);
 
-        buttonNum=1;
+        buttonNum = 1;
         count = 1;
     }
 
@@ -962,6 +964,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public boolean IsBtConnected(){
+        return mChatService.getState() == BluetoothChatService.STATE_CONNECTED;
+    }
+
     /**
      * Check current time and show up the notification if necessary
      */
@@ -1002,13 +1008,15 @@ public class MainActivity extends AppCompatActivity
         if(myList != null) {
             for (MapImage mapImage : myList) {
                 if (mapImage.getImageId() == id) {
+                    Animation slide_up = AnimationUtils.loadAnimation(this,R.anim.slide_in_up);
+                    fl.startAnimation(slide_up);
+                    fl.setVisibility(View.VISIBLE);
                     Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
                     ImageView iv = new ImageView(this);
                     iv.setPadding(10, 10, 10, 10);
                     iv.setImageBitmap(image);
                     iv.setScaleType(ImageView.ScaleType.FIT_START);
                     ll.addView(iv);
-                    fl.setVisibility(View.VISIBLE);
 
                 }
             }

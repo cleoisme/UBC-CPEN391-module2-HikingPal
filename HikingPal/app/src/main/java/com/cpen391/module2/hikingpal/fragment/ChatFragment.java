@@ -100,6 +100,11 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 // TODO: 2017-04-04 need to check if the bluetooth is connected
                 String textContent = sendText.getText().toString();
+                MainActivity main = (MainActivity)getActivity();
+                if(!main.IsBtConnected()){
+                    return;
+                }
+
                 if(textContent.length()!=0) {
                     messageList.add(new Message(msg_id,textContent,0));
                     hikingPalStorage.writeToMessages(msg_id,0,textContent);
@@ -110,6 +115,9 @@ public class ChatFragment extends Fragment {
                         mRecyclerView.smoothScrollToPosition(
                                 mRecyclerView.getAdapter().getItemCount() - 1);
                     }
+
+                    main.sendMessageSlow(main.BLUETOOTH_MESSAGE + textContent + main.BLUETOOTH_MESSAGE);
+
                     Log.d("msg", String.valueOf(messageList));
                 }
             }

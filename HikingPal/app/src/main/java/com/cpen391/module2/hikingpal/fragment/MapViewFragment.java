@@ -325,9 +325,9 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     @Override
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
-//                                        myID = System.currentTimeMillis();
-                                        myID =123456;
-
+                                        myID = System.currentTimeMillis();
+                                        //myID =123456;
+                                        
                                         //save the image
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
 
@@ -390,12 +390,12 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
     //the save function that can be used in MainActivity
     public static void saveToStorage() {
 
-        Log.d("mySpots?", String.valueOf(myspots_list));
         myDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(myID)).toString();
         myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
         myDuration = Duration;
         myDistance = (long) totalDistance;
         mySpots = myspots_list;
+        Log.d("mySpots?", String.valueOf(mySpots));
         myRating = rating;
         subscribe = 0;
         myspots_list.clear();

@@ -61,7 +61,7 @@ public class ViewHistoryFragment extends Fragment {
         final File[] myFiles = myFolder.listFiles();
 
         if (myFolder.isDirectory()) {
-            if (myFiles.length != 0) {
+            if (myFiles != null && myFiles.length != 0) {
                 no_trail.setVisibility(View.INVISIBLE);
                 for (final File child : myFiles) {
                     img.getLayoutParams().width = WRAP_CONTENT;
