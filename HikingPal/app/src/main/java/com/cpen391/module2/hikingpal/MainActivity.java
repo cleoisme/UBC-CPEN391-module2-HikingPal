@@ -72,6 +72,7 @@ import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_med1;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_small;
+import static com.cpen391.module2.hikingpal.fragment.AnnouncementFragment.s_fragment;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.adapter;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.spinner;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
@@ -232,6 +233,19 @@ public class MainActivity extends AppCompatActivity
 //                break;
 //            }
 //        }
+
+        ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+        ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+        ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+
+        ft.hide(newtrailFrag);
+        ft.hide(curFrag2);
+        ft.hide(curFrag4);
+
+        buttonNum=1;
+        count = 1;
+        app_start = false;
+
     }
 
 
@@ -340,12 +354,19 @@ public class MainActivity extends AppCompatActivity
             me.getItem(3).setVisible(false);
         }
         else if(curFrag5.isVisible()){
-            ft.hide(curFrag5);
+            if(s_fragment.isVisible()){
+                ft.remove(s_fragment);
+                curFrag5 = new AnnouncementFragment();
+                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
+                ft.commit();
+            }else{
+                me.getItem(1).setVisible(false);
+                me.getItem(2).setVisible(false);
+                me.getItem(3).setVisible(false);
+                ft.remove(curFrag5);
+                ft.commit();
+            }
             getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
-            ft.commit();
-            me.getItem(1).setVisible(false);
-            me.getItem(2).setVisible(false);
-            me.getItem(3).setVisible(false);
         }
         else {
             super.onBackPressed();
@@ -377,7 +398,7 @@ public class MainActivity extends AppCompatActivity
             TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
-                SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy hh:mm aaa");
                 String dateString = formatter.format(date);
                 dateText.setText(dateString);
             }
@@ -388,11 +409,19 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-            TextView textView = (TextView) navigationView.findViewById(R.id.weather_info);
+            TextView wea = (TextView) navigationView.findViewById(R.id.weather_info);
+            TextView tempV = (TextView) navigationView.findViewById(R.id.temp_info);
             mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
+
+            String weather_condition = weather.currentCondition.getCondition();
+            String temp = String.valueOf((int)weather.temperature.getTemp());
+            Log.d("weather?1",weather.currentCondition.getCondition());
+            Log.d("weather?2",weather.currentCondition.getDescr());
+
             mWeatherIcon = weather.currentCondition.getIcon();
-            if (textView != null) {
-                textView.setText(mWeatherText);
+            if (wea != null) {
+                wea.setText(weather_condition);
+                tempV.setText(temp);
                 return;
             }
         }
@@ -549,26 +578,27 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
 
         //todo: PartialAnnouncement frag need to be added
-        if(app_start == true) {
-            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
-            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
-            ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
-            buttonNum=1;
-            count = 1;
-            app_start = false;
-        }
-
+//        if(app_start == true) {
+//            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+//            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+//            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+//            buttonNum=1;
+//            count = 1;
+//            app_start = false;
+//        }
 
         switch (fragmentID) {
             case R.id.new_trail:
                 me.getItem(1).setVisible(false);
                 me.getItem(2).setVisible(false);
                 me.getItem(3).setVisible(false);
-                
+
+                if(s_fragment.isVisible()){
+                    ft.remove(s_fragment);
+                }
                 ft.hide(curFrag2);
                 ft.hide(curFrag4);
-                ft.hide(curFrag5);
+                ft.remove(curFrag5);
                 ft.show(newtrailFrag);
                 getSupportActionBar().setTitle(getResources().getString(R.string.new_trail_tag));
                 DiscoverFabOnClick(dfb, mapFragment);
@@ -579,11 +609,15 @@ public class MainActivity extends AppCompatActivity
                 me.getItem(2).setVisible(false);
                 me.getItem(3).setVisible(false);
 
+                if(s_fragment.isVisible()){
+                    ft.remove(s_fragment);
+                }
+
                 getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
                 dfb.hide();
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag4);
-                ft.hide(curFrag5);
+                ft.remove(curFrag5);
                 ft.show(curFrag2);
                 ft.remove(DF);
                 GetNearbyPlacesData.clearPin();
@@ -595,10 +629,15 @@ public class MainActivity extends AppCompatActivity
                 me.getItem(1).setVisible(false);
                 me.getItem(2).setVisible(true);
                 me.getItem(3).setVisible(false);
+
+                if(s_fragment.isVisible()){
+                    ft.remove(s_fragment);
+                }
+
                 dfb.hide();
                 ft.hide(newtrailFrag);
                 ft.hide(curFrag2);
-                ft.hide(curFrag5);
+                ft.remove(curFrag5);
                 ft.show(curFrag4);
                 ft.remove(DF);
                 GetNearbyPlacesData.clearPin();
@@ -608,6 +647,8 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.announcement:
+                curFrag5 = new AnnouncementFragment();
+                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
                 me.getItem(1).setVisible(false);
                 me.getItem(2).setVisible(false);
                 me.getItem(3).setVisible(true);
