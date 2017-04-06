@@ -107,12 +107,14 @@ public class MainActivity extends AppCompatActivity
     public static final char BLUETOOTH_RATE = 'P';
     public static final char BLUETOOTH_WEATHER = 'Z';
     public static final char BLUETOOTH_GPS = 'Y';
+    public static final char BLUETOOTH_MESSAGE = 'J';
 
     private enum State{
         None,
         Rate,
         Weather,
         Map,
+        Message,
     };
 
     private State state = State.None;
@@ -832,13 +834,13 @@ public class MainActivity extends AppCompatActivity
                     String readMessage = new String(readBuf, 0, msg.arg1);
 
                     //Toast.makeText(getBaseContext(), readMessage, Toast.LENGTH_SHORT).show();
-                    if(readMessage.charAt(0) == 'Y'){
-                        // todo
-                    }
 
                     if(state == State.None && mBluetoothData.length() == 0){
                         if(readMessage.charAt(0) == BLUETOOTH_RATE) {
                             state = State.Rate;
+                        }
+                        if(readMessage.charAt(0) == BLUETOOTH_MESSAGE){
+                            state = State.Message;
                         }
                     }
                     else {
@@ -847,6 +849,11 @@ public class MainActivity extends AppCompatActivity
                             mapFragment.rating = stars;
                             mapFragment.saveToStorage();
                             Toast.makeText(getBaseContext(), stars + " Stars!", Toast.LENGTH_SHORT).show();
+                            mBluetoothData.setLength(0);
+                            state = State.None;
+                        }
+                        else if (state == State.Message && readMessage.charAt(0) == BLUETOOTH_MESSAGE){
+                            curFrag4.received_msg(mBluetoothData.toString());
                             mBluetoothData.setLength(0);
                             state = State.None;
                         }
