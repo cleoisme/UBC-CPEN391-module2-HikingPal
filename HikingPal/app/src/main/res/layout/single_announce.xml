@@ -6,7 +6,6 @@
         android:background="@color/colorAccent"
         android:id="@+id/announce_details"
         android:gravity="left"
-
         android:layout_marginLeft="25dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="140dp">
