@@ -41,7 +41,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,8 +49,8 @@ import java.util.List;
 import static com.cpen391.module2.hikingpal.MainActivity.buttonNum;
 import static com.cpen391.module2.hikingpal.MainActivity.curFrag2;
 import static com.cpen391.module2.hikingpal.MainActivity.running;
-import static com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment.myspots_list;
 import static com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment.ms_i;
+import static com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment.myspots_list;
 import static com.cpen391.module2.hikingpal.fragment.NewTrailFragment.trailButton;
 
 /**
@@ -327,6 +326,7 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
                                         myID = System.currentTimeMillis();
+//                                        myID =123456;
 
                                         //save the image
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
