@@ -66,7 +66,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.cpen391.module2.hikingpal.R.id.center_horizontal;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
@@ -225,13 +224,7 @@ public class MainActivity extends AppCompatActivity
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         // TODO: 2017-04-05 receive the ID from bluetooth here
-//        while(true){
-//            if(image_ID != 0) {
-//                imagePopup(hikingPalStorage, image_ID);
-//            }else{
-//                break;
-//            }
-//        }
+        //imagePopup(hikingPalStorage, 123456);
     }
 
 
@@ -980,16 +973,12 @@ public class MainActivity extends AppCompatActivity
     private void imagePopup(HikingPalStorage hps, long id){
         final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
         final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
+        ImageButton bt = (ImageButton) fl.getChildAt(1);
 
-        Button bt = new Button(this);
-        bt.setText("Close");
-        bt.setWidth(30);
-        bt.setHeight(10);
-        bt.setGravity(center_horizontal);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fl.removeAllViewsInLayout();
+                fl.removeAllViews();
             }
         });
 
@@ -1000,12 +989,11 @@ public class MainActivity extends AppCompatActivity
                 if (mapImage.getImageId() == id) {
                     Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
                     ImageView iv = new ImageView(this);
+                    iv.setPadding(10, 10, 10, 10);
                     iv.setImageBitmap(image);
                     iv.setScaleType(ImageView.ScaleType.FIT_START);
                     ll.addView(iv);
-                    ll.addView(bt);
-                } else {
-                    break;
+                    fl.setVisibility(View.VISIBLE);
                 }
             }
         }

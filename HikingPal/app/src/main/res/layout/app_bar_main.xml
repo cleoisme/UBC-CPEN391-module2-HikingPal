@@ -30,7 +30,7 @@
         app:fabSize="mini"
         android:layout_gravity="right|center"
         android:background="@null"
-        app:srcCompat="@android:drawable/sym_def_app_icon"
+        app:srcCompat="@android:drawable/btn_star_big_on"
         android:id="@+id/discover_fab" />
 
     <FrameLayout
@@ -110,14 +110,34 @@
 
     <FrameLayout
         android:id="@+id/popup_view"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:animateLayoutChanges="false"
+        android:layout_marginTop="150dp"
+        android:visibility="invisible"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="40dp">
+
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/popup_container">
+            android:id="@+id/popup_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="#72979797"
+            android:layout_gravity="center">
         </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/delete"
+            android:background="#00ffffff"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"/>
+
     </FrameLayout>
 
     <FrameLayout
