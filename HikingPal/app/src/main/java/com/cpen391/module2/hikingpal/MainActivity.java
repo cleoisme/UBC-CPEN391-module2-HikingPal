@@ -601,22 +601,22 @@ public class MainActivity extends AppCompatActivity
                 //ft.addToBackStack(null);
                 break;
 
-            case R.id.announcement:
-                curFrag5 = new AnnouncementFragment();
-                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
-                me.getItem(1).setVisible(false);
-                me.getItem(2).setVisible(false);
-                me.getItem(3).setVisible(true);
-                ft.hide(newtrailFrag);
-                ft.hide(curFrag2);
-                ft.hide(curFrag4);
-                ft.show(curFrag5);
-                ft.remove(DF);
-                GetNearbyPlacesData.clearPin();
-                count =1;
-                dfb.hide();
-                getSupportActionBar().setTitle("Announcement");
-                break;
+//            case R.id.announcement:
+//                curFrag5 = new AnnouncementFragment();
+//                ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
+//                me.getItem(1).setVisible(false);
+//                me.getItem(2).setVisible(false);
+//                me.getItem(3).setVisible(true);
+//                ft.hide(newtrailFrag);
+//                ft.hide(curFrag2);
+//                ft.hide(curFrag4);
+//                ft.show(curFrag5);
+//                ft.remove(DF);
+//                GetNearbyPlacesData.clearPin();
+//                count =1;
+//                dfb.hide();
+//                getSupportActionBar().setTitle("Announcement");
+//                break;
 
             default:
                 break;
