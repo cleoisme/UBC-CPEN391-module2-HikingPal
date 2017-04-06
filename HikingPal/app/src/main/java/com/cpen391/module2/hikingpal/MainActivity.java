@@ -233,6 +233,19 @@ public class MainActivity extends AppCompatActivity
 //                break;
 //            }
 //        }
+
+        ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+        ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+        ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+
+        ft.hide(newtrailFrag);
+        ft.hide(curFrag2);
+        ft.hide(curFrag4);
+
+        buttonNum=1;
+        count = 1;
+        app_start = false;
+
     }
 
 
@@ -385,7 +398,7 @@ public class MainActivity extends AppCompatActivity
             TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
-                SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy hh:mm aaa");
                 String dateString = formatter.format(date);
                 dateText.setText(dateString);
             }
@@ -396,11 +409,19 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-            TextView textView = (TextView) navigationView.findViewById(R.id.weather_info);
+            TextView wea = (TextView) navigationView.findViewById(R.id.weather_info);
+            TextView tempV = (TextView) navigationView.findViewById(R.id.temp_info);
             mWeatherText = weather.currentCondition.getDescr().substring(0, 1).toUpperCase() + weather.currentCondition.getDescr().substring(1) + "\nTemp: " + weather.temperature.getTemp() + " degree Celsius";
+
+            String weather_condition = weather.currentCondition.getCondition();
+            String temp = String.valueOf((int)weather.temperature.getTemp());
+            Log.d("weather?1",weather.currentCondition.getCondition());
+            Log.d("weather?2",weather.currentCondition.getDescr());
+
             mWeatherIcon = weather.currentCondition.getIcon();
-            if (textView != null) {
-                textView.setText(mWeatherText);
+            if (wea != null) {
+                wea.setText(weather_condition);
+                tempV.setText(temp);
                 return;
             }
         }
@@ -557,14 +578,14 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
 
         //todo: PartialAnnouncement frag need to be added
-        if(app_start == true) {
-            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
-            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
-            buttonNum=1;
-            count = 1;
-            app_start = false;
-        }
+//        if(app_start == true) {
+//            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
+//            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
+//            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
+//            buttonNum=1;
+//            count = 1;
+//            app_start = false;
+//        }
 
         switch (fragmentID) {
             case R.id.new_trail:
