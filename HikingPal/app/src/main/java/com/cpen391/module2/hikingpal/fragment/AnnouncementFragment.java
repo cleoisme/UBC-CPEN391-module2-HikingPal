@@ -36,6 +36,8 @@ public class AnnouncementFragment extends Fragment{
     public AnnouncementFragment() {
     }
 
+    public static SingleAnnounceFrag s_fragment = new SingleAnnounceFrag();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +56,8 @@ public class AnnouncementFragment extends Fragment{
         // TODO: 2017-04-04  All announcement sent from touchscreen need to be written to database first
         List<Announcement> myList = hps.getAllAnnoucements();
 
+        s_fragment = new SingleAnnounceFrag();
+
         if (myList == null){
             //for testing purpose
             final Announcement announcement = new Announcement();
@@ -66,9 +70,8 @@ public class AnnouncementFragment extends Fragment{
             bt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SingleAnnounceFrag fragment = new SingleAnnounceFrag();
-                    fragment.setAnnouncement(announcement);
-                    fragment.setPrevFrag(LISTALLANNOUNCEMENT);
+                    s_fragment.setAnnouncement(announcement);
+                    s_fragment.setPrevFrag(LISTALLANNOUNCEMENT);
 
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     Fragment currentFrag = fm.findFragmentById(R.id.fragment_container_large);
@@ -77,7 +80,7 @@ public class AnnouncementFragment extends Fragment{
                     //hide the current frag
                     transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_left);
                     transaction.remove(currentFrag);
-                    transaction.add(R.id.fragment_container_large, fragment, String.valueOf(bt.getId()));
+                    transaction.add(R.id.fragment_container_large, s_fragment, String.valueOf(bt.getId()));
 
                     //reopen the all announcement frag
                     transaction.addToBackStack(null);
@@ -86,7 +89,8 @@ public class AnnouncementFragment extends Fragment{
             });
 
             ll.addView(bt, lp);
-        }else{
+        }
+        else{
             //iterate the announcement list to create button for each announcement
             for (final Announcement announcement : myList) {
                 //create button
@@ -97,17 +101,16 @@ public class AnnouncementFragment extends Fragment{
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        SingleAnnounceFrag fragment = new SingleAnnounceFrag();
                         FragmentManager fm = getActivity().getSupportFragmentManager();
                         Fragment currentFrag = fm.findFragmentById(R.id.fragment_container_large);
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        fragment.setAnnouncement(announcement);
-                        fragment.setPrevFrag(LISTALLANNOUNCEMENT);
+                        s_fragment.setAnnouncement(announcement);
+                        s_fragment.setPrevFrag(LISTALLANNOUNCEMENT);
 
                         //hide the current frag
                         transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_left);
                         transaction.remove(currentFrag);
-                        transaction.add(R.id.fragment_container_large, fragment, String.valueOf(button.getId()));
+                        transaction.add(R.id.fragment_container_large, s_fragment, String.valueOf(button.getId()));
 
                         //reopen the all announcement frag
                         transaction.addToBackStack(null);
