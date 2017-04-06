@@ -325,8 +325,8 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                     @Override
                                     public void onSnapshotReady(Bitmap snapshot) {
                                         bitmap = snapshot;
-//                                        myID = System.currentTimeMillis();
-                                        myID =123456;
+                                        myID = System.currentTimeMillis();
+                                        //myID =123456;
 
                                         //save the image
                                         boolean result = savePic(bitmap, "sdcard/hikingPal/saveTrail/" + myID + ".png");
