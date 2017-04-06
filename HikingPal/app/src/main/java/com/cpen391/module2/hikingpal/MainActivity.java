@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         // TODO: 2017-04-05 receive the ID from bluetooth here
-        //imagePopup(hikingPalStorage, 123456);
+        imagePopup(hikingPalStorage, 123456);
 
         ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
         ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
@@ -1001,6 +1001,7 @@ public class MainActivity extends AppCompatActivity
         if(myList != null) {
             for (MapImage mapImage : myList) {
                 if (mapImage.getImageId() == id) {
+
                     Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
                     ImageView iv = new ImageView(this);
                     iv.setPadding(10, 10, 10, 10);
