@@ -957,7 +957,12 @@ public class MainActivity extends AppCompatActivity
             Character c = message.charAt(i);
             sendMessage(c.toString());
             try {
-                Thread.sleep(60);
+                if(i == 0 || i == message.length() - 1){
+                    Thread.sleep(120);
+                }
+                else {
+                    Thread.sleep(60);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -999,7 +1004,8 @@ public class MainActivity extends AppCompatActivity
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fl.removeAllViews();
+                fl.setVisibility(View.INVISIBLE);
+                ll.removeAllViews();
             }
         });
 
