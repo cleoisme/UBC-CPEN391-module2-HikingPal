@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     public static final char BLUETOOTH_WEATHER = 'Z';
     public static final char BLUETOOTH_GPS = 'Y';
     public static final char BLUETOOTH_MESSAGE = 'J';
+    public static final char BLUETOOTH_MAPID = 'K';
 
     private enum State{
         None,
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity
         Weather,
         Map,
         Message,
+        MapId,
     };
 
     private State state = State.None;
@@ -883,6 +885,9 @@ public class MainActivity extends AppCompatActivity
                         if(readMessage.charAt(0) == BLUETOOTH_MESSAGE){
                             state = State.Message;
                         }
+                        if(readMessage.charAt(0) == BLUETOOTH_MAPID){
+                            state = State.MapId;
+                        }
                     }
                     else {
                         if(state == State.Rate && readMessage.charAt(0) == BLUETOOTH_RATE) {
@@ -895,6 +900,11 @@ public class MainActivity extends AppCompatActivity
                         }
                         else if (state == State.Message && readMessage.charAt(0) == BLUETOOTH_MESSAGE){
                             curFrag4.received_msg(mBluetoothData.toString());
+                            mBluetoothData.setLength(0);
+                            state = State.None;
+                        }
+                        else if (state == State.MapId && readMessage.charAt(0) == BLUETOOTH_MAPID){
+                            imagePopup(hikingPalStorage, Long.parseLong(mBluetoothData.toString()));
                             mBluetoothData.setLength(0);
                             state = State.None;
                         }
@@ -1052,8 +1062,6 @@ public class MainActivity extends AppCompatActivity
                     iv.setScaleType(ImageView.ScaleType.FIT_START);
                     ll.addView(iv);
                     ll.addView(bt);
-                } else {
-                    break;
                 }
             }
         }
