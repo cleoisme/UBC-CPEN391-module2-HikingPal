@@ -986,6 +986,7 @@ public class MainActivity extends AppCompatActivity
 // TODO: 2017-04-05 test this function, need to add the popup animation
     private void imagePopup(HikingPalStorage hps, long id){
         final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
+
         final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
         ImageButton bt = (ImageButton) fl.getChildAt(1);
 
@@ -1001,7 +1002,6 @@ public class MainActivity extends AppCompatActivity
         if(myList != null) {
             for (MapImage mapImage : myList) {
                 if (mapImage.getImageId() == id) {
-
                     Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
                     ImageView iv = new ImageView(this);
                     iv.setPadding(10, 10, 10, 10);
@@ -1009,6 +1009,7 @@ public class MainActivity extends AppCompatActivity
                     iv.setScaleType(ImageView.ScaleType.FIT_START);
                     ll.addView(iv);
                     fl.setVisibility(View.VISIBLE);
+
                 }
             }
         }
