@@ -363,7 +363,6 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
                                         points.clear();
                                         buttonNum = 1;
                                         initMap = true;
-                                        myspots_list.clear();
                                         ms_i = 0;
                                         zoomable = 0;
                                         totalDistance = 0;
@@ -390,16 +389,17 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
 
     //the save function that can be used in MainActivity
     public static void saveToStorage() {
+
         myDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(myID)).toString();
         myPath = "sdcard/hikingPal/saveTrail/" + myID + ".png";
         myDuration = Duration;
         myDistance = (long) totalDistance;
         mySpots = myspots_list;
+        Log.d("mySpots?", String.valueOf(mySpots));
         myRating = rating;
-        //hardcoded
         subscribe = 0;
+        myspots_list.clear();
 
-        //write to storage
         mapImageStorage.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
     }
 

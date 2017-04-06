@@ -992,6 +992,7 @@ public class MainActivity extends AppCompatActivity
 // TODO: 2017-04-05 test this function, need to add the popup animation
     private void imagePopup(HikingPalStorage hps, long id){
         final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
+
         final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
         ImageButton bt = (ImageButton) fl.getChildAt(1);
 
@@ -1007,7 +1008,6 @@ public class MainActivity extends AppCompatActivity
         if(myList != null) {
             for (MapImage mapImage : myList) {
                 if (mapImage.getImageId() == id) {
-
                     Animation slide_up = AnimationUtils.loadAnimation(this,R.anim.slide_in_up);
                     fl.startAnimation(slide_up);
                     fl.setVisibility(View.VISIBLE);
