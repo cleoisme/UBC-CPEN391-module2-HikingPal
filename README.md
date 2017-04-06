@@ -1,8 +1,7 @@
-### HikingPal
-Module 2 for CPEN 391
+# HikingPal - Module 2 for CPEN 391
 
-## Feature List:
-# Android Side:
+Feature List:
+### Android Side:
       Path Track:
             - New Trail: Our main feature
                 Start/stop/save user's path.
@@ -29,7 +28,7 @@ Module 2 for CPEN 391
                Allow user to save all announcement in local database
                Allow user to delete all announcement
  
-# DE2 Side:
+### DE2 Side:
    Components: DE2 Board, Touch screen, SD Card, Blue tooth (Swiches, Buttons, LCD, Virtual Keyboard, Graphics)
       - Generally:
             Send the image id to the Android side, and the matched MapImage pops up no matter which fragment the user is currently on
