@@ -964,6 +964,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public boolean IsBtConnected(){
+        return mChatService.getState() == BluetoothChatService.STATE_CONNECTED;
+    }
+
     /**
      * Check current time and show up the notification if necessary
      */
