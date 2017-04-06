@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -30,8 +32,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +51,7 @@ import com.cpen391.module2.hikingpal.fragment.DiscoverNearbyFragment;
 import com.cpen391.module2.hikingpal.fragment.MapViewFragment;
 import com.cpen391.module2.hikingpal.fragment.NewTrailFragment;
 import com.cpen391.module2.hikingpal.fragment.ViewHistoryFragment;
+import com.cpen391.module2.hikingpal.module.MapImage;
 import com.cpen391.module2.hikingpal.module.Weather;
 import com.cpen391.module2.hikingpal.parser.WeatherJSONParser;
 import com.google.android.gms.common.ConnectionResult;
@@ -59,7 +64,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import static com.cpen391.module2.hikingpal.R.id.center_horizontal;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
@@ -203,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         task.execute(new String[]{"Vancouver"});
 
         //brings up the notification after dark
-        Notifier();
+        notifier();
         app_start = true;
         newtrailFrag = new NewTrailFragment();
         dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
@@ -217,6 +224,15 @@ public class MainActivity extends AppCompatActivity
         waiting_view = findViewById(R.id.container_waiting);
         waitIcon = (ProgressBar)findViewById(R.id.loading_spinner);
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+
+        // TODO: 2017-04-05 receive the ID from bluetooth here
+//        while(true){
+//            if(image_ID != 0) {
+//                imagePopup(hikingPalStorage, image_ID);
+//            }else{
+//                break;
+//            }
+//        }
     }
 
 
@@ -447,8 +463,25 @@ public class MainActivity extends AppCompatActivity
                 return true;
 
             case R.id.ann_settings:
-                Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
-                // TODO: 2017-04-04 @cleo 
+                //Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Delete all announcement?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                curFrag5.delAllAnn();
+                            }
+                        })
+                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
                 return true;
             case R.id.secure_connect_scan:
                 Intent serverIntent = new Intent(this, DeviceListActivity.class);
@@ -523,6 +556,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
+        //todo: PartialAnnouncement frag need to be added
         if(app_start == true) {
             ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
             ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
@@ -944,7 +978,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Check current time and show up the notification if necessary
      */
-    private void Notifier() {
+    private void notifier() {
         Calendar c = Calendar.getInstance();
         //get current month: 0~11 -> Jan~Dec
         int month = c.get(Calendar.MONTH);
@@ -962,6 +996,40 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+// TODO: 2017-04-05 test this function, need to add the popup animation
+    private void imagePopup(HikingPalStorage hps, long id){
+        final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
+        final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
+
+        Button bt = new Button(this);
+        bt.setText("Close");
+        bt.setWidth(30);
+        bt.setHeight(10);
+        bt.setGravity(center_horizontal);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fl.removeAllViewsInLayout();
+            }
+        });
+
+        List<MapImage> myList = hps.getAllMapImages();
+
+        if(myList != null) {
+            for (MapImage mapImage : myList) {
+                if (mapImage.getImageId() == id) {
+                    Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
+                    ImageView iv = new ImageView(this);
+                    iv.setImageBitmap(image);
+                    iv.setScaleType(ImageView.ScaleType.FIT_START);
+                    ll.addView(iv);
+                    ll.addView(bt);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
 
     private HashMap<String, Integer> getWeatherIcons() {
 

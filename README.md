@@ -1,38 +1,49 @@
-# HikingPal
-Module 2 for CPEN 391
+# HikingPal - Module 2 for CPEN 391
 
-Notice:
-   1. Try create one branch for each task
-   2. Remember to delete the branch after it is merged to the master
-   3. Open a new issue as long as you find it is necesary
+Feature List:
+### Android Side:
+      Path Track:
+            - New Trail: Our main feature
+                Start/stop/save user's path.
+                Allow user to discover nearby
+                Allow user to add any interesting spots' names to the (current) MapImage object
 
-About Map Background:
-    Currently, we have the same map as background for each fragment. Later when we implement the new trail feature, we need to pass a new MapViewFragment to fragment_container, which overlays the original background.
+            - View History: Second main feature 
+                View all saved path
+                Allow user to select some specific image and send corresponding data to the DE2
+                Allow user to view the corresponding data on the touch screen
+                Allow user to remove some specific trail
+                Allow user to send all info to the DE2 and display each image as a button on touch screen
 
-Fragments:
-- New Trail: Our main feature. 
-    Start/continue/stop/save user's path.
-    Allow user to discover nearby
-    Allow user to put markers on whatever interests him
+      Communicate:
+            - Group Chat
+                Allow user to send message to DE2 Board
+                Allow user to receive message sent from DE2 Board
+                Allow user to save all messages in local database
+                Brings up the message notification if the DE2 sends any message
+                Allow user to delete all messages
 
-- View History: Second main feature. 
-    View all saved path
-    Allow user to select some trail
-    Allow user to view the detailed info about the selected trail
-    Allow user to remove the selected trail
-    Allow user to fav the selected trail (so we can view this trail in "My Fav Trails" fragment)
-
-- My Fav Trails
-    View all faved trailes 
-    Allow user to select some trail
-    Allow user to view the detailed info about the selected trail
-
-- Share
-    Allow user to select a trail from the history
-    Allow user to share the selected trail to other people via bluetooth, that is, other Android devices
-
-- Send
-    Allow user to select a trail from the history
-    Allow user to send detailed information of the selected trail to DE2 Board (and display it on touchscreen)
-
-WE NEED TO IMPLEMENT A LOCAL DATABASE FOR THE INFO LINKED TO EACH TRAIL!
+            - Announcement
+               Allow user to receive announcement from the DE2 Board
+               Allow user to save all announcement in local database
+               Allow user to delete all announcement
+ 
+### DE2 Side:
+   Components: DE2 Board, Touch screen, SD Card, Blue tooth (Swiches, Buttons, LCD, Virtual Keyboard, Graphics)
+      - Generally:
+            Send the image id to the Android side, and the matched MapImage pops up no matter which fragment the user is currently on
+            Display the current coordinates on LCD
+            Read Weather icons from the SD Card and display them on the touchscreen correspondingly
+            
+      - For New Trail Fragment:
+            Allow user to rate the current path
+      - For View History Fragment:
+            Allow user to send corresponding info to the touch screen (all images/selected images)
+      - For the Chat Fragment: bi-direction communication
+            A keyboard has been implemented to send message to the Android side
+            Be able to receive the message sent from Android
+      - For the Announcement: DE2 Board -> Android, one direction communication
+            Be able to send announcement to the Android side
+            
+      
+            

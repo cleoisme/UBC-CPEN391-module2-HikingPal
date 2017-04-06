@@ -1,6 +1,7 @@
 package com.cpen391.module2.hikingpal.fragment;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
+import static com.cpen391.module2.hikingpal.MainActivity.waiting_view;
 import static com.cpen391.module2.hikingpal.R.dimen.button_margin;
 
 /**
@@ -32,6 +34,8 @@ import static com.cpen391.module2.hikingpal.R.dimen.button_margin;
  */
 public class AnnouncementFragment extends Fragment{
     private static final int LISTALLANNOUNCEMENT = 1;
+    HikingPalStorage hikingPalStorage;
+    List<Announcement> myList;
 
     public AnnouncementFragment() {
     }
@@ -54,7 +58,7 @@ public class AnnouncementFragment extends Fragment{
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         // TODO: 2017-04-04  All announcement sent from touchscreen need to be written to database first
-        List<Announcement> myList = hps.getAllAnnoucements();
+        myList = hps.getAllAnnoucements();
 
         s_fragment = new SingleAnnounceFrag();
 
@@ -140,5 +144,20 @@ public class AnnouncementFragment extends Fragment{
         buttonText.setSpan(new RelativeSizeSpan((float) 1.5), index, buttonText.length(), SPAN_INCLUSIVE_INCLUSIVE);
         bt.setText(buttonText);
         return bt;
+    }
+
+    public void delAllAnn() {
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                waiting_view.setVisibility(View.VISIBLE);
+                hikingPalStorage.removeAllAnnouncement();
+            }
+            public void onFinish() {
+                waiting_view.setVisibility(View.INVISIBLE);
+                myList.clear();
+            }
+
+        }.start();
     }
 }
