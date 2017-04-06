@@ -624,7 +624,7 @@ public class HikingPalStorage {
                 JSONArray newArray = new JSONArray();
                 boolean remove = true;
                 for(int i = 0; i < jsonArray.length(); i++) {
-                    if(!jobject.optString("mapPath").equals(jsonArray.getJSONObject(i).optString("pathToImage").toString())){
+                    if(!jobject.optString("mapPath").contains(jsonArray.getJSONObject(i).optString("pathToImage").toString())){
                         newArray.put(jsonArray.get(i));
                     }
                     else {

@@ -7,10 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by macuser on 2017-03-15.
- */
-
 public class WeatherJSONParser {
 
     public static Weather getWeather(String data) throws JSONException  {
