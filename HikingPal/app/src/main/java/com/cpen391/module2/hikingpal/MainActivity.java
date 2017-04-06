@@ -66,7 +66,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.cpen391.module2.hikingpal.R.id.center_horizontal;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large;
 import static com.cpen391.module2.hikingpal.R.id.fragment_container_large2;
@@ -215,7 +214,7 @@ public class MainActivity extends AppCompatActivity
 
         //brings up the notification after dark
         notifier();
-        app_start = true;
+
         newtrailFrag = new NewTrailFragment();
         dfb = (FloatingActionButton) findViewById(R.id.discover_fab);
         curFrag2 = new ViewHistoryFragment();
@@ -223,20 +222,12 @@ public class MainActivity extends AppCompatActivity
         curFrag5 = new AnnouncementFragment();
         DF = new DiscoverNearbyFragment();
 
-        //waiting_view = findViewById(R.id.container_waiting);
-        //waiting_view.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         waiting_view = findViewById(R.id.container_waiting);
         waitIcon = (ProgressBar)findViewById(R.id.loading_spinner);
         //waitIcon.getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         // TODO: 2017-04-05 receive the ID from bluetooth here
-//        while(true){
-//            if(image_ID != 0) {
-//                imagePopup(hikingPalStorage, image_ID);
-//            }else{
-//                break;
-//            }
-//        }
+        imagePopup(hikingPalStorage, 123456);
 
         ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
         ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
@@ -248,8 +239,6 @@ public class MainActivity extends AppCompatActivity
 
         buttonNum=1;
         count = 1;
-        app_start = false;
-
     }
 
 
@@ -402,7 +391,7 @@ public class MainActivity extends AppCompatActivity
             TextView dateText = (TextView) navigationView.findViewById(R.id.date_field);
             if(dateText != null) {
                 Date date = Calendar.getInstance().getTime();
-                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy hh:mm aaa");
+                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
                 String dateString = formatter.format(date);
                 dateText.setText(dateString);
             }
@@ -425,7 +414,7 @@ public class MainActivity extends AppCompatActivity
             mWeatherIcon = weather.currentCondition.getIcon();
             if (wea != null) {
                 wea.setText(weather_condition);
-                tempV.setText(temp);
+                tempV.setText(temp+"°");
                 return;
             }
         }
@@ -457,8 +446,6 @@ public class MainActivity extends AppCompatActivity
                         .setNegativeButton("no", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //nothing
-                                curFrag4.received_msg("hello from the other side");
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -467,8 +454,6 @@ public class MainActivity extends AppCompatActivity
 
                 return true;
             case R.id.chat_settings:
-                //Toast.makeText(MainActivity.this, "hhh", Toast.LENGTH_SHORT).show();
-
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Delete all conversations?")
                         .setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -488,8 +473,6 @@ public class MainActivity extends AppCompatActivity
                 return true;
 
             case R.id.ann_settings:
-                //Toast.makeText(MainActivity.this, "lalala", Toast.LENGTH_SHORT).show();
-
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Delete all announcement?")
                         .setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -549,47 +532,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    boolean app_start;
-
-    private void SetupFragment(){
-        if(app_start) {
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
-            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
-            ft.add(fragment_container_large, curFrag5, getResources().getString(R.string.announcement));
-            buttonNum=1;
-            count = 1;
-            app_start = false;
-        }
-    }
-
-    private void HandleViewHistory(){
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        getSupportActionBar().setTitle(getResources().getString(R.string.view_history_tag));
-        dfb.hide();
-        ft.hide(newtrailFrag);
-        ft.hide(curFrag4);
-        ft.hide(curFrag5);
-        ft.show(curFrag2);
-    }
 
     public void MyFragmentManager(int fragmentID) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
         //todo: PartialAnnouncement frag need to be added
-//        if(app_start == true) {
-//            ft.add(fragment_container_small, newtrailFrag, getResources().getString(R.string.new_trail_tag));
-//            ft.add(fragment_container_med1, curFrag2, getResources().getString(R.string.view_history_tag));
-//            ft.add(fragment_container_large2, curFrag4, getResources().getString(R.string.group_chat));
-//            buttonNum=1;
-//            count = 1;
-//            app_start = false;
-//        }
+
 
         switch (fragmentID) {
             case R.id.new_trail:
@@ -1042,16 +991,12 @@ public class MainActivity extends AppCompatActivity
     private void imagePopup(HikingPalStorage hps, long id){
         final FrameLayout fl = (FrameLayout) findViewById(R.id.popup_view);
         final LinearLayout ll = (LinearLayout) fl.getChildAt(0);
+        ImageButton bt = (ImageButton) fl.getChildAt(1);
 
-        Button bt = new Button(this);
-        bt.setText("Close");
-        bt.setWidth(30);
-        bt.setHeight(10);
-        bt.setGravity(center_horizontal);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fl.removeAllViewsInLayout();
+                fl.removeAllViews();
             }
         });
 
@@ -1060,12 +1005,14 @@ public class MainActivity extends AppCompatActivity
         if(myList != null) {
             for (MapImage mapImage : myList) {
                 if (mapImage.getImageId() == id) {
+
                     Bitmap image = BitmapFactory.decodeFile(mapImage.getAbsPath());
                     ImageView iv = new ImageView(this);
+                    iv.setPadding(10, 10, 10, 10);
                     iv.setImageBitmap(image);
                     iv.setScaleType(ImageView.ScaleType.FIT_START);
                     ll.addView(iv);
-                    ll.addView(bt);
+                    fl.setVisibility(View.VISIBLE);
                 }
             }
         }

@@ -85,7 +85,6 @@ public class ChatFragment extends Fragment {
                     mRecyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-
                             if(mRecyclerView.getAdapter().getItemCount()>=1) {
                                 mRecyclerView.smoothScrollToPosition(
                                         mRecyclerView.getAdapter().getItemCount() - 1);
@@ -123,15 +122,12 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-
         return ll;
     }
 
 
     public void delAllConv(){
-
         new CountDownTimer(3000, 1000) {
-
             public void onTick(long millisUntilFinished) {
                 hindkb();
                 waiting_view.setVisibility(View.VISIBLE);
@@ -143,7 +139,6 @@ public class ChatFragment extends Fragment {
                 msg_id=0;
                 mAdapter.notifyDataSetChanged();
             }
-
         }.start();
     }
 
@@ -163,6 +158,11 @@ public class ChatFragment extends Fragment {
         msg_id++;
         mAdapter.notifyDataSetChanged();
         addNotification("New Message from DE2!");
+
+        if(mRecyclerView.getAdapter().getItemCount()>=1) {
+            mRecyclerView.smoothScrollToPosition(
+                    mRecyclerView.getAdapter().getItemCount() - 1);
+        }
     }
 
 
