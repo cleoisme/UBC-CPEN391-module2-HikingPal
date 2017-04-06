@@ -398,9 +398,9 @@ public class MapViewFragment extends Fragment implements GoogleApiClient.Connect
         Log.d("mySpots?", String.valueOf(mySpots));
         myRating = rating;
         subscribe = 0;
-        myspots_list.clear();
 
         mapImageStorage.writeToStorage((int) myID, subscribe, myDuration, myDistance, mySpots, myDate, myRating, myPath);
+        myspots_list.clear();
     }
 
 
